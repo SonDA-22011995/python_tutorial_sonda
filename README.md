@@ -1,8 +1,34 @@
+- [The `__str__` method](#the-__str__-method)
+- [Lambda functions](#lambda-functions)
 - [Destructuring](#destructuring)
 - [Format datetime to string](#format-datetime-to-string)
 - [index of the day of the week from a date in Python](#index-of-the-day-of-the-week-from-a-date-in-python)
 - [Add days to a date in Python](#add-days-to-a-date-in-python)
 - [A global variable](#a-global-variable)
+
+## The `__str__` method
+
+- The `__str__()` method is a special method that controls what is returned when the object is printed:
+
+```
+class Person:
+  def __init__(self, name, age):
+    self.name = name
+    self.age = age
+
+  def __str__(self):
+    return f"{self.name} ({self.age})"
+
+p1 = Person("Tobias", 36)
+
+print(p1)
+# It print Tobias (36)
+```
+
+## Lambda functions
+
+- The expression is executed and the result is returned:
+- Syntax: `lambda arguments : expression`
 
 ## Destructuring
 
