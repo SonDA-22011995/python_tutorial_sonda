@@ -1,7 +1,91 @@
+- [Destructuring](#destructuring)
 - [Format datetime to string](#format-datetime-to-string)
 - [index of the day of the week from a date in Python](#index-of-the-day-of-the-week-from-a-date-in-python)
 - [Add days to a date in Python](#add-days-to-a-date-in-python)
 - [A global variable](#a-global-variable)
+
+## Destructuring
+
+- If we try to destructure a collection with more or fewer values than we provide variables, we end up with a ValueError.
+- Standard destructuring assignments
+
+```
+# or
+# x, y = (5, 11)
+# (5, 11) and 5, 11 are tuple
+x, y = 5, 11
+```
+
+- Destructuring dictionaries
+
+```
+my_dict = {"name": "Bob", "age": 25}
+x, y = my_dict
+```
+
+- If you wanted to destructure the dictionary values only, you can do:
+
+```
+my_dict = {"name": "Bob", "age": 25}
+x, y = my_dict.values()  # "Bob", 25
+```
+
+- Destructuring in for loops
+
+```
+example_list = ["A", "B", "C"]
+
+for counter, letter in enumerate(example_list):
+	print(counter, letter)
+
+# 0 A
+# 1 B
+# 2 C
+```
+
+```
+people = [
+	("Bob", 42, "Mechanic"),
+	("James", 24, "Artist"),
+	("Harry", 32, "Lecturer")
+]
+
+for name, age, profession in people:
+	print(f"Name: {name}, Age: {age}, Profession: {profession}")
+```
+
+- Ignoring Values: So, what do we do if we have a collection of values and we don't want to assign all of them? We can use an \_ in place of a variable name.
+
+```
+person = ("Bob", 42, "Mechanic")
+name, _, profession = person
+
+print(name, profession)  # Bob Mechanic
+```
+
+- Using `*` to Collect Values: In Python, we can use the `*` operator to collect leftover values when performing a destructuring assignment. For example, we might have a list of numbers, and we want to grab the first number, and then assign the remaining numbers to a second variable
+
+```
+head, *tail = [1, 2, 3, 4, 5]
+
+print(head)  # 1
+print(tail)  # [2, 3, 4, 5]
+```
+
+```
+*head, tail = [1, 2, 3, 4, 5]
+
+print(head)  # [1, 2, 3, 4]
+print(tail)  # 5
+```
+
+```
+head, *middle, tail = [1, 2, 3, 4, 5]
+
+print(head)    # 1
+print(middle)  # [2, 3, 4]
+print(tail)    # 5
+```
 
 ## Format datetime to string
 
