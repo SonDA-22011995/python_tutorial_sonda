@@ -1,6 +1,7 @@
 - [The `class attributes`](#the-class-attributes)
 - [The `@staticmethod` method](#the-staticmethod-method)
 - [The `@classmethod` method](#the-classmethod-method)
+- [The class composition method](#the-class-composition-method)
 - [The `__str__` method](#the-__str__-method)
 - [The `__repr__` method](#the-__repr__-method)
 - [Lambda functions](#lambda-functions)
@@ -9,6 +10,9 @@
 - [index of the day of the week from a date in Python](#index-of-the-day-of-the-week-from-a-date-in-python)
 - [Add days to a date in Python](#add-days-to-a-date-in-python)
 - [A global variable](#a-global-variable)
+- [Arbitrary Positional Arguments](#arbitrary-positional-arguments)
+- [Mixing Positional and Arbitrary Arguments](#mixing-positional-and-arbitrary-arguments)
+- [Arbitrary Keyword Arguments](#arbitrary-keyword-arguments)
 
 ## The `class attributes`
 
@@ -108,6 +112,8 @@ print(v2.v_type, v2.name)  # bike Honda
 print(v3.v_type, v3.name)  # truck Volvo
 
 ```
+
+## The class composition method
 
 ## The `__str__` method
 
@@ -339,4 +345,55 @@ print(f"Outside function (after access): {global_var}")
 
 modify_global()
 print(f"Outside function (after modification): {global_var}")
+```
+
+## Arbitrary Positional Arguments
+
+- **Purpose**: To collect an arbitrary number of non-keyword (positional) arguments into a single tuple within the function.
+- **Syntax**: Precede a parameter name in the function definition with a single asterisk (`*`).
+
+```
+    def calculate_sum(*numbers):
+        total = 0
+        for num in numbers:
+            total += num
+        print(f"The sum is: {total}")
+
+    calculate_sum(1, 2, 3)  # numbers will be (1, 2, 3)
+    calculate_sum(10, 20, 30, 40, 50) # numbers will be (10, 20, 30, 40, 50)
+```
+
+## Mixing Positional and Arbitrary Arguments
+
+- The parameter that accepts an arbitrary number of arguments must be placed last in the function definition
+
+```
+def make_pizza(size, *toppings):
+    #Summarize the pizza we are about to make.
+    print(f"\nMaking a {size}-inch pizza with the following toppings:")
+    for topping in toppings:
+        print(f"- {topping}")
+
+make_pizza(16, 'pepperoni')
+make_pizza(12, 'mushrooms', 'green peppers', 'extra cheese')
+```
+
+## Arbitrary Keyword Arguments
+
+- This is achieved by placing a double asterisk `**` before a parameter name in the function definition. This parameter will then collect all the passed keyword arguments into a dictionary.
+
+```
+def build_profile(first, last, **user_info):
+    # Build a dictionary containing everything we know about a user.
+    user_info['first_name'] = first
+    user_info['last_name'] = last
+    return user_info
+
+user_profile = build_profile(
+    'albert',
+    'einstein',
+    location='princeton',
+    field='physics'
+)
+print(user_profile)
 ```
