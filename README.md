@@ -2,7 +2,7 @@
 - [The `@staticmethod` method](#the-staticmethod-method)
 - [The `@classmethod` method](#the-classmethod-method)
 - [`Is-A` relation](#is-a-relation)
-- [The class composition method](#the-class-composition-method)
+- [The class composition method `Has-A`](#the-class-composition-method-has-a)
 - [The `__str__` method](#the-__str__-method)
 - [The `__repr__` method](#the-__repr__-method)
 - [Lambda functions](#lambda-functions)
@@ -17,6 +17,7 @@
 - [Type hint](#type-hint)
 - [`__name__` variable](#__name__-variable)
 - [Imports](#imports)
+- [Absolute Imports](#absolute-imports)
 - [Relative Imports](#relative-imports)
 - [`__init__` file](#__init__-file)
 
@@ -152,7 +153,7 @@ print(my_dog.speak())  # Output: Woof!
 print(my_cat.speak())  # Output: Meow!
 ```
 
-## The class composition method
+## The class composition method `Has-A`
 
 - An object-oriented programming concept where a class includes an object of another class as an attribute
 - This creates a **has-a** relationship, meaning the composite class has or owns a component object.
@@ -668,6 +669,8 @@ my_module's __name__ when imported is: my_module
 ## Imports
 
 - The `import` statement is used to bring modules or specific components (functions, classes, variables) from modules into the current namespace, making them available for use. This promotes code reusability and organization
+
+## Absolute Imports
 
 ## Relative Imports
 
