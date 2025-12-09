@@ -122,7 +122,7 @@ print(v3.v_type, v3.name)  # truck Volvo
   - **Inheritance**: The "Is-A" relationship is established when one class inherits from another. The subclass automatically gains access to the attributes and methods defined in its superclass.
   - **Specialization**: The subclass represents a more specific type of the superclass. For example, a Dog `Is-A` Animal, and a Car `Is-A` Vehicle.
   - **Code Reusability**: Inheritance promotes code reusability by allowing subclasses to inherit and potentially override or extend the functionality of their superclasses, rather than duplicating code.
-  - **Polymorphism**: The "Is-A" relationship enables polymorphism, where objects of different classes can be treated as objects of a common superclass, allowing for more flexible and extensible code.
+  - **Polymorphism**: The `Is-A` relationship enables polymorphism, where objects of different classes can be treated as objects of a common superclass, allowing for more flexible and extensible code.
 
 ```
 # Superclass (Base class)
@@ -471,3 +471,51 @@ print(user_profile)
 ```
 
 ## Type hint
+
+- Type hints are a feature in Python that allow developers to annotate their code with expected types for variables and function arguments. This helps to improve code readability and provides an opportunity to catch errors before runtime using type checkers like mypy.
+- Variable and Function Type Hints
+
+```
+age: int = 25
+def greet(name: str) -> str:
+    return f"Hello, {name}!"
+```
+
+- Function Return Type
+
+```
+def add_numbers(x: int, y: int) -> int:
+    return x + y
+```
+
+- Optional Types and Collections
+
+```
+from typing import Optional, List, Tuple
+
+def get_user(id: int) -> Optional[str]:
+    return None if id == 0 else "User"
+
+def sum(num: List[int]) -> int:
+    return sum(num)
+
+def get_name_and_age() -> Tuple[str, int]:
+    return ("Abc", 25)
+```
+
+- Python ≤ 3.8
+
+```
+from typing import List, Optional, Tuple
+
+def f(data: List[int]) -> Optional[Tuple[int, str]]:
+    return None
+
+```
+
+- Python ≥ 3.10
+
+```
+def f(data: list[int]) -> tuple[int, str] | None:
+    return None
+```
