@@ -656,6 +656,13 @@ print(my_module.greet("Python"))
 print(f"my_module's __name__ when imported is: {my_module.__name__}")
 ```
 
+The output will be:
+
+```
+Hello, Python!
+my_module's __name__ when imported is: my_module
+```
+
 ## Imports
 
 - The `import` statement is used to bring modules or specific components (functions, classes, variables) from modules into the current namespace, making them available for use. This promotes code reusability and organization
