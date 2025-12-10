@@ -774,8 +774,11 @@ from . import string_tools
 - Package Recognition: In older Python versions (prior to 3.3), the `__init__.py` file was required for Python to recognize a directory as a package. While no longer strictly mandatory in Python 3.3+ (due to implicit namespace packages), it is still widely used and considered a best practice for most projects
 - The `__all__` variable is a list of strings that indicate the names that should be imported when using the `*` operator
 - Key purposes
+
   - It marks the directory as a Python Package so that the interpreter can find the modules inside it.
   - It can contain initialization code for the Package, such as importing submodules, defining variables, or executing other code.
+
+- Creating a Simple Package Using `__init__.py` File
 
 ```
 mypackage/
@@ -783,4 +786,46 @@ mypackage/
     module1.py
     module2.py
 main.py
+```
+
+```
+# __init__.py
+# Define the __all__ variable
+__all__ = ["module1", "module2"]
+
+# Import the submodules
+from . import module1
+from . import module2
+```
+
+```
+# module1.py
+# Define a function called func1
+def func1():
+    print("This is func1 from module1")
+```
+
+```
+# module2.py
+# Define a function called func2
+def func2():
+    print("This is func2 from module2")
+```
+
+```
+# main.py
+# Import the package
+import mypackage
+
+# Import the modules
+import mypackage.module1
+import mypackage.module2
+
+# Call the functions
+mypackage.module1.func1()
+mypackage.module2.func2()
+
+# Output
+# This is func1 from module1
+# This is func2 from module2
 ```
