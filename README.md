@@ -849,6 +849,7 @@ mypackage.module2.func2()
   - `try` block runs code, raising an exception if any occurs
   - `except` block catches exceptions
   - `finally` block always executes
+  - `else` Optional Code to execute if no exception occurred in the try block
 
 ```
 try:
@@ -860,6 +861,9 @@ except ZeroDivisionError:
 except Exception as e:
     # Catch-all for other exceptions
     print(f"An unexpected error occurred: {e}")
+else:
+    # Optional: Code to execute if no exception occurred in the try block
+    print("No exceptions were raised.")
 finally:
     # Optional: Code that always executes, regardless of exception
     print("Execution finished.")
