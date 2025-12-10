@@ -27,6 +27,7 @@
   - [Raise an exception](#raise-an-exception)
   - [Using raise with a custom exception.](#using-raise-with-a-custom-exception)
   - [Re-raising an exception](#re-raising-an-exception)
+  - [First-class functions](#first-class-functions)
 
 # OOP
 
@@ -1046,4 +1047,74 @@ except ZeroDivisionError as e:
     print(f"An error occurred: {e}")
     # Re-raises the ZeroDivisionError
     raise
+```
+
+## First-class functions
+
+- Assigning Functions to Variables
+- Passing Functions as Arguments
+- Returning Functions from Other Functions
+- Storing Functions in Data Structures
+
+```
+def msg(name):
+    return f"Hello, {name}!"
+
+# Assigning the function to a variable
+f = msg
+
+# Calling the function using the variable
+print(f("Emma"))
+```
+
+```
+def msg(name):
+    return f"Hello, {name}!"
+
+def fun1(fun2, name):
+    return fun2(name)
+
+# Passing the msg function as an argument
+print(fun1(msg, "Alex"))
+```
+
+```
+def fun1(msg):
+    def fun2():
+        return f"Message: {msg}"
+    return fun2
+
+# Getting the inner function
+func = fun1("Hello, World!")
+print(func())
+
+def divide(dividend, divisor):
+    if divisor == 0:
+        raise ZeroDivisionError('Divisor cannot be 0.')
+
+    return dividend / divisor
+
+def calculate(*value, operator):
+    return operator(*values)
+
+result = calculate(20, 4, operator=divide)
+print(result)
+```
+
+```
+def add(x, y):
+    return x + y
+
+def subtract(x, y):
+    return x - y
+
+# Storing functions in a dictionary
+d = {
+    "add": add,
+    "subtract": subtract
+}
+
+# Calling functions from the dictionary
+print(d["add"](5, 3))
+print(d["subtract"](5, 3))
 ```
