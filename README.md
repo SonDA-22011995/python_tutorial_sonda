@@ -707,6 +707,10 @@ print(result)
 ## Relative Imports
 
 - A relative path is a location defined in relation to the current working directory
+- When to use `from . import module_name`
+  - You use `.` when the file you want to import is in the same folder as the current file
+- When to use `from .folder_name import module_name`
+  - Use `.folder_name` when the module is inside a subfolder of the current folder.
 
 ```
 project/
@@ -736,4 +740,47 @@ def print_upper(text):
 
 ```
 
+```
+my_project/
+│
+├── main.py
+└── utils/
+    ├── __init__.py
+    ├── math_tools.py
+    └── string_tools.py
+```
+
+```
+# utils/math_tools.py
+def add(a, b):
+    return a + b
+```
+
+```
+# utils/string_tools.py
+def shout(text):
+    return text.upper()
+```
+
+```
+# utils/__init__.py
+from . import math_tools
+from . import string_tools
+```
+
 ## `__init__` file
+
+- `__init__.py` file is a Python file that is executed when a package is imported and is used to initialize the package's namespace and structure how its contents are accessed.
+- Package Recognition: In older Python versions (prior to 3.3), the `__init__.py` file was required for Python to recognize a directory as a package. While no longer strictly mandatory in Python 3.3+ (due to implicit namespace packages), it is still widely used and considered a best practice for most projects
+- The `__all__` variable is a list of strings that indicate the names that should be imported when using the `*` operator
+- Key purposes
+  - It marks the directory as a Python Package so that the interpreter can find the modules inside it.
+  - It can contain initialization code for the Package, such as importing submodules, defining variables, or executing other code.
+
+```
+mypackage/
+    __init__.py
+    module1.py
+    module2.py
+main.py
+```
