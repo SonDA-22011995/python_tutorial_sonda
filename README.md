@@ -1,30 +1,34 @@
-- [The `class attributes`](#the-class-attributes)
-- [The `@staticmethod` method](#the-staticmethod-method)
-- [The `@classmethod` method](#the-classmethod-method)
-- [`Is-A` relation](#is-a-relation)
-- [The class composition method `Has-A`](#the-class-composition-method-has-a)
-- [The `__str__` method](#the-__str__-method)
-- [The `__repr__` method](#the-__repr__-method)
-- [Lambda functions](#lambda-functions)
-- [Destructuring](#destructuring)
-- [Format datetime to string](#format-datetime-to-string)
-- [index of the day of the week from a date in Python](#index-of-the-day-of-the-week-from-a-date-in-python)
-- [Add days to a date in Python](#add-days-to-a-date-in-python)
-- [A global variable](#a-global-variable)
-- [Arbitrary Positional Arguments](#arbitrary-positional-arguments)
-- [Mixing Positional and Arbitrary Arguments](#mixing-positional-and-arbitrary-arguments)
-- [Arbitrary Keyword Arguments](#arbitrary-keyword-arguments)
-- [Type hint](#type-hint)
-- [`__name__` variable](#__name__-variable)
-- [Imports](#imports)
-- [Absolute Imports](#absolute-imports)
-- [Relative Imports](#relative-imports)
-- [`__init__` file](#__init__-file)
-- [Errors](#errors)
-- [Custom error classes](#custom-error-classes)
-- [Raise an exception](#raise-an-exception)
-- [Using raise with a custom exception.](#using-raise-with-a-custom-exception)
-- [Re-raising an exception](#re-raising-an-exception)
+- [OOP](#oop)
+  - [The `class attributes`](#the-class-attributes)
+  - [The `@staticmethod` method](#the-staticmethod-method)
+  - [The `@classmethod` method](#the-classmethod-method)
+  - [`Is-A` relation](#is-a-relation)
+  - [The class composition method `Has-A`](#the-class-composition-method-has-a)
+  - [The `__str__` method](#the-__str__-method)
+  - [The `__repr__` method](#the-__repr__-method)
+- [Other](#other)
+  - [Lambda functions](#lambda-functions)
+  - [Destructuring](#destructuring)
+  - [Format datetime to string](#format-datetime-to-string)
+  - [index of the day of the week from a date in Python](#index-of-the-day-of-the-week-from-a-date-in-python)
+  - [Add days to a date in Python](#add-days-to-a-date-in-python)
+  - [A global variable](#a-global-variable)
+  - [Arbitrary Positional Arguments](#arbitrary-positional-arguments)
+  - [Mixing Positional and Arbitrary Arguments](#mixing-positional-and-arbitrary-arguments)
+  - [Arbitrary Keyword Arguments](#arbitrary-keyword-arguments)
+  - [Type hint](#type-hint)
+  - [`__name__` variable](#__name__-variable)
+  - [Imports](#imports)
+  - [Absolute Imports](#absolute-imports)
+  - [Relative Imports](#relative-imports)
+  - [`__init__` file](#__init__-file)
+  - [Errors](#errors)
+  - [Custom error classes](#custom-error-classes)
+  - [Raise an exception](#raise-an-exception)
+  - [Using raise with a custom exception.](#using-raise-with-a-custom-exception)
+  - [Re-raising an exception](#re-raising-an-exception)
+
+# OOP
 
 ## The `class attributes`
 
@@ -236,6 +240,8 @@ print(repr(p))  # Explicitly calls __repr__
 print(p)        # Calls __repr__ by default if __str__ is not defined
 
 ```
+
+# Other
 
 ## Lambda functions
 
