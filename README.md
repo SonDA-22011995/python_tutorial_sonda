@@ -779,15 +779,12 @@ from . import string_tools
   - It can contain initialization code for the Package, such as importing submodules, defining variables, or executing other code.
   - Import up two levels: `from .... import x`
 
-```
-| Level | Syntax | Meaning |
-|-------|---------|---------|
-| 1 level up | `from .. import x` | Go to the parent directory |
-| 2 levels up | `from .... import x` | Go to the parent of the parent directory |
-| 1 level up + subfolder | `from ..subfolder import x` | Go up one level, then into a subfolder |
-| 2 levels up + subfolder | `from ....subfolder import x` | Go up two levels, then into a subfolder |
-
-```
+| Level                   | Syntax                        | Meaning                                  |
+| ----------------------- | ----------------------------- | ---------------------------------------- |
+| 1 level up              | `from .. import x`            | Go to the parent directory               |
+| 2 levels up             | `from .... import x`          | Go to the parent of the parent directory |
+| 1 level up + subfolder  | `from ..subfolder import x`   | Go up one level, then into a subfolder   |
+| 2 levels up + subfolder | `from ....subfolder import x` | Go up two levels, then into a subfolder  |
 
 - Creating a Simple Package Using `__init__.py` File
 
