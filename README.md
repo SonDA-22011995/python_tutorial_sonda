@@ -1151,6 +1151,48 @@ greet()
 
 ## Define function Decorators with `functools.wraps`
 
+- The cause of this isn’t hard to see. The **decorator** function returns the **wrapper** defined within its body. The **wrapper** function is what’s assigned to the **say_whee** name in the containing module because of the decorator.
+- This behavior is problematic because it undermines tools that do introspection, such as debuggers
+
+```
+def decorator(func):
+    def wrapper():
+        print("Something is happening before the function is called.")
+        func()
+        print("Something is happening after the function is called.")
+    return wrapper
+
+@decorator
+def say_whee():
+    print("Whee!")
+
+print(say_whee.__name__)
+# wrapper_do_twice
+
+```
+
+- To fix this, decorators should use the @wraps decorator, which will preserve information about the original function
+
+```
+# import functools
+from functools import wraps
+
+def do_twice(func):
+    # @functools.wraps
+    @wraps(func)
+    def wrapper_do_twice(*args, **kwargs):
+        func(*args, **kwargs)
+        return func(*args, **kwargs)
+    return wrapper_do_twice
+
+@do_twice
+def say_whee():
+    print("Whee!")
+
+print(say_whee.__name__)
+# say_whee
+```
+
 ## Decorators function with parameter
 
 - Explanation of Parameters
