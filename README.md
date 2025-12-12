@@ -46,6 +46,14 @@
     - [3xx — Redirection](#3xx--redirection)
     - [4xx — Client Errors](#4xx--client-errors)
     - [5xx — Server Errors](#5xx--server-errors)
+- [Python Built-in Functions](#python-built-in-functions)
+  - [Basic I/O \& Introspection](#basic-io--introspection)
+  - [Sequence \& Iterable Operations](#sequence--iterable-operations)
+  - [Functional Programming Tools](#functional-programming-tools)
+  - [Type Conversion](#type-conversion)
+  - [Numeric Helpers](#numeric-helpers)
+  - [File \& Execution](#file--execution)
+  - [OOP Helpers](#oop-helpers)
 
 # OOP
 
@@ -1538,3 +1546,78 @@ pip install -r requirements.txt
 | **505** | HTTP Version Not Supported |
 | **507** | Insufficient Storage       |
 | **508** | Loop Detected              |
+
+# Python Built-in Functions
+
+## Basic I/O & Introspection
+
+| Function       | Meaning               | Syntax                               | Parameters               | Example                       |
+| -------------- | --------------------- | ------------------------------------ | ------------------------ | ----------------------------- |
+| `print()`      | Print text to console | `print(*objects, sep=' ', end='\n')` | `*objects`, `sep`, `end` | `print("Hello", "World")`     |
+| `input()`      | Read user input       | `input(prompt=None)`                 | `prompt`                 | `name = input("Your name: ")` |
+| `type()`       | Get object type       | `type(object)`                       | `object`                 | `type(10)`                    |
+| `isinstance()` | Check object type     | `isinstance(obj, classinfo)`         | `obj`, `classinfo`       | `isinstance(5, int)`          |
+| `id()`         | Get memory address    | `id(object)`                         | `object`                 | `id(x)`                       |
+| `dir()`        | List attributes       | `dir([object])`                      | `object` (optional)      | `dir(str)`                    |
+| `help()`       | Show documentation    | `help(object)`                       | `object`                 | `help(list)`                  |
+
+## Sequence & Iterable Operations
+
+| Function      | Meaning                 | Syntax                                      | Parameters          | Example                      |
+| ------------- | ----------------------- | ------------------------------------------- | ------------------- | ---------------------------- |
+| `len()`       | Count elements          | `len(s)`                                    | `s`                 | `len([1,2,3])`               |
+| `range()`     | Create integer sequence | `range(start, stop, step)`                  | `start=0`, `step=1` | `range(1, 5)`                |
+| `enumerate()` | Index + value           | `enumerate(iterable, start=0)`              | `iterable`, `start` | `enumerate(lst)`             |
+| `zip()`       | Combine iterables       | `zip(*iterables)`                           | iterables           | `zip(a, b)`                  |
+| `sorted()`    | Return sorted list      | `sorted(iterable, key=None, reverse=False)` | `key`, `reverse`    | `sorted(nums, reverse=True)` |
+| `reversed()`  | Reverse sequence        | `reversed(seq)`                             | `seq`               | `list(reversed("abc"))`      |
+
+## Functional Programming Tools
+
+| Function   | Meaning                 | Syntax                   | Parameters          | Example                      |
+| ---------- | ----------------------- | ------------------------ | ------------------- | ---------------------------- |
+| `map()`    | Apply function to items | `map(func, iterable)`    | `func`, `iterable`  | `map(str, nums)`             |
+| `filter()` | Filter by condition     | `filter(func, iterable)` | `func`, `iterable`  | `filter(lambda x: x>5, lst)` |
+| `any()`    | True if any True        | `any(iterable)`          | `iterable`          | `any(x>5 for x in nums)`     |
+| `all()`    | True if all True        | `all(iterable)`          | `iterable`          | `all(x>0 for x in nums)`     |
+| `sum()`    | Sum elements            | `sum(iterable, start=0)` | `iterable`, `start` | `sum([1,2,3])`               |
+| `min()`    | Minimum value           | `min(iterable)`          | `iterable`          | `min(nums)`                  |
+| `max()`    | Maximum value           | `max(iterable)`          | `iterable`          | `max(nums)`                  |
+
+## Type Conversion
+
+| Function  | Meaning            | Syntax            | Parameters  | Example          |
+| --------- | ------------------ | ----------------- | ----------- | ---------------- |
+| `int()`   | Convert to int     | `int(x, base=10)` | `x`, `base` | `int("10")`      |
+| `float()` | Convert to float   | `float(x)`        | `x`         | `float("3.14")`  |
+| `str()`   | Convert to string  | `str(obj)`        | `obj`       | `str(123)`       |
+| `bool()`  | Convert to boolean | `bool(x)`         | `x`         | `bool("")`       |
+| `list()`  | Convert to list    | `list(iterable)`  | `iterable`  | `list("abc")`    |
+| `tuple()` | Convert to tuple   | `tuple(iterable)` | `iterable`  | `tuple([1,2])`   |
+| `set()`   | Convert to set     | `set(iterable)`   | `iterable`  | `set([1,1,2])`   |
+| `dict()`  | Create dictionary  | `dict(**kwargs)`  | key/value   | `dict(a=1, b=2)` |
+
+## Numeric Helpers
+
+| Function  | Meaning        | Syntax                   | Parameters     | Example             |
+| --------- | -------------- | ------------------------ | -------------- | ------------------- |
+| `abs()`   | Absolute value | `abs(x)`                 | `x`            | `abs(-5)`           |
+| `round()` | Round number   | `round(x, ndigits=None)` | `x`, `ndigits` | `round(3.14159, 2)` |
+| `pow()`   | Exponent       | `pow(a, b)`              | `a`, `b`       | `pow(2, 3)`         |
+
+## File & Execution
+
+| Function | Meaning             | Syntax                 | Parameters         | Example                 |
+| -------- | ------------------- | ---------------------- | ------------------ | ----------------------- |
+| `open()` | Open file           | `open(filename, mode)` | `filename`, `mode` | `open("data.txt", "r")` |
+| `eval()` | Evaluate expression | `eval(expr)`           | `expr`             | `eval("1+2")`           |
+| `exec()` | Execute code        | `exec(code)`           | `code`             | `exec("x=10")`          |
+
+## OOP Helpers
+
+| Function         | Meaning                | Syntax          | Parameters | Example              |
+| ---------------- | ---------------------- | --------------- | ---------- | -------------------- |
+| `super()`        | Call parent class      | `super()`       | —          | `super().__init__()` |
+| `classmethod()`  | Define class method    | `@classmethod`  | —          | see OOP section      |
+| `staticmethod()` | Define static method   | `@staticmethod` | —          | see OOP section      |
+| `property()`     | Getter/setter property | `@property`     | —          | property getter      |

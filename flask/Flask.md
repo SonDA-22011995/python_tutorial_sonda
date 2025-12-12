@@ -8,7 +8,8 @@
     - [`get_json`](#get_json)
 - [Flask REST API](#flask-rest-api)
   - [First REST API](#first-rest-api)
-  - [Create item in REST API](#create-item-in-rest-api)
+  - [Create store in REST API](#create-store-in-rest-api)
+  - [Create items in our REST API](#create-items-in-our-rest-api)
 - [Flask CLI](#flask-cli)
   - [flask run](#flask-run)
 - [JSON](#json)
@@ -92,10 +93,25 @@ def get_stores():
     return {"stores": stores}
 ```
 
-## Create item in REST API
+## Create store in REST API
+
+- Create store
 
 ```
 from flask import Flask, request
+
+stores = [
+    {
+        "name": "My Store",
+        "is_active": True,
+        "items": [
+            {
+                "name": "my item",
+                "price": 15.99
+            }
+        ]
+    }
+]
 
 app = Flask(__name__)
 
@@ -106,6 +122,8 @@ def create_store():
     stores.append(new_store)
     return new_store, 201
 ```
+
+## Create items in our REST API
 
 # Flask CLI
 
