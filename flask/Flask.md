@@ -6,6 +6,7 @@
     - [`post(rule, **options)`](#postrule-options)
   - [`class flask.Request`](#class-flaskrequest)
     - [`get_json`](#get_json)
+  - [URL variables | Route parameters](#url-variables--route-parameters)
 - [Flask REST API](#flask-rest-api)
   - [First REST API](#first-rest-api)
   - [Create store in REST API](#create-store-in-rest-api)
@@ -77,6 +78,45 @@ def get_stores():
 - Parse data as JSON.
 - If the mimetype does not indicate JSON (`application/json`, see `is_json`), or parsing fails, `on_json_loading_failed()` is called and its return value is used as the return value. By default this raises a 415 Unsupported Media Type resp.
 
+## URL variables | Route parameters
+
+- How to Use: ou define a route parameter in the URL rule within the `@app.route()` decorator using angle brackets `<variable_name>`. The name you use in the URL must match the name of the argument in the corresponding Python function.
+
+- Basic example
+
+```
+from flask import Flask
+app = Flask(__name__)
+
+@app.route('/user/<username>')
+def show_user_profile(username):
+    # show the user profile for that user
+    return f'User: {username}'
+
+if __name__ == '__main__':
+    app.run(debug=True)
+```
+
+- URL Converters: By default, the parameter type is a string (without slashes). Flask supports various type converters to filter the parameters in the URL
+
+| **Type**   | **Description**                                |
+| ---------- | ---------------------------------------------- |
+| **string** | _(Default)_ Accepts any text without slashes.  |
+| **int**    | Accepts positive integers.                     |
+| **float**  | Accepts positive floating-point values.        |
+| **path**   | Similar to `string`, but also accepts slashes. |
+| **uuid**   | Accepts UUID strings.                          |
+
+- Example with an Integer Converter
+
+```
+@app.route('/post/<int:post_id>')
+def show_post(post_id):
+    # show the post with the given id, which is an integer
+    return f'Post ID: {post_id}'
+
+```
+
 # Flask REST API
 
 ## First REST API
@@ -124,6 +164,18 @@ def create_store():
 ```
 
 ## Create items in our REST API
+
+```
+@app.post("/store/<string:name>/item")
+def create_item(name):
+    request_data = request.get_json()
+    for store in stores:
+        if store["name"] == name:
+            new_item = {"name": request_data["name"], "price": request_data["price"]}
+            store["items"].append(new_item)
+            return new_item
+    return {"message": "Store not found"}, 404
+```
 
 # Flask CLI
 
