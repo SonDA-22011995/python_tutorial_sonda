@@ -49,6 +49,11 @@
 - [Python Built-in Functions](#python-built-in-functions)
   - [Basic I/O \& Introspection](#basic-io--introspection)
   - [Sequence \& Iterable Operations](#sequence--iterable-operations)
+  - [Functional Programming Tools](#functional-programming-tools)
+  - [Type Conversion](#type-conversion)
+  - [Numeric Helpers](#numeric-helpers)
+  - [File \& Execution](#file--execution)
+  - [OOP Helpers](#oop-helpers)
 
 # OOP
 
@@ -1566,23 +1571,16 @@ pip install -r requirements.txt
 | `zip()`       | Combine iterables                                                                                                                      | `zip(*iterables)`                           | iterables                                                                                           | `zip(a, b)`                  |
 | `sorted()`    | Return sorted list                                                                                                                     | `sorted(iterable, key=None, reverse=False)` | `key`, `reverse`                                                                                    | `sorted(nums, reverse=True)` |
 | `reversed()`  | Reverse sequence                                                                                                                       | `reversed(seq)`                             | `seq`                                                                                               | `list(reversed("abc"))`      |
-| `next()`      | Retrieves the next item from an iterator. If the iterator is exhausted, it raises `StopIteration`, unless a default value is provided. | `next(iterator, default)`                   | **iterator**: any iterator object **default** (optional): value returned when iterator is exhausted | ```python                    |
+| `next()`      | Retrieves the next item from an iterator. If the iterator is exhausted, it raises `StopIteration`, unless a default value is provided. | `next(iterator, default)`                   | **iterator**: any iterator object **default** (optional): value returned when iterator is exhausted |
 
+|
 nums = iter([1, 2, 3])
 print(next(nums)) # 1
 print(next(nums)) # 2
 print(next(nums)) # 3
 print(next(nums, 0)) # 0 (default used)
+|
 
-````|
-
-nums = iter([1, 2, 3])
-print(next(nums)) # 1
-print(next(nums)) # 2
-print(next(nums)) # 3
-print(next(nums, 0)) # 0 (default used)
-
-```|
 ## Functional Programming Tools
 
 | Function   | Meaning                 | Syntax                   | Parameters          | Example                      |
@@ -1632,4 +1630,7 @@ print(next(nums, 0)) # 0 (default used)
 | `classmethod()`  | Define class method    | `@classmethod`  | —          | see OOP section      |
 | `staticmethod()` | Define static method   | `@staticmethod` | —          | see OOP section      |
 | `property()`     | Getter/setter property | `@property`     | —          | property getter      |
-````
+
+```
+
+```
