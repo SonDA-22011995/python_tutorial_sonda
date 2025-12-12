@@ -5,11 +5,11 @@
     - [`get(rule, **option)`](#getrule-option)
     - [`post(rule, **options)`](#postrule-options)
   - [](#)
-  - [JSON](#json)
 - [Flask REST API](#flask-rest-api)
   - [First REST API](#first-rest-api)
 - [Flask CLI](#flask-cli)
   - [flask run](#flask-run)
+- [JSON](#json)
 
 # Flask Terminology
 
@@ -66,7 +66,29 @@ def get_stores():
 
 ##
 
-## JSON
+# Flask REST API
+
+## First REST API
+
+```
+from flask import Flask
+
+app = Flask(__name__)
+
+stores = [{"name": "My Store", "items": [{"name": "my item", "price": 15.99}]}]
+
+@app.get("/store")
+def get_stores():
+    return {"stores": stores}
+```
+
+# Flask CLI
+
+## flask run
+
+- Run web application
+
+# JSON
 
 ```
 {
@@ -93,25 +115,3 @@ def get_stores():
 - When we return a Python dictionary in a Flask route, Flask automatically turns it into JSON for us, so we don't have to. Remember that "turning it into JSON" means two things:
   - Change Python keywords and values so they match the JSON standard (e.g. True to true).
   - Turn the whole thing into a single string that our API can return.
-
-# Flask REST API
-
-## First REST API
-
-```
-from flask import Flask
-
-app = Flask(__name__)
-
-stores = [{"name": "My Store", "items": [{"name": "my item", "price": 15.99}]}]
-
-@app.get("/store")
-def get_stores():
-    return {"stores": stores}
-```
-
-# Flask CLI
-
-## flask run
-
-- Run web application
