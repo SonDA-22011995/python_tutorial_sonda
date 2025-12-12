@@ -1573,12 +1573,11 @@ pip install -r requirements.txt
 | `reversed()`  | Reverse sequence                                                                                                                       | `reversed(seq)`                             | `seq`                                                                                               | `list(reversed("abc"))`      |
 | `next()`      | Retrieves the next item from an iterator. If the iterator is exhausted, it raises `StopIteration`, unless a default value is provided. | `next(iterator, default)`                   | **iterator**: any iterator object **default** (optional): value returned when iterator is exhausted |
 
-|
-nums = iter([1, 2, 3])
+`nums = iter([1, 2, 3])
 print(next(nums)) # 1
 print(next(nums)) # 2
 print(next(nums)) # 3
-print(next(nums, 0)) # 0 (default used)
+print(next(nums, 0)) # 0 (default used)`
 |
 
 ## Functional Programming Tools
