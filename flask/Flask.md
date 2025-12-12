@@ -1,7 +1,7 @@
 - [Flask Terminology](#flask-terminology)
-  - [`route(rule, **options)`](#routerule-options)
   - [`class flask.Flask`](#class-flaskflask)
     - [About the First Parameter - `import_name`](#about-the-first-parameter---import_name)
+    - [`route(rule, **options)`](#routerule-options)
     - [`get(rule, **option)`](#getrule-option)
     - [`post(rule, **options)`](#postrule-options)
   - [](#)
@@ -12,24 +12,6 @@
   - [flask run](#flask-run)
 
 # Flask Terminology
-
-## `route(rule, **options)`
-
-- Decorate a view function to register it with the given URL rule and options
-- The endpoint decorator `@app.route("/")` registers the route's endpoint with Flask.
-- Parameters:
-  - `rule` (str) – The URL rule string.
-
-```
-from flask import Flask
-
-app = Flask(__name__)
-
-@app.route("/")
-def home():
-    return "Hello"
-
-```
 
 ## `class flask.Flask`
 
@@ -48,6 +30,24 @@ def home():
 ```
 app = Flask('yourapplication')
 app = Flask(__name__.split('.')[0])
+```
+
+### `route(rule, **options)`
+
+- Decorate a view function to register it with the given URL rule and options
+- The endpoint decorator `@app.route("/")` registers the route's endpoint with Flask.
+- Parameters:
+  - `rule` (str) – The URL rule string.
+
+```
+from flask import Flask
+
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "Hello"
+
 ```
 
 ### `get(rule, **option)`
