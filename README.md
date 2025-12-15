@@ -13,6 +13,8 @@
   - [First-class functions](#first-class-functions)
   - [Lambda functions](#lambda-functions)
   - [Destructuring](#destructuring)
+  - [Iterable unpacking](#iterable-unpacking)
+  - [Dictionary unpacking](#dictionary-unpacking)
   - [A global variable](#a-global-variable)
   - [Arbitrary Positional Arguments](#arbitrary-positional-arguments)
   - [Mixing Positional and Arbitrary Arguments](#mixing-positional-and-arbitrary-arguments)
@@ -518,6 +520,36 @@ head, *middle, tail = [1, 2, 3, 4, 5]
 print(head)    # 1
 print(middle)  # [2, 3, 4]
 print(tail)    # 5
+```
+
+## Iterable unpacking
+
+- Iterable unpacking uses the syntax \*iterable_name to pass the elements of an iterable
+  as positional arguments to a function
+
+```
+# arguments.unpack.iterable.py
+def func(a, b, c):
+    print(a, b, c)
+
+values = (1, 3, -7)
+func(*values) # equivalent to: func(1, 3, -7)
+```
+
+## Dictionary unpacking
+
+- Dictionary unpacking is to keyword arguments what iterable unpacking is to
+  positional arguments. We use the syntax `**dictionary_name` to pass keyword
+  arguments, constructed from the keys and values of a dictionary, to a function
+
+```
+# arguments.unpack.dict.py
+def func(a, b, c):
+    print(a, b, c)
+
+values = {'b': 1, 'c': 2, 'a': 42}
+func(**values) # equivalent to func(b=1, c=2, a=42)
+
 ```
 
 ## A global variable
