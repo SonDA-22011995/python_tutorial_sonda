@@ -23,6 +23,10 @@
   - [Define function Decorators with `functools.wraps`](#define-function-decorators-with-functoolswraps)
   - [Decorators function with parameter](#decorators-function-with-parameter)
   - [Decorators with parameter - A decorator factory](#decorators-with-parameter---a-decorator-factory)
+- [Generator](#generator)
+  - [Iterable vs Iterator](#iterable-vs-iterator)
+  - [Generator functions](#generator-functions)
+  - [Generator expressions](#generator-expressions)
 - [Package and module](#package-and-module)
   - [`__name__` variable](#__name__-variable)
   - [Imports](#imports)
@@ -50,7 +54,6 @@
     - [3xx — Redirection](#3xx--redirection)
     - [4xx — Client Errors](#4xx--client-errors)
     - [5xx — Server Errors](#5xx--server-errors)
-  - [Iterable vs Iterator](#iterable-vs-iterator)
 - [Python Built-in Functions](#python-built-in-functions)
   - [Basic I/O \& Introspection](#basic-io--introspection)
   - [Sequence \& Iterable Operations](#sequence--iterable-operations)
@@ -908,6 +911,32 @@ def cube(n):
 print(cube(5))
 ```
 
+# Generator
+
+## Iterable vs Iterator
+
+| **Criteria**                       | **Iterable**                                   | **Iterator**                                                                   |
+| ---------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------ |
+| **Definition**                     | An object that can be looped over (loopable).  | An object that can return the next element when `next()` is called.            |
+| **Purpose**                        | Stores data that can be iterated.              | Retrieves elements from an iterable one at a time, maintaining internal state. |
+| **Has `__iter__()`?**              | ✔ Yes                                          | ✔ Yes (returns itself)                                                         |
+| **Has `__next__()`?**              | ❌ No                                          | ✔ Yes                                                                          |
+| **Usable with `for` loop?**        | ✔ Yes                                          | ✔ Yes                                                                          |
+| **Usable directly with `next()`?** | ❌ No                                          | ✔ Yes                                                                          |
+| **Maintains iteration state?**     | ❌ No                                          | ✔ Yes (remembers current position)                                             |
+| **Examples**                       | `list`, `tuple`, `dict`, `set`, `str`, `range` | `iter(list)`, generator, file object                                           |
+| **How to obtain an iterator?**     | Call `iter(x)`                                 | Already an iterator                                                            |
+| **When elements are exhausted**    | No error                                       | Raises `StopIteration`                                                         |
+| **Memory usage**                   | May hold all items in memory                   | Typically uses less memory (generators produce items lazily)                   |
+
+## Generator functions
+
+- These are very similar to regular functions, but instead
+  of returning results through return statements, they use yield, which allows
+  them to suspend and resume their state between each call.
+
+## Generator expressions
+
 # Package and module
 
 ## `__name__` variable
@@ -1585,22 +1614,6 @@ print(b)
 | **505** | HTTP Version Not Supported |
 | **507** | Insufficient Storage       |
 | **508** | Loop Detected              |
-
-## Iterable vs Iterator
-
-| **Criteria**                       | **Iterable**                                   | **Iterator**                                                                   |
-| ---------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------ |
-| **Definition**                     | An object that can be looped over (loopable).  | An object that can return the next element when `next()` is called.            |
-| **Purpose**                        | Stores data that can be iterated.              | Retrieves elements from an iterable one at a time, maintaining internal state. |
-| **Has `__iter__()`?**              | ✔ Yes                                          | ✔ Yes (returns itself)                                                         |
-| **Has `__next__()`?**              | ❌ No                                          | ✔ Yes                                                                          |
-| **Usable with `for` loop?**        | ✔ Yes                                          | ✔ Yes                                                                          |
-| **Usable directly with `next()`?** | ❌ No                                          | ✔ Yes                                                                          |
-| **Maintains iteration state?**     | ❌ No                                          | ✔ Yes (remembers current position)                                             |
-| **Examples**                       | `list`, `tuple`, `dict`, `set`, `str`, `range` | `iter(list)`, generator, file object                                           |
-| **How to obtain an iterator?**     | Call `iter(x)`                                 | Already an iterator                                                            |
-| **When elements are exhausted**    | No error                                       | Raises `StopIteration`                                                         |
-| **Memory usage**                   | May hold all items in memory                   | Typically uses less memory (generators produce items lazily)                   |
 
 # Python Built-in Functions
 
