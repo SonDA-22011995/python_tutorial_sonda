@@ -29,6 +29,8 @@
   - [Yield vs Return](#yield-vs-return)
   - [`next()` function](#next-function)
   - [Generator functions](#generator-functions)
+  - [`return` in generator function](#return-in-generator-function)
+  - [`send()` in generator function](#send-in-generator-function)
   - [Generator expressions](#generator-expressions)
 - [Package and module](#package-and-module)
   - [`__name__` variable](#__name__-variable)
@@ -1001,6 +1003,72 @@ def get_squares_gen(n): # generator approach
 
 print(list(get_squares_gen(10)))
 ```
+
+## `return` in generator function
+
+- It will cause a StopIteration exception to be raised, effectively ending the iteration
+
+```
+def geometric_progression(a, q):
+    k = 0
+    while True:
+        result = a * q**k
+        if result <= 100000:
+            yield result
+        else:
+            return
+        k += 1
+
+for n in geometric_progression(2, 5):
+    print(n)
+```
+
+## `send()` in generator function
+
+- The `send` function is a method that allows us to send a value to a generator at its current yield expression
+- Syntax:
+
+```
+generator.send(value)
+```
+
+- Example
+
+```
+def counter(start=0):
+    n = start
+    while True:
+        result = yield n  # A
+        print(type(result), result)  # B
+        if result == 'Q':
+            break
+        n += 1
+
+
+c = counter()
+print(next(c))  # C
+print(c.send('Wow!'))  # D
+print(next(c))  # E
+print(c.send('Q'))  # F
+```
+
+```
+0
+<class 'str'> Wow!
+1
+<class 'NoneType'> None
+2
+<class 'str'> Q
+Traceback (most recent call last):
+ File "gen.send.py", line 15, in <module>
+ print(c.send('Q')) # F
+StopIteration
+```
+
+- Step #C: Within the generator, n is set to the same value as start. The while loop is entered, execution stops (#A), and n (0) is yielded back to the caller. 0 is printed on the console.
+- Step #D: execution resumes, result is set to 'Wow!'(still #A), and then its type and value are printed on the console (#B). result is not 'Q', so n is incremented by 1 and execution goes back to the while condition, which, being True, evaluates to True (that wasn't hard to guess, right?). Another loop cycle begins, execution stops again (#A), and n (1) is yielded back to the caller. 1 is printed on the console.
+- Step #E: , execution is resumed again (#A), and because we are not sending anything to the generator explicitly, the yield n expression (#A) returns None (the behavior is exactly the same as when we call a function that does not return anything). result is therefore set to None, and its type and value are again printed on the console (#B). Execution continues, result is not 'Q', so n is incremented by 1, and we start another loop again. Execution stops again (#A) and n (2) is yielded back to the caller. 2 is printed on the console
+- Step #F: send again (#F), but this time we pass in 'Q', and so when execution is resumed, result is set to 'Q' (#A). Its type and value are printed on the console (#B), and then finally the if clause evaluates to True and the while loop is stopped by the break statement. The generator naturally terminates, which means a StopIteration exception is raised. You can see the print of its traceback on the last few lines printed on the console
 
 ## Generator expressions
 
