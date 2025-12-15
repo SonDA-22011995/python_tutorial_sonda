@@ -8,6 +8,8 @@
   - [The `__repr__` method](#the-__repr__-method)
   - [Don't use mutable defaults parameters](#dont-use-mutable-defaults-parameters)
 - [Function](#function)
+  - [Argument vs Parameter](#argument-vs-parameter)
+  - [Set Up Virtual Environment and Install Dependencies](#set-up-virtual-environment-and-install-dependencies)
   - [First-class functions](#first-class-functions)
   - [Lambda functions](#lambda-functions)
   - [Destructuring](#destructuring)
@@ -38,8 +40,6 @@
   - [Mutable objects](#mutable-objects)
   - [Immutable objects](#immutable-objects)
   - [Mutable vs. Immutable in Python](#mutable-vs-immutable-in-python)
-  - [Argument vs Parameter](#argument-vs-parameter)
-  - [Set Up Virtual Environment and Install Dependencies](#set-up-virtual-environment-and-install-dependencies)
   - [API - Application programing interface](#api---application-programing-interface)
   - [Responses HTTP codes](#responses-http-codes)
     - [1xx — Informational](#1xx--informational)
@@ -317,6 +317,50 @@ class Student:
 ```
 
 # Function
+
+## Argument vs Parameter
+
+- In programming, the key difference is that a **parameter** is a **variable** in a function's definition (a placeholder), while an argument is the actual value passed to that function when it is called (the specific data).
+
+| Feature           | Parameter                                                    | Argument                                                        |
+| ----------------- | ------------------------------------------------------------ | --------------------------------------------------------------- |
+| **Role**          | A placeholder variable in the function definition/signature. | The actual data or value supplied when the function is invoked. |
+| **Location**      | Defined in the function header (declaration).                | Provided in the function call statement.                        |
+| **Timing**        | Specified at compile-time/definition.                        | Passed at run-time/execution.                                   |
+| **Also Known As** | Formal parameter, formal argument.                           | Actual parameter, actual argument.                              |
+
+## Set Up Virtual Environment and Install Dependencies
+
+- Step 1: Create a virtual environment (recommended).
+
+```
+python -m venv venv
+
+# python -m venv <<folder_name>>
+```
+
+- Step 2: Activate the virtual environment
+  - On the window
+
+```
+venv\Scripts\activate
+
+# <<folder_name>>\Scripts\activate
+```
+
+- On macOS / Linux:
+
+```
+source venv/bin/activate
+
+# source <<folder_name>>/bin/activate
+```
+
+- Step 3: Install required libraries from requirements.txt
+
+```
+pip install -r requirements.txt
+```
 
 ## First-class functions
 
@@ -1434,50 +1478,6 @@ print(b)
 | **Thread Safety**            | Less safe (values can be changed unexpectedly)     | More safe (values cannot be changed)                 |
 | **Passing to Functions**     | Function can modify in-place                       | Function cannot modify original object               |
 | **Common Use Cases**         | Lists of items, mutable configurations             | Strings, numeric constants, dictionary keys          |
-
-## Argument vs Parameter
-
-- In programming, the key difference is that a **parameter** is a **variable** in a function's definition (a placeholder), while an argument is the actual value passed to that function when it is called (the specific data).
-
-| Feature           | Parameter                                                    | Argument                                                        |
-| ----------------- | ------------------------------------------------------------ | --------------------------------------------------------------- |
-| **Role**          | A placeholder variable in the function definition/signature. | The actual data or value supplied when the function is invoked. |
-| **Location**      | Defined in the function header (declaration).                | Provided in the function call statement.                        |
-| **Timing**        | Specified at compile-time/definition.                        | Passed at run-time/execution.                                   |
-| **Also Known As** | Formal parameter, formal argument.                           | Actual parameter, actual argument.                              |
-
-## Set Up Virtual Environment and Install Dependencies
-
-- Step 1: Create a virtual environment (recommended).
-
-```
-python -m venv venv
-
-# python -m venv <<folder_name>>
-```
-
-- Step 2: Activate the virtual environment
-  - On the window
-
-```
-venv\Scripts\activate
-
-# <<folder_name>>\Scripts\activate
-```
-
-- On macOS / Linux:
-
-```
-source venv/bin/activate
-
-# source <<folder_name>>/bin/activate
-```
-
-- Step 3: Install required libraries from requirements.txt
-
-```
-pip install -r requirements.txt
-```
 
 ## API - Application programing interface
 
