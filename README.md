@@ -16,6 +16,10 @@
   - [Mixing Positional and Arbitrary Arguments](#mixing-positional-and-arbitrary-arguments)
   - [Arbitrary Keyword Arguments](#arbitrary-keyword-arguments)
   - [Type hint](#type-hint)
+  - [Decorators](#decorators)
+  - [Define function Decorators with `functools.wraps`](#define-function-decorators-with-functoolswraps)
+  - [Decorators function with parameter](#decorators-function-with-parameter)
+  - [Decorators with parameter - A decorator factory](#decorators-with-parameter---a-decorator-factory)
 - [Other](#other)
   - [Format datetime to string](#format-datetime-to-string)
   - [index of the day of the week from a date in Python](#index-of-the-day-of-the-week-from-a-date-in-python)
@@ -31,10 +35,6 @@
   - [Using raise with a custom exception.](#using-raise-with-a-custom-exception)
   - [Re-raising an exception](#re-raising-an-exception)
   - [Python Docstrings - `__doc__` or `help()`](#python-docstrings---__doc__-or-help)
-  - [Decorators](#decorators)
-  - [Define function Decorators with `functools.wraps`](#define-function-decorators-with-functoolswraps)
-  - [Decorators function with parameter](#decorators-function-with-parameter)
-  - [Decorators with parameter - A decorator factory](#decorators-with-parameter---a-decorator-factory)
   - [Mutable objects](#mutable-objects)
   - [Immutable objects](#immutable-objects)
   - [Mutable vs. Immutable in Python](#mutable-vs-immutable-in-python)
@@ -700,6 +700,170 @@ class User:
 
 ```
 
+## Decorators
+
+- A design pattern that allows you to modify or extend the behavior of a function or a class without changing its source code
+- This is achieved by "wrapping" the original function with another function (the decorator), which adds functionality before and/or after the original code runs.
+- A decorator is essentially a function that takes another function as an argument and returns a new function with enhanced functionality.
+- Decorators are often used in scenarios such as logging, authentication and memorization, allowing us to add additional functionality to existing functions or methods in a clean, reusable way.
+- Declare
+
+```
+def decorator(func):
+    def wrapper():
+        print("Before calling the function.")
+        func()
+        print("After calling the function.")
+    return wrapper
+
+# Using the @ symbol is equivalent to calling the decorator on the function it wraps and assigning the
+# return value to the original name in the same scope
+# greet = decorator(greet)
+
+@decorator # Applying the decorator to a function
+def greet():
+    print("Hello, World!")
+
+greet()
+```
+
+## Define function Decorators with `functools.wraps`
+
+- The cause of this isn’t hard to see. The **decorator** function returns the **wrapper** defined within its body. The **wrapper** function is what’s assigned to the **say_whee** name in the containing module because of the decorator.
+- This behavior is problematic because it undermines tools that do introspection, such as debuggers
+
+```
+def decorator(func):
+    def wrapper():
+        print("Something is happening before the function is called.")
+        func()
+        print("Something is happening after the function is called.")
+    return wrapper
+
+@decorator
+def say_whee():
+    print("Whee!")
+
+print(say_whee.__name__)
+# wrapper_do_twice
+
+```
+
+- To fix this, decorators should use the @wraps decorator, which will preserve information about the original function
+
+```
+# import functools
+from functools import wraps
+
+def do_twice(func):
+    # @functools.wraps
+    @wraps(func)
+    def wrapper_do_twice(*args, **kwargs):
+        func(*args, **kwargs)
+        return func(*args, **kwargs)
+    return wrapper_do_twice
+
+@do_twice
+def say_whee():
+    print("Whee!")
+
+print(say_whee.__name__)
+# say_whee
+```
+
+## Decorators function with parameter
+
+- Explanation of Parameters
+  - `decorator_name(func)`: This is the decorator function. It takes another function (func) as input.
+  - `**wrapper(*args, kwargs)`: A nested function that wraps func. `*args` collects positional arguments, `**kwargs` collects keyword arguments, so wrapper works with any function.
+  - `@decorator_name`: Syntax sugar for `add = decorator_name(add)`.
+
+```
+def decorator_name(func):
+    def wrapper(*args, **kwargs):
+        print("Before execution")
+        result = func(*args, **kwargs)
+        print("After execution")
+        return result
+    return wrapper
+
+@decorator_name
+def add(a, b):
+    return a + b
+
+print(add(5, 3))
+```
+
+## Decorators with parameter - A decorator factory
+
+- Let's simplify this example now, going back to a single decorator: max_result(). We
+  want to make it so that we can decorate different functions with different thresholds,
+  as we don't want to write one decorator for each threshold. Let's therefore amend
+  max_result() so that it allows us to decorate functions by specifying the threshold
+  dynamicall
+
+- Before: We want a decorator that prints an error message when the result of a function is greater than a certain threshold
+
+```
+from time import time
+from functools import wraps
+def measure(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        t = time()
+        result = func(*args, **kwargs)
+        print(func.__name__, 'took:', time() - t)
+        return result
+    return wrapper
+
+def max_result(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        result = func(*args, **kwargs)
+        if result > 100:
+            print(
+                f'Result is too big ({result}). '
+                'Max allowed is 100.'
+            )
+        return result
+    return wrapper
+
+@measure
+@max_result
+def cube(n):
+    return n ** 3
+
+print(cube(2))
+print(cube(5))
+```
+
+- After
+
+```
+# decorators/decorators.factory.py
+from functools import wraps
+
+def max_result(threshold):
+    def decorator(func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            result = func(*args, **kwargs)
+            if result > threshold:
+                print(
+                    f'Result is too big ({result}). '
+                    f'Max allowed is {threshold}.'
+                )
+            return result
+        return wrapper
+    return decorator
+
+@max_result(75)
+def cube(n):
+    return n ** 3
+
+print(cube(5))
+```
+
 # Other
 
 ## Format datetime to string
@@ -1225,170 +1389,6 @@ Help on function my_function in module __main__:
 
 my_function()
     Demonstrates triple quotes docstring and does no...
-```
-
-## Decorators
-
-- A design pattern that allows you to modify or extend the behavior of a function or a class without changing its source code
-- This is achieved by "wrapping" the original function with another function (the decorator), which adds functionality before and/or after the original code runs.
-- A decorator is essentially a function that takes another function as an argument and returns a new function with enhanced functionality.
-- Decorators are often used in scenarios such as logging, authentication and memorization, allowing us to add additional functionality to existing functions or methods in a clean, reusable way.
-- Declare
-
-```
-def decorator(func):
-    def wrapper():
-        print("Before calling the function.")
-        func()
-        print("After calling the function.")
-    return wrapper
-
-# Using the @ symbol is equivalent to calling the decorator on the function it wraps and assigning the
-# return value to the original name in the same scope
-# greet = decorator(greet)
-
-@decorator # Applying the decorator to a function
-def greet():
-    print("Hello, World!")
-
-greet()
-```
-
-## Define function Decorators with `functools.wraps`
-
-- The cause of this isn’t hard to see. The **decorator** function returns the **wrapper** defined within its body. The **wrapper** function is what’s assigned to the **say_whee** name in the containing module because of the decorator.
-- This behavior is problematic because it undermines tools that do introspection, such as debuggers
-
-```
-def decorator(func):
-    def wrapper():
-        print("Something is happening before the function is called.")
-        func()
-        print("Something is happening after the function is called.")
-    return wrapper
-
-@decorator
-def say_whee():
-    print("Whee!")
-
-print(say_whee.__name__)
-# wrapper_do_twice
-
-```
-
-- To fix this, decorators should use the @wraps decorator, which will preserve information about the original function
-
-```
-# import functools
-from functools import wraps
-
-def do_twice(func):
-    # @functools.wraps
-    @wraps(func)
-    def wrapper_do_twice(*args, **kwargs):
-        func(*args, **kwargs)
-        return func(*args, **kwargs)
-    return wrapper_do_twice
-
-@do_twice
-def say_whee():
-    print("Whee!")
-
-print(say_whee.__name__)
-# say_whee
-```
-
-## Decorators function with parameter
-
-- Explanation of Parameters
-  - `decorator_name(func)`: This is the decorator function. It takes another function (func) as input.
-  - `**wrapper(*args, kwargs)`: A nested function that wraps func. `*args` collects positional arguments, `**kwargs` collects keyword arguments, so wrapper works with any function.
-  - `@decorator_name`: Syntax sugar for `add = decorator_name(add)`.
-
-```
-def decorator_name(func):
-    def wrapper(*args, **kwargs):
-        print("Before execution")
-        result = func(*args, **kwargs)
-        print("After execution")
-        return result
-    return wrapper
-
-@decorator_name
-def add(a, b):
-    return a + b
-
-print(add(5, 3))
-```
-
-## Decorators with parameter - A decorator factory
-
-- Let's simplify this example now, going back to a single decorator: max_result(). We
-  want to make it so that we can decorate different functions with different thresholds,
-  as we don't want to write one decorator for each threshold. Let's therefore amend
-  max_result() so that it allows us to decorate functions by specifying the threshold
-  dynamicall
-
-- Before: We want a decorator that prints an error message when the result of a function is greater than a certain threshold
-
-```
-from time import time
-from functools import wraps
-def measure(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        t = time()
-        result = func(*args, **kwargs)
-        print(func.__name__, 'took:', time() - t)
-        return result
-    return wrapper
-
-def max_result(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        result = func(*args, **kwargs)
-        if result > 100:
-            print(
-                f'Result is too big ({result}). '
-                'Max allowed is 100.'
-            )
-        return result
-    return wrapper
-
-@measure
-@max_result
-def cube(n):
-    return n ** 3
-
-print(cube(2))
-print(cube(5))
-```
-
-- After
-
-```
-# decorators/decorators.factory.py
-from functools import wraps
-
-def max_result(threshold):
-    def decorator(func):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            result = func(*args, **kwargs)
-            if result > threshold:
-                print(
-                    f'Result is too big ({result}). '
-                    f'Max allowed is {threshold}.'
-                )
-            return result
-        return wrapper
-    return decorator
-
-@max_result(75)
-def cube(n):
-    return n ** 3
-
-print(cube(5))
 ```
 
 ## Mutable objects
