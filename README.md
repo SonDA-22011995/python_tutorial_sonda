@@ -31,6 +31,7 @@
   - [Generator functions](#generator-functions)
   - [`return` in generator function](#return-in-generator-function)
   - [`send()` in generator function](#send-in-generator-function)
+  - [The `yield from` expression](#the-yield-from-expression)
   - [Generator expressions](#generator-expressions)
 - [Package and module](#package-and-module)
   - [`__name__` variable](#__name__-variable)
@@ -1069,6 +1070,31 @@ StopIteration
 - Step #D: execution resumes, result is set to 'Wow!'(still #A), and then its type and value are printed on the console (#B). result is not 'Q', so n is incremented by 1 and execution goes back to the while condition, which, being True, evaluates to True (that wasn't hard to guess, right?). Another loop cycle begins, execution stops again (#A), and n (1) is yielded back to the caller. 1 is printed on the console.
 - Step #E: , execution is resumed again (#A), and because we are not sending anything to the generator explicitly, the yield n expression (#A) returns None (the behavior is exactly the same as when we call a function that does not return anything). result is therefore set to None, and its type and value are again printed on the console (#B). Execution continues, result is not 'Q', so n is incremented by 1, and we start another loop again. Execution stops again (#A) and n (2) is yielded back to the caller. 2 is printed on the console
 - Step #F: send again (#F), but this time we pass in 'Q', and so when execution is resumed, result is set to 'Q' (#A). Its type and value are printed on the console (#B), and then finally the if clause evaluates to True and the while loop is stopped by the break statement. The generator naturally terminates, which means a StopIteration exception is raised. You can see the print of its traceback on the last few lines printed on the console
+
+## The `yield from` expression
+
+- not use `yeild from`. Prints the numbers 4, 9, and 16 on the console
+
+```
+# gen.yield.for.py
+def print_squares(start, end):
+    for n in range(start, end):
+        yield n ** 2
+
+for n in print_squares(2, 5):
+    print(n)
+```
+
+- use `yeild from`. Prints the numbers 4, 9, and 16 on the console
+
+```
+# gen.yield.from.py
+def print_squares(start, end):
+    yield from (n ** 2 for n in range(start, end))
+
+for n in print_squares(2, 5):
+    print(n)
+```
 
 ## Generator expressions
 
