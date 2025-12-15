@@ -6,6 +6,7 @@
   - [The class composition method `Has-A`](#the-class-composition-method-has-a)
   - [The `__str__` method](#the-__str__-method)
   - [The `__repr__` method](#the-__repr__-method)
+  - [Don't use mutable defaults parameters](#dont-use-mutable-defaults-parameters)
 - [Function](#function)
   - [Lambda functions](#lambda-functions)
   - [Destructuring](#destructuring)
@@ -37,7 +38,6 @@
   - [Mutable objects](#mutable-objects)
   - [Immutable objects](#immutable-objects)
   - [Mutable vs. Immutable in Python](#mutable-vs-immutable-in-python)
-  - [Don't use mutable defaults parameters](#dont-use-mutable-defaults-parameters)
   - [Argument vs Parameter](#argument-vs-parameter)
   - [Set Up Virtual Environment and Install Dependencies](#set-up-virtual-environment-and-install-dependencies)
   - [API - Application programing interface](#api---application-programing-interface)
@@ -267,6 +267,52 @@ class Point:
 p = Point(10, 20)
 print(repr(p))  # Explicitly calls __repr__
 print(p)        # Calls __repr__ by default if __str__ is not defined
+
+```
+
+## Don't use mutable defaults parameters
+
+- **BAD**
+
+```
+class Student:
+    def __init__(self, name: str, grades: list[int] = []):  # BAD
+        self.name = name
+        self.grades = grades
+
+    def take_exam(self, result: int):
+        self.grades.append(result)
+
+bob = Student('Bob')
+rolf = Student('Rof')
+
+bob.take_exam(90)
+
+print(bob.grades)
+print(rolf.grades)
+
+# Print same output is [90]
+```
+
+- Why This Happens
+
+  - Default parameter values are evaluated once, when the function is defined—not each time it is called.
+
+  - So the default [] (empty list) is created only once.
+
+  - All objects using that default will share the same list in memory.
+
+  - Thus bob.grades and rolf.grades point to the same list, causing unexpected behavior.
+
+- Correct approach
+
+```
+from typing import Optional
+
+class Student:
+    def __init__(self, name: str, grades: Optional[list[int]] = None):
+        self.name = name
+        self.grades = grades or []
 
 ```
 
@@ -1388,52 +1434,6 @@ print(b)
 | **Thread Safety**            | Less safe (values can be changed unexpectedly)     | More safe (values cannot be changed)                 |
 | **Passing to Functions**     | Function can modify in-place                       | Function cannot modify original object               |
 | **Common Use Cases**         | Lists of items, mutable configurations             | Strings, numeric constants, dictionary keys          |
-
-## Don't use mutable defaults parameters
-
-- **BAD**
-
-```
-class Student:
-    def __init__(self, name: str, grades: list[int] = []):  # BAD
-        self.name = name
-        self.grades = grades
-
-    def take_exam(self, result: int):
-        self.grades.append(result)
-
-bob = Student('Bob')
-rolf = Student('Rof')
-
-bob.take_exam(90)
-
-print(bob.grades)
-print(rolf.grades)
-
-# Print same output is [90]
-```
-
-- Why This Happens
-
-  - Default parameter values are evaluated once, when the function is defined—not each time it is called.
-
-  - So the default [] (empty list) is created only once.
-
-  - All objects using that default will share the same list in memory.
-
-  - Thus bob.grades and rolf.grades point to the same list, causing unexpected behavior.
-
-- Correct approach
-
-```
-from typing import Optional
-
-class Student:
-    def __init__(self, name: str, grades: Optional[list[int]] = None):
-        self.name = name
-        self.grades = grades or []
-
-```
 
 ## Argument vs Parameter
 
