@@ -41,6 +41,10 @@
   - [`__init__` file](#__init__-file)
   - [Set Up Virtual Environment and Install Dependencies](#set-up-virtual-environment-and-install-dependencies)
 - [Other](#other)
+  - [Debug in CLI command - without IDE editor](#debug-in-cli-command---without-ide-editor)
+    - [Method 1: Start the debugger from the command line on the first line of the file.](#method-1-start-the-debugger-from-the-command-line-on-the-first-line-of-the-file)
+    - [Method 2: Start the debugger from the command line and debug at the line where the breakpoint is set.](#method-2-start-the-debugger-from-the-command-line-and-debug-at-the-line-where-the-breakpoint-is-set)
+    - [pdb Commands](#pdb-commands)
   - [Format datetime to string](#format-datetime-to-string)
   - [index of the day of the week from a date in Python](#index-of-the-day-of-the-week-from-a-date-in-python)
   - [Add days to a date in Python](#add-days-to-a-date-in-python)
@@ -1361,6 +1365,62 @@ pip install -r requirements.txt
 ```
 
 # Other
+
+## Debug in CLI command - without IDE editor
+
+### Method 1: Start the debugger from the command line on the first line of the file.
+
+- Step 1: Open your terminal or command prompt.
+- Step 2: Run your Python script using the -m pdb option:
+
+```
+python3 -m pdb your_file_name.py
+```
+
+On Window
+
+```
+python -m pdb your_file_name.py
+```
+
+### Method 2: Start the debugger from the command line and debug at the line where the breakpoint is set.
+
+- Step 1: Open your Python file in a text editor.
+- Step 2: Insert the following line at the exact point where you want the debugger to pause
+
+**With python < 3.7**
+
+```
+import pdb;
+pdb.set_trace()
+```
+
+**With python >= 3.7** you can simply use the built-in function `breakpoint()` as a shortcut.
+
+- Step 3: Run your script normally from the command line
+
+```
+python3 your_file_name.py
+```
+
+On Window
+
+```
+python your_file_name.py
+```
+
+### pdb Commands
+
+- Once you are at the (Pdb) prompt, you can use these commands to navigate and inspect your code:
+  - `n` (next): Execute the current line and move to the next line in the current function.
+  - `s` (step): Step into a function call on the current line.
+  - `c` (continue): Continue execution until the next breakpoint or the end of the program.
+  - `l` (list): Show the source code around the current line.
+  - `p  <variable_name>` (print): Print the value of a variable.
+  - `w` (where): Show the current position in the code stack.
+  - `b  <line_number>` (break): Set a new breakpoint at a specific line number in the current file.
+  - `h` (help): Display a list of all available commands.
+  - `q` or exit (quit): Exit the debugger immediately.
 
 ## Format datetime to string
 
