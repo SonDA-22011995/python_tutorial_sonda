@@ -64,6 +64,12 @@
     - [3xx — Redirection](#3xx--redirection)
     - [4xx — Client Errors](#4xx--client-errors)
     - [5xx — Server Errors](#5xx--server-errors)
+  - [Universally Unique Identifier (UUID)](#universally-unique-identifier-uuid)
+    - [What is a UUID?](#what-is-a-uuid)
+    - [Why is it called “Universally Unique”?](#why-is-it-called-universally-unique)
+    - [UUIDs ideal for](#uuids-ideal-for)
+    - [Common UUID Versions](#common-uuid-versions)
+    - [How to use](#how-to-use)
 - [Python Built-in Functions](#python-built-in-functions)
   - [Basic I/O \& Introspection](#basic-io--introspection)
   - [Sequence \& Iterable Operations](#sequence--iterable-operations)
@@ -1857,6 +1863,54 @@ print(b)
 | **505** | HTTP Version Not Supported |
 | **507** | Insufficient Storage       |
 | **508** | Loop Detected              |
+
+## Universally Unique Identifier (UUID)
+
+- Universally Unique Identifier (UUID) is a globally unique identifier used to uniquely identify objects, records, requests, sessions, and more without relying on a central authority to generate IDs.
+
+### What is a UUID?
+
+- A UUID is a 128-bit (16-byte) value, typically represented as a 36-character string (32 hexadecimal characters and 4 hyphens)
+
+```
+550e8400-e29b-41d4-a716-446655440000
+```
+
+### Why is it called “Universally Unique”?
+
+- Universal: Can be generated anywhere
+
+- Unique: Practically guaranteed not to collide
+
+- Identifier: Used for identification
+
+### UUIDs ideal for
+
+- Distributed systems
+
+- Microservices
+
+- Offline-capable applications
+
+### Common UUID Versions
+
+- UUID v1 – Time-based:
+  - Generated using a timestamp and the machine’s MAC address
+  - May leak hardware information → less commonly used today
+- UUID v4 – Random (most common)
+  - Generated randomly
+  - Does not reveal system information
+  - Very low collision probability
+- UUID v5 – Name-based (SHA-1)
+  - Deterministic: the same namespace + name always produce the same UUID
+  - Useful when you need a consistent, reproducible ID
+
+### How to use
+
+```
+import uuid
+uuid.uuid4().hex
+```
 
 # Python Built-in Functions
 
