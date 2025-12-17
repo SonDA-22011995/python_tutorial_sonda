@@ -222,7 +222,7 @@ FLASK_RUN_PORT=9999
   - Look for the line: IPv4 Address. If the number displayed there is different from `192.168.3.2`, you must use that specific number in your `.flaskenv` file.
 
 ```
-FLASK_RUN_HOST=192.168.2.67 # wrong
+FLASK_RUN_HOST=192.168.3.2 # wrong
 FLASK_RUN_HOST=192.168.2.67 # correct
 ```
 
@@ -231,6 +231,12 @@ FLASK_RUN_HOST=192.168.2.67 # correct
 ```
 FLASK_RUN_HOST=0.0.0.0
 ```
+
+- If you do not specify a host address, the default IP address is `localhost` (`127.0.0.1`).
+- The Loopback IP Address
+  - `127.0.0.0` to `127.255.255.255` is reserved for loopback, i.e., a host’s own address,
+    also known as the localhost addres
+  - `127.0.0.1` is typically configured as the default loopback address on operating systems.
 
 ## flask run
 
