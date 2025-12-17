@@ -1383,6 +1383,13 @@ On Window
 python -m pdb your_file_name.py
 ```
 
+If it is not py file
+
+```
+python -m pdb -m flask run
+# python -m pdb -m <command-line>
+```
+
 ### Method 2: Start the debugger from the command line and debug at the line where the breakpoint is set.
 
 - Step 1: Open your Python file in a text editor.
@@ -1407,6 +1414,13 @@ On Window
 
 ```
 python your_file_name.py
+```
+
+If it is not py file
+
+```
+python -m pdb -m flask run
+# python -m pdb -m <command-line>
 ```
 
 ### pdb Commands
