@@ -16,6 +16,7 @@
     - [FLASK_APP](#flask_app)
     - [FLASK_DEBUG](#flask_debug)
     - [FLASK_RUN_PORT](#flask_run_port)
+    - [FLASK_RUN_HOST](#flask_run_host)
   - [flask run](#flask-run)
 - [JSON](#json)
 
@@ -211,6 +212,24 @@ def create_item(name):
 
 ```
 FLASK_RUN_PORT=9999
+```
+
+### FLASK_RUN_HOST
+
+- To set the host for the run command
+- You cannot just choose any random IP address; it must match the IP address assigned to your machine by the router.
+  - To check this: Open the Command Prompt (cmd) and type the command ipconfig.
+  - Look for the line: IPv4 Address. If the number displayed there is different from `192.168.3.2`, you must use that specific number in your `.flaskenv` file.
+
+```
+FLASK_RUN_HOST=192.168.2.67 # wrong
+FLASK_RUN_HOST=192.168.2.67 # correct
+```
+
+- Recommendation: This command instructs Flask to listen on all available network interfaces of the machine (including Wi-Fi, LAN, and localhost)
+
+```
+FLASK_RUN_HOST=0.0.0.0
 ```
 
 ## flask run
