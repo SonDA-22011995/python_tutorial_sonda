@@ -2030,7 +2030,7 @@ a.append(4)
 | get               | d.get(k[, default]) | Return value for key k, no error if missing | ❌       | value                             | d.get('a', 0)        |
 | setdefault        | d.setdefault(k, v)  | Return value; insert key with v if missing  | ✅       | value                             | d.setdefault('a', 1) |
 | update            | d.update(other)     | Merge another dict into this one            | ✅       | None                              | d.update({'a':1})    |
-|                   | =                   | d                                           | = other  | Merge dictionaries (Python ≥ 3.9) | ✅                   | None | `d  | = {'a':1}` |
+| `                 | =`                  | d `                                         | =` other | Merge dictionaries (Python ≥ 3.9) | ✅                   | None | d ` | =` {'a':1} |
 | pop               | d.pop(k)            | Remove key and return its value             | ✅       | value                             | d.pop('a')           |
 | popitem           | d.popitem()         | Remove and return last key-value pair       | ✅       | (key, value)                      | d.popitem()          |
 | clear             | d.clear()           | Remove all items                            | ✅       | None                              | d.clear()            |
