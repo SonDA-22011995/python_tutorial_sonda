@@ -18,6 +18,8 @@
     - [FLASK_RUN_PORT](#flask_run_port)
     - [FLASK_RUN_HOST](#flask_run_host)
   - [flask run](#flask-run)
+- [Flask-Smorest](#flask-smorest)
+  - [Why use Flask-Smorest](#why-use-flask-smorest)
 - [JSON](#json)
 
 # Flask Terminology
@@ -254,6 +256,20 @@ FLASK_RUN_HOST=0.0.0.0
   - `options` (Any) – the `options` to be forwarded to the underlying Werkzeug server. See werkzeug.serving.run_simple() for more information.
 
 - Example: `flask run --host=0.0.0.0 --port=5000 --debug`
+
+# Flask-Smorest
+
+## Why use Flask-Smorest
+
+- I was looking to compare the three libraries in a few key areas:
+
+  - Ease of use and getting started. Many REST APIs are essentially microservices, so being able to whip one up quickly and without having to go through a steep learning curve is definitely interesting.
+  - Maintainability and expandability. Although many start as microservices, sometimes we have to maintain projects for a long time. And sometimes, they grow past what we originally envisioned.
+  - Activity in the library itself. Even if a library is suitable now, if it is not actively maintained and improved, it may not be suitable in the future. We'd like to teach something that you will use for years to come.
+  - Documentation and usage of best practice. The library should help you write better code by having strong documentation and guiding you into following best practice. If possible, it should use existing, actively maintained libraries as dependencies instead of implementing their own versions of them.
+  - Developer experience in production projects. The main point here was: how easy is it to produce API documentation with the library of choice. Hundreds of students have asked me how to integrate Swagger in their APIs, so it would be great if the library we teach gave it to you out of the box.
+
+- Flask-Smorest is the most well-rounded. It ticks all the boxes above
 
 # JSON
 
