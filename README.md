@@ -9,6 +9,7 @@
   - [Don't use mutable defaults parameters](#dont-use-mutable-defaults-parameters)
 - [Function](#function)
   - [Argument vs Parameter](#argument-vs-parameter)
+  - [Keyword-only arguments](#keyword-only-arguments)
   - [First-class functions](#first-class-functions)
   - [Lambda functions](#lambda-functions)
   - [Destructuring](#destructuring)
@@ -373,6 +374,16 @@ class Student:
 | **Location**      | Defined in the function header (declaration).                | Provided in the function call statement.                        |
 | **Timing**        | Specified at compile-time/definition.                        | Passed at run-time/execution.                                   |
 | **Also Known As** | Formal parameter, formal argument.                           | Actual parameter, actual argument.                              |
+
+## Keyword-only arguments
+
+- In Python, keyword-only arguments are function parameters that must be passed using their names, not by position.
+- They are defined by placing a `*` in the function signature. All parameters after `*` become keyword-only.
+
+```
+def response(status_code, schema=None, *, description=None, headers=None):
+    pass
+```
 
 ## First-class functions
 
