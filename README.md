@@ -100,7 +100,7 @@
   - [Dictionary Built-in Functions \& Methods](#dictionary-built-in-functions--methods)
   - [Merge dictionaries (Python ≥ 3.9)](#merge-dictionaries-python--39)
 - [Python Libraries](#python-libraries)
-- [Flask](#flask)
+  - [Flask](#flask)
   - [Flask_smorest](#flask_smorest)
   - [python-dotenv](#python-dotenv)
   - [Marshmallow](#marshmallow)
@@ -2300,7 +2300,7 @@ print(z is y)  # False
 
 # Python Libraries
 
-# Flask
+## Flask
 
 - Role: Core web framework
 
