@@ -100,8 +100,17 @@
   - [Dictionary Built-in Functions \& Methods](#dictionary-built-in-functions--methods)
   - [Merge dictionaries (Python ≥ 3.9)](#merge-dictionaries-python--39)
 - [Python Libraries](#python-libraries)
+- [Flask](#flask)
   - [Flask_smorest](#flask_smorest)
-  - [marshmallow](#marshmallow)
+  - [python-dotenv](#python-dotenv)
+  - [Marshmallow](#marshmallow)
+  - [SQLAlchemy](#sqlalchemy)
+  - [psycopg2](#psycopg2)
+  - [PyJWT](#pyjwt)
+  - [flask-jwt-extended](#flask-jwt-extended)
+  - [passlib](#passlib)
+  - [flask-migrate](#flask-migrate)
+  - [Alembic](#alembic)
 
 # OOP
 
@@ -2291,6 +2300,108 @@ print(z is y)  # False
 
 # Python Libraries
 
+# Flask
+
+- Role: Core web framework
+
+- Main functions
+
+  - Build web applications and REST APIs
+  - URL routing (@app.route)
+  - Handle HTTP requests and responses
+  - Middleware hooks (before_request, after_request)
+  - Template rendering (via Jinja2, optional)
+
 ## Flask_smorest
 
-## marshmallow
+- REST API framework + OpenAPI (Swagger) support
+- Main functions
+  - Build RESTful APIs in Flask
+  - Validate request data
+  - Serialize response data
+  - Generate OpenAPI / Swagger documentation automatically
+  - Integrate with **Marshmallow** schemas
+
+## python-dotenv
+
+- Role: Environment variable management
+
+- Main functions
+
+  - Load environment variables from a `.env` file
+  - Separate configuration from source code
+  - Manage secrets such as database URLs and JWT keys
+
+## Marshmallow
+
+- Role: Serialization, deserialization, and validation library
+
+- Main functions
+
+  - Convert Python objects → JSON-friendly data (serialization)
+  - Convert input data (JSON) → Python objects (deserialization)
+  - Validate request data using schemas
+  - Enforce data types, required fields, and custom validation rules
+
+## SQLAlchemy
+
+- Role: Core ORM and SQL toolkit
+- Main functions
+
+  - Object–Relational Mapping (ORM)
+  - Map Python classes to database tables
+  - Build database queries using Python instead of raw SQL
+  - Handle transactions and connection pooling
+  - Protect against SQL injection
+
+## psycopg2
+
+- Role: PostgreSQL database driver
+- Main functions
+  - Enable Python to communicate with PostgreSQL
+  - Execute SQL commands at a low level
+
+## PyJWT
+
+- Role: JSON Web Token (JWT) implementation
+- Main functions
+  - Encode JWT tokens
+  - Decode and validate JWT tokens
+  - Verify signatures and expiration times
+
+## flask-jwt-extended
+
+- Role: Authentication and authorization using JWT
+- Main functions
+
+  - Create access tokens and refresh tokens
+  - Protect endpoints with decorators (@jwt_required)
+  - Support fresh tokens and refresh tokens
+  - Retrieve user identity from JWTs
+  - Token revocation and blacklist support
+
+## passlib
+
+- Role: Password hashing and verification
+- Main functions
+  - Securely hash passwords (bcrypt, PBKDF2, Argon2, etc.)
+  - Verify passwords against stored hashes
+
+## flask-migrate
+
+- Role: Database schema migration tool. Built on top of Alembic, designed specifically for Flas
+- Main functions
+  - Track changes in SQLAlchemy models
+  - Generate migration scripts automatically
+  - Apply and rollback database schema changes
+
+## Alembic
+
+- Role: Database schema migration engine
+
+- Main functions
+
+  - Manage database schema changes over time
+  - Generate migration scripts by comparing models and database state
+  - Apply schema upgrades and downgrades
+  - Version-control database structure
