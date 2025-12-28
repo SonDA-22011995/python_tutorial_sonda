@@ -111,6 +111,8 @@
   - [passlib](#passlib)
   - [flask-migrate](#flask-migrate)
   - [Alembic](#alembic)
+  - [Selenium](#selenium)
+  - [BeautifulSoup](#beautifulsoup)
 
 # OOP
 
@@ -2405,3 +2407,26 @@ print(z is y)  # False
   - Generate migration scripts by comparing models and database state
   - Apply schema upgrades and downgrades
   - Version-control database structure
+
+## Selenium
+
+- Role: Browser automation and web testing tool
+
+- Main functions
+
+  - Automate real browser interactions (Chrome, Firefox, Edge, etc.)
+  - Simulate user actions (click, type, scroll, submit forms)
+  - Test dynamic web applications (JavaScript-heavy sites)
+  - Handle authentication, cookies, sessions
+  - Support end-to-end (E2E) testing and web scraping where JS rendering is required
+
+## BeautifulSoup
+
+- Role: HTML and XML parsing library for web scraping
+
+- Main functions
+  - Parse HTML/XML documents into a navigable tree
+  - Extract data using tags, attributes, CSS selectors
+  - Clean and transform raw HTML content
+  - Work with static web pages (no JavaScript execution)
+  - Integrate with HTTP libraries (e.g., requests) for scraping workflows
