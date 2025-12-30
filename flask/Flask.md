@@ -8,6 +8,8 @@
   - [`class flask.Request`](#class-flaskrequest)
     - [`get_json`](#get_json)
   - [URL variables | Route parameters](#url-variables--route-parameters)
+  - [Builtin Configuration Values](#builtin-configuration-values)
+    - [`PROPAGATE_EXCEPTIONS`](#propagate_exceptions)
 - [Flask REST API](#flask-rest-api)
   - [First REST API](#first-rest-api)
   - [Create store in REST API](#create-store-in-rest-api)
@@ -27,6 +29,8 @@
   - [How to use Flask-Smorest `MethodViews` and `Blueprints`](#how-to-use-flask-smorest-methodviews-and-blueprints)
     - [`Blueprints`](#blueprints)
     - [MethodViews](#methodviews)
+    - [Import blueprints and Flask-Smorest configuration](#import-blueprints-and-flask-smorest-configuration)
+  - [`marshmallow`](#marshmallow)
 - [JSON](#json)
 
 # Flask Terminology
@@ -135,6 +139,15 @@ def show_post(post_id):
     return f'Post ID: {post_id}'
 
 ```
+
+## Builtin Configuration Values
+
+- The following configuration values are used internally by Flask:
+
+### `PROPAGATE_EXCEPTIONS`
+
+- Exceptions are re-raised rather than being handled by the app’s error handlers. If not set, this is implicitly `true` if `TESTING` or `DEBUG` is enabled.
+- Default: `None`
 
 # Flask REST API
 
@@ -357,6 +370,95 @@ class Store(MethodView):
 
     def delete(self, store_id):
         pass
+```
+
+### Import blueprints and Flask-Smorest configuration
+
+```
+from flask import Flask
+from flask_smorest import Api
+
+from resources.item import blp as ItemBlueprint
+from resources.store import blp as StoreBlueprint
+
+
+app = Flask(__name__)
+
+app.config["PROPAGATE_EXCEPTIONS"] = True
+app.config["API_TITLE"] = "Stores REST API"
+app.config["API_VERSION"] = "v1"
+app.config["OPENAPI_VERSION"] = "3.0.3"
+app.config["OPENAPI_URL_PREFIX"] = "/"
+app.config["OPENAPI_SWAGGER_UI_PATH"] = "/swagger-ui"
+app.config["OPENAPI_SWAGGER_UI_URL"] = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
+
+api = Api(app)
+
+api.register_blueprint(ItemBlueprint)
+api.register_blueprint(StoreBlueprint)
+
+```
+
+## `marshmallow`
+
+- Marshmallow is a Python library used to validate, serialize, and deserialize data.
+
+- It allows developers to:
+
+  - Validate incoming data (e.g. API request payloads)
+  -
+  - Convert raw input data (JSON, dict) into Python objects (deserialization)
+  -
+  - Convert Python objects into JSON-ready data (serialization)
+  -
+  - Enforce data structure and types using schemas
+  -
+  - Produce consistent and meaningful validation errors
+
+- Marshmallow helps keep APIs safe, predictable, and maintainable by ensuring that all input and output data follows well-defined rules.
+
+```
+from marshmallow import Schema, fields, validates_schema, ValidationError
+
+
+class ItemSchema(Schema):
+    id = fields.Str(dump_only=True)
+    name = fields.Str(required=True)
+    price = fields.Float(required=True)
+    store_id = fields.Str(required=True)
+
+class ItemUpdateSchema(Schema):
+    name = fields.Str()
+    price = fields.Float()
+
+    @validates_schema
+    def validate_at_least_one(self, data, **kwargs):
+        if not data:
+            raise ValidationError("At least one field is required")
+
+class StoreSchema(Schema):
+    id = fields.Str(dump_only=True)
+    name = fields.Str(required=True)
+```
+
+```
+from schemas import ItemSchema
+
+@blp.arguments(ItemSchema)
+def post(self, item_data):
+    for item in items.values():
+        if (
+            item_data["name"] == item["name"]
+            and item_data["store_id"] == item["store_id"]
+        ):
+            abort(400, message=f"Item already exists.")
+
+    item_id = uuid.uuid4().hex
+    item = {**item_data, "id": item_id}
+    items[item_id] = item
+
+    return item
+
 ```
 
 # JSON

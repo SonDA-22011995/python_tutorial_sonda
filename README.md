@@ -113,6 +113,7 @@
   - [Alembic](#alembic)
   - [Selenium](#selenium)
   - [BeautifulSoup](#beautifulsoup)
+  - [Mailgun](#mailgun)
 
 # OOP
 
@@ -2430,3 +2431,17 @@ print(z is y)  # False
   - Clean and transform raw HTML content
   - Work with static web pages (no JavaScript execution)
   - Integrate with HTTP libraries (e.g., requests) for scraping workflows
+
+## Mailgun
+
+- Role: Transactional email service for sending, receiving, and tracking emails via API or SMTP
+
+- Main functions
+
+  - Send transactional emails (verification, password reset, notifications)
+  - Send bulk and marketing emails with high deliverability
+  - Receive and route inbound emails via webhooks
+  - Email validation (verify email addresses to reduce bounce rate)
+  - Track email events (delivered, opened, clicked, bounced, spam complaints)
+  - Manage domains, templates, and email logs
+  - Integrate via REST API or SMTP with backend applications (Python, Node.js, Java, etc.)
