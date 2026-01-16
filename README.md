@@ -1,3 +1,7 @@
+- [Built-In Data Types](#built-in-data-types)
+  - [Mutable objects](#mutable-objects)
+  - [Immutable objects](#immutable-objects)
+  - [Mutable vs. Immutable in Python](#mutable-vs-immutable-in-python)
 - [OOP](#oop)
   - [The `class attributes`](#the-class-attributes)
   - [The `@staticmethod` method](#the-staticmethod-method)
@@ -55,9 +59,6 @@
   - [Using raise with a custom exception.](#using-raise-with-a-custom-exception)
   - [Re-raising an exception](#re-raising-an-exception)
   - [Python Docstrings - `__doc__` or `help()`](#python-docstrings---__doc__-or-help)
-  - [Mutable objects](#mutable-objects)
-  - [Immutable objects](#immutable-objects)
-  - [Mutable vs. Immutable in Python](#mutable-vs-immutable-in-python)
   - [API - Application programing interface](#api---application-programing-interface)
   - [HTTP Request](#http-request)
     - [What is an HTTP Request?](#what-is-an-http-request)
@@ -114,6 +115,52 @@
   - [Selenium](#selenium)
   - [BeautifulSoup](#beautifulsoup)
   - [Mailgun](#mailgun)
+
+# Built-In Data Types
+
+## Mutable objects
+
+- Mutable objects can have their internal state or value changed without creating a new object in memory.
+
+```
+a = []
+b = a
+
+print(id(a))
+print(id(b))
+
+# print(id(a)) and print(id(b)) functions print same results
+
+a.append(35)
+
+print(a)
+print(b)
+
+# print(a) and print(b) functions print same results
+```
+
+- Mutable objects include `liit`, `dict`, `set`, `bytearray`, custom classes (User-defined classes are generally mutable by default)
+- When two variables refer to the same mutable object, modifying the object through one variable will affect the value accessed by the other.
+
+## Immutable objects
+
+- Immutable objects cannot be changed once they are defined. Any operation that seems to modify an immutable object actually results in a new object being created
+
+- Immutable objects include `int`, `float`, `bool`, `string`, `Unicode`, and `tuple` (Similar to lists but once created, their elements cannot be changed. However, a tuple is considered immutable even if it contains mutable objects, as the collection of objects it holds cannot be changed)
+
+## Mutable vs. Immutable in Python
+
+| Aspect                       | Mutable                                            | Immutable                                            |
+| ---------------------------- | -------------------------------------------------- | ---------------------------------------------------- |
+| **Definition**               | Objects whose value can be changed after creation  | Objects whose value cannot be changed after creation |
+| **Behavior on Modification** | Changes affect the same object in memory           | Any “change” creates a new object                    |
+| **Memory Address**           | Remains the same after modification                | Changes after modification (new object created)      |
+| **Examples**                 | `list`, `dict`, `set`, `bytearray`                 | `int`, `float`, `str`, `tuple`, `frozenset`, `bytes` |
+| **Hashability**              | Usually not hashable (cannot be used as dict keys) | Usually hashable (can be dict keys)                  |
+| **Suitable For**             | Data structures that need updating                 | Fixed data, dictionary keys, safe sharing            |
+| **Thread Safety**            | Less safe (values can be changed unexpectedly)     | More safe (values cannot be changed)                 |
+| **Passing to Functions**     | Function can modify in-place                       | Function cannot modify original object               |
+| **Common Use Cases**         | Lists of items, mutable configurations             | Strings, numeric constants, dictionary keys          |
 
 # OOP
 
@@ -1793,50 +1840,6 @@ Help on function my_function in module __main__:
 my_function()
     Demonstrates triple quotes docstring and does no...
 ```
-
-## Mutable objects
-
-- Mutable objects can have their internal state or value changed without creating a new object in memory.
-
-```
-a = []
-b = a
-
-print(id(a))
-print(id(b))
-
-# print(id(a)) and print(id(b)) functions print same results
-
-a.append(35)
-
-print(a)
-print(b)
-
-# print(a) and print(b) functions print same results
-```
-
-- Mutable objects include `liit`, `dict`, `set`, `bytearray`, custom classes (User-defined classes are generally mutable by default)
-- When two variables refer to the same mutable object, modifying the object through one variable will affect the value accessed by the other.
-
-## Immutable objects
-
-- Immutable objects cannot be changed once they are defined. Any operation that seems to modify an immutable object actually results in a new object being created
-
-- Immutable objects include `int`, `float`, `bool`, `string`, `Unicode`, and `tuple` (Similar to lists but once created, their elements cannot be changed. However, a tuple is considered immutable even if it contains mutable objects, as the collection of objects it holds cannot be changed)
-
-## Mutable vs. Immutable in Python
-
-| Aspect                       | Mutable                                            | Immutable                                            |
-| ---------------------------- | -------------------------------------------------- | ---------------------------------------------------- |
-| **Definition**               | Objects whose value can be changed after creation  | Objects whose value cannot be changed after creation |
-| **Behavior on Modification** | Changes affect the same object in memory           | Any “change” creates a new object                    |
-| **Memory Address**           | Remains the same after modification                | Changes after modification (new object created)      |
-| **Examples**                 | `list`, `dict`, `set`, `bytearray`                 | `int`, `float`, `str`, `tuple`, `frozenset`, `bytes` |
-| **Hashability**              | Usually not hashable (cannot be used as dict keys) | Usually hashable (can be dict keys)                  |
-| **Suitable For**             | Data structures that need updating                 | Fixed data, dictionary keys, safe sharing            |
-| **Thread Safety**            | Less safe (values can be changed unexpectedly)     | More safe (values cannot be changed)                 |
-| **Passing to Functions**     | Function can modify in-place                       | Function cannot modify original object               |
-| **Common Use Cases**         | Lists of items, mutable configurations             | Strings, numeric constants, dictionary keys          |
 
 ## API - Application programing interface
 
