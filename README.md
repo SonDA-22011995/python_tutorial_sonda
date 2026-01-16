@@ -2,6 +2,14 @@
   - [Mutable objects](#mutable-objects)
   - [Immutable objects](#immutable-objects)
   - [Mutable vs. Immutable in Python](#mutable-vs-immutable-in-python)
+  - [Numbers](#numbers)
+    - [Integers](#integers)
+    - [Booleans](#booleans)
+    - [Float](#float)
+    - [Complex numbers](#complex-numbers)
+    - [Fractions and decimals](#fractions-and-decimals)
+  - [Immutable sequences](#immutable-sequences)
+    - [String](#string)
 - [OOP](#oop)
   - [The `class attributes`](#the-class-attributes)
   - [The `@staticmethod` method](#the-staticmethod-method)
@@ -162,6 +170,184 @@ print(b)
 | **Passing to Functions**     | Function can modify in-place                       | Function cannot modify original object               |
 | **Common Use Cases**         | Lists of items, mutable configurations             | Strings, numeric constants, dictionary keys          |
 
+## Numbers
+
+### Integers
+
+- Python integers have an unlimited range, subject only to the available virtual memory. This means that it doesn't really matter how big a number you want to store is—as long as it can fit in your computer's memory
+- Integer numbers can be positive, negative, or 0 (zero)
+
+### Booleans
+
+- Booleans represent one of two values: `True` or `False`.
+
+### Float
+
+- Float, or "floating point number" is a number, positive or negative, containing one or more decimals.
+- Issue -> Python gives you the Decimal type, which doesn't suffer from these issues
+
+```
+0.3 - 0.1 * 3 # this should be 0!!!
+-5.551115123125783e-17
+```
+
+### Complex numbers
+
+- Complex numbers are numbers that can be expressed in the form `a + ib` where `a` and `b` are real numbers, and `i` (or j if you're an engineer) is the imaginary unit
+- It is perhaps unlikely that you will use them, unless you're coding something scientifi
+
+### Fractions and decimals
+
+- Fractions hold a rational numerator and denominator in their lowest form
+
+```
+from fractions import Fraction
+
+a = Fraction(1, 2)
+b = Fraction(3, 4)
+
+print(a + b)   # 5/4
+print(a * b)   # 3/8
+print(a / b)   # 2/3
+```
+
+```
+from fractions import Fraction
+
+Fraction(2, 3)          # 2/3
+Fraction("7/9")         # 7/9
+Fraction(0.75)          # 3/4
+```
+
+```
+from fractions import Fraction
+
+scores = [Fraction(85, 1), Fraction(90, 1), Fraction(88, 1)]
+avg = sum(scores) / len(scores)
+
+print(avg)        # 263/3
+print(float(avg)) # 87.66666666666667
+```
+
+- Although Fraction objects can be very useful at times, it's not that common to spotthem in commercial software. Instead, it is much more common to see decimal numbers being used in all those contexts where precision is everything
+
+```
+from decimal import Decimal as D # rename for brevity
+D(3.14) # pi, from float, so approximation issues
+# Decimal('3.140000000000000124344978758017532527446746826171875')
+D('3.14') # pi, from a string, so no approximation issues
+# Decimal('3.14')
+D(0.1) * D(3) - D(0.3) # from float, we still have the issue
+# Decimal('2.775557561565156540423631668E-17')
+D('0.1') * D(3) - D('0.3') # from string, all perfect
+# Decimal('0.0')
+D('1.4').as_integer_ratio() # 7/5 = 1.4 (isn't this cool?!)
+# (7, 5)
+```
+
+## Immutable sequences
+
+### String
+
+- Assign String to a Variable
+
+```
+a = "Hello"
+print(a)
+```
+
+- Assign a multiline string to a variable
+
+```
+a = """Lorem ipsum dolor sit amet,
+consectetur adipiscing elit,
+sed do eiusmod tempor incididunt
+ut labore et dolore magna aliqua."""
+print(a)
+```
+
+```
+a = '''Lorem ipsum dolor sit amet,
+consectetur adipiscing elit,
+sed do eiusmod tempor incididunt
+ut labore et dolore magna aliqua.'''
+print(a)
+```
+
+- Strings are Arrays
+
+```
+a = "Hello, World!"
+print(a[1])
+```
+
+- Looping Through a String
+
+```
+for x in "banana":
+  print(x)
+```
+
+- String Length
+
+```
+a = "Hello, World!"
+print(len(a))
+```
+
+- Check String
+
+```
+txt = "The best things in life are free!"
+print("free" in txt)
+```
+
+- Slicing Strings
+
+```
+b = "Hello, World!"
+print(b[2:5])
+```
+
+- Slice From the Start
+
+```
+b = "Hello, World!"
+print(b[:5])
+```
+
+- Slice To the End
+
+```
+b = "Hello, World!"
+print(b[2:])
+```
+
+- Modify string
+
+| Category  | Method           | Description                     | Example                                   |
+| --------- | ---------------- | ------------------------------- | ----------------------------------------- |
+| Case      | `upper()`        | Convert to uppercase            | `"abc".upper()` → `"ABC"`                 |
+| Case      | `lower()`        | Convert to lowercase            | `"ABC".lower()` → `"abc"`                 |
+| Case      | `capitalize()`   | Capitalize first character      | `"hello".capitalize()` → `"Hello"`        |
+| Case      | `title()`        | Capitalize each word            | `"hello world".title()` → `"Hello World"` |
+| Case      | `swapcase()`     | Swap upper/lower case           | `"AbC".swapcase()` → `"aBc"`              |
+| Trim      | `strip()`        | Remove leading & trailing chars | `" hi ".strip()` → `"hi"`                 |
+| Trim      | `lstrip()`       | Remove leading chars            | `" hi".lstrip()` → `"hi"`                 |
+| Trim      | `rstrip()`       | Remove trailing chars           | `"hi ".rstrip()` → `"hi"`                 |
+| Replace   | `replace()`      | Replace substring               | `"a-b".replace("-", "_")` → `"a_b"`       |
+| Split     | `split()`        | Split string into list          | `"a,b".split(",")` → `["a","b"]`          |
+| Join      | `join()`         | Join iterable into string       | `",".join(["a","b"])` → `"a,b"`           |
+| Align     | `center()`       | Center with padding             | `"42".center(5,"*")` → `"*42**"`          |
+| Align     | `ljust()`        | Left-align with padding         | `"42".ljust(5,"0")` → `"42000"`           |
+| Align     | `rjust()`        | Right-align with padding        | `"42".rjust(5,"0")` → `"00042"`           |
+| Align     | `zfill()`        | Pad with zeros                  | `"42".zfill(5)` → `"00042"`               |
+| Prefix    | `removeprefix()` | Remove prefix (Py 3.9+)         | `"unhappy".removeprefix("un")`            |
+| Suffix    | `removesuffix()` | Remove suffix (Py 3.9+)         | `"file.txt".removesuffix(".txt")`         |
+| Encode    | `encode()`       | String → bytes                  | `"hi".encode("utf-8")`                    |
+| Decode    | `decode()`       | Bytes → string                  | `b"hi".decode("utf-8")`                   |
+| Translate | `translate()`    | Replace multiple chars          | `"abc".translate(table)`                  |
+
 # OOP
 
 ## The `class attributes`
@@ -173,27 +359,31 @@ print(b)
 - **Useful for shared data**: They are suitable for storing data that is common to all instances, such as constants, default values, or counters that track class-level information.
 
 ```
-class Car:
-    # This is a class attribute
-    number_of_wheels = 4
+
+class Car: # This is a class attribute
+number_of_wheels = 4
 
     def __init__(self, make, model):
         self.make = make  # This is an instance attribute
         self.model = model # This is an instance attribute
 
 # Create instances of the Car class
+
 car1 = Car("Toyota", "Camry")
 car2 = Car("Honda", "Civic")
 
 # Accessing the class attribute
+
 print(f"Car 1 has {car1.number_of_wheels} wheels.")
 print(f"Car 2 has {car2.number_of_wheels} wheels.")
 print(f"The Car class has {Car.number_of_wheels} wheels defined.")
 
 # Modifying the class attribute through the class
+
 Car.number_of_wheels = 6
 print(f"After modification, Car 1 now has {car1.number_of_wheels} wheels.")
 print(f"After modification, Car 2 now has {car2.number_of_wheels} wheels.")
+
 ```
 
 ## The `@staticmethod` method
@@ -206,22 +396,25 @@ print(f"After modification, Car 2 now has {car2.number_of_wheels} wheels.")
 - Code organization: Using @staticmethod helps in organizing code by grouping related functions within a class, even if those functions don't interact with the class's internal state.
 
 ```
+
 class Calculator:
-    @staticmethod
-    def add(x, y):
-        return x + y
+@staticmethod
+def add(x, y):
+return x + y
 
     @staticmethod
     def multiply(x, y):
         return x * y
 
 # Calling static methods
+
 result_add = Calculator.add(5, 3)
 print(f"Addition: {result_add}")
 
 calc_instance = Calculator()
 result_multiply = calc_instance.multiply(4, 2)
 print(f"Multiplication: {result_multiply}")
+
 ```
 
 ## The `@classmethod` method
@@ -233,8 +426,9 @@ print(f"Multiplication: {result_multiply}")
 - **Modifying Class State**: Class methods are suitable for operations that need to modify or interact with the class's state, such as updating class variables or performing actions that affect all instances.
 
 ```
+
 class Vehicle:
-    TYPES = ("car", "bike", "truck")
+TYPES = ("car", "bike", "truck")
 
     def __init__(self, v_type, name):
         self.v_type = v_type
@@ -253,13 +447,14 @@ class Vehicle:
         return cls("truck", name)
 
 # ----------------------------
+
 v1 = Vehicle.car("Toyota")
 v2 = Vehicle.bike("Honda")
 v3 = Vehicle.truck("Volvo")
 
-print(v1.v_type, v1.name)  # car Toyota
-print(v2.v_type, v2.name)  # bike Honda
-print(v3.v_type, v3.name)  # truck Volvo
+print(v1.v_type, v1.name) # car Toyota
+print(v2.v_type, v2.name) # bike Honda
+print(v3.v_type, v3.name) # truck Volvo
 
 ```
 
@@ -273,27 +468,33 @@ print(v3.v_type, v3.name)  # truck Volvo
   - **Polymorphism**: The `Is-A` relationship enables polymorphism, where objects of different classes can be treated as objects of a common superclass, allowing for more flexible and extensible code.
 
 ```
+
 # Superclass (Base class)
+
 class Animal:
-    def speak(self):
-        return "Animal speaks"
+def speak(self):
+return "Animal speaks"
 
 # Subclass (Derived class) - Dog IS-A Animal
+
 class Dog(Animal):
-    def speak(self):
-        return "Woof!"
+def speak(self):
+return "Woof!"
 
 # Subclass (Derived class) - Cat IS-A Animal
+
 class Cat(Animal):
-    def speak(self):
-        return "Meow!"
+def speak(self):
+return "Meow!"
 
 # Usage
+
 my_dog = Dog()
 my_cat = Cat()
 
-print(my_dog.speak())  # Output: Woof!
-print(my_cat.speak())  # Output: Meow!
+print(my_dog.speak()) # Output: Woof!
+print(my_cat.speak()) # Output: Meow!
+
 ```
 
 ## The class composition method `Has-A`
@@ -307,27 +508,29 @@ print(my_cat.speak())  # Output: Meow!
   - **Single Responsibility Principle**: Composition helps in creating smaller, more focused classes, adhering to the principle that a class should have one specific responsibility
 
 ```
+
 class Engine:
-    def __init__(self, horse_power):
-        self.horse_power = horse_power
+def **init**(self, horse_power):
+self.horse_power = horse_power
 
     def start(self):
         return "Engine started."
 
 class Car:
-    def __init__(self, make, model, horse_power):
-        self.make = make
-        self.model = model
-        # Composition: A Car has an Engine object as an attribute
-        self.engine = Engine(horse_power)
+def **init**(self, make, model, horse_power):
+self.make = make
+self.model = model # Composition: A Car has an Engine object as an attribute
+self.engine = Engine(horse_power)
 
     def display_car_info(self):
         engine_status = self.engine.start() # Accessing a method of the composed object
         return f"{self.make} {self.model} with {self.engine.horse_power}hp. {engine_status}"
 
 # Create a Car instance
+
 my_car = Car(make="Ford", model="Mustang", horse_power=500)
 print(my_car.display_car_info())
+
 ```
 
 - In this example
@@ -340,18 +543,21 @@ print(my_car.display_car_info())
 - The `__str__()` method is a special method that controls what is returned when the object is printed:
 
 ```
-class Person:
-  def __init__(self, name, age):
-    self.name = name
-    self.age = age
 
-  def __str__(self):
-    return f"{self.name} ({self.age})"
+class Person:
+def **init**(self, name, age):
+self.name = name
+self.age = age
+
+def **str**(self):
+return f"{self.name} ({self.age})"
 
 p1 = Person("Tobias", 36)
 
 print(p1)
+
 # It print Tobias (36)
+
 ```
 
 ## The `__repr__` method
@@ -360,18 +566,20 @@ print(p1)
 - Fallback for **str**: If a class does not define a **str** method, Python will fall back to using **repr** for user-facing string conversions (e.g., when using print())
 
 ```
+
 class Point:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+def **init**(self, x, y):
+self.x = x
+self.y = y
 
     def __repr__(self):
         return f"Point(x={self.x}, y={self.y})"
 
 # Usage
+
 p = Point(10, 20)
-print(repr(p))  # Explicitly calls __repr__
-print(p)        # Calls __repr__ by default if __str__ is not defined
+print(repr(p)) # Explicitly calls **repr**
+print(p) # Calls **repr** by default if **str** is not defined
 
 ```
 
@@ -380,10 +588,11 @@ print(p)        # Calls __repr__ by default if __str__ is not defined
 - **BAD**
 
 ```
+
 class Student:
-    def __init__(self, name: str, grades: list[int] = []):  # BAD
-        self.name = name
-        self.grades = grades
+def **init**(self, name: str, grades: list[int] = []): # BAD
+self.name = name
+self.grades = grades
 
     def take_exam(self, result: int):
         self.grades.append(result)
@@ -397,6 +606,7 @@ print(bob.grades)
 print(rolf.grades)
 
 # Print same output is [90]
+
 ```
 
 - Why This Happens
@@ -412,12 +622,13 @@ print(rolf.grades)
 - Correct approach
 
 ```
+
 from typing import Optional
 
 class Student:
-    def __init__(self, name: str, grades: Optional[list[int]] = None):
-        self.name = name
-        self.grades = grades or []
+def **init**(self, name: str, grades: Optional[list[int]] = None):
+self.name = name
+self.grades = grades or []
 
 ```
 
@@ -440,8 +651,10 @@ class Student:
 - They are defined by placing a `*` in the function signature. All parameters after `*` become keyword-only.
 
 ```
-def response(status_code, schema=None, *, description=None, headers=None):
-    pass
+
+def response(status_code, schema=None, \*, description=None, headers=None):
+pass
+
 ```
 
 ## First-class functions
@@ -452,66 +665,80 @@ def response(status_code, schema=None, *, description=None, headers=None):
 - Storing Functions in Data Structures
 
 ```
+
 def msg(name):
-    return f"Hello, {name}!"
+return f"Hello, {name}!"
 
 # Assigning the function to a variable
+
 f = msg
 
 # Calling the function using the variable
+
 print(f("Emma"))
+
 ```
 
 ```
+
 def msg(name):
-    return f"Hello, {name}!"
+return f"Hello, {name}!"
 
 def fun1(fun2, name):
-    return fun2(name)
+return fun2(name)
 
 # Passing the msg function as an argument
+
 print(fun1(msg, "Alex"))
+
 ```
 
 ```
+
 def fun1(msg):
-    def fun2():
-        return f"Message: {msg}"
-    return fun2
+def fun2():
+return f"Message: {msg}"
+return fun2
 
 # Getting the inner function
+
 func = fun1("Hello, World!")
 print(func())
 
 def divide(dividend, divisor):
-    if divisor == 0:
-        raise ZeroDivisionError('Divisor cannot be 0.')
+if divisor == 0:
+raise ZeroDivisionError('Divisor cannot be 0.')
 
     return dividend / divisor
 
 def calculate(*value, operator):
-    return operator(*values)
+return operator(*values)
 
 result = calculate(20, 4, operator=divide)
 print(result)
+
 ```
 
 ```
+
 def add(x, y):
-    return x + y
+return x + y
 
 def subtract(x, y):
-    return x - y
+return x - y
 
 # Storing functions in a dictionary
+
 d = {
-    "add": add,
-    "subtract": subtract
+"add": add,
+"subtract": subtract
 }
 
 # Calling functions from the dictionary
+
 print(d["add"](5, 3))
 print(d["subtract"](5, 3))
+
 ```
 
 ## Lambda functions
@@ -525,81 +752,104 @@ print(d["subtract"](5, 3))
 - Standard destructuring assignments
 
 ```
+
 # or
+
 # x, y = (5, 11)
+
 # (5, 11) and 5, 11 are tuple
+
 x, y = 5, 11
+
 ```
 
 - Destructuring dictionaries
 
 ```
+
 my_dict = {"name": "Bob", "age": 25}
 x, y = my_dict
+
 ```
 
 - If you wanted to destructure the dictionary values only, you can do:
 
 ```
+
 my_dict = {"name": "Bob", "age": 25}
-x, y = my_dict.values()  # "Bob", 25
+x, y = my_dict.values() # "Bob", 25
+
 ```
 
 - Destructuring in for loops
 
 ```
+
 example_list = ["A", "B", "C"]
 
 for counter, letter in enumerate(example_list):
-	print(counter, letter)
+print(counter, letter)
 
 # 0 A
+
 # 1 B
+
 # 2 C
+
 ```
 
 ```
+
 people = [
-	("Bob", 42, "Mechanic"),
-	("James", 24, "Artist"),
-	("Harry", 32, "Lecturer")
+("Bob", 42, "Mechanic"),
+("James", 24, "Artist"),
+("Harry", 32, "Lecturer")
 ]
 
 for name, age, profession in people:
-	print(f"Name: {name}, Age: {age}, Profession: {profession}")
+print(f"Name: {name}, Age: {age}, Profession: {profession}")
+
 ```
 
 - Ignoring Values: So, what do we do if we have a collection of values and we don't want to assign all of them? We can use an \_ in place of a variable name.
 
 ```
-person = ("Bob", 42, "Mechanic")
-name, _, profession = person
 
-print(name, profession)  # Bob Mechanic
+person = ("Bob", 42, "Mechanic")
+name, \_, profession = person
+
+print(name, profession) # Bob Mechanic
+
 ```
 
 - Using `*` to Collect Values: In Python, we can use the `*` operator to collect leftover values when performing a destructuring assignment. For example, we might have a list of numbers, and we want to grab the first number, and then assign the remaining numbers to a second variable
 
 ```
-head, *tail = [1, 2, 3, 4, 5]
 
-print(head)  # 1
-print(tail)  # [2, 3, 4, 5]
-```
+head, \*tail = [1, 2, 3, 4, 5]
 
-```
-*head, tail = [1, 2, 3, 4, 5]
+print(head) # 1
+print(tail) # [2, 3, 4, 5]
 
-print(head)  # [1, 2, 3, 4]
-print(tail)  # 5
 ```
 
 ```
-head, *middle, tail = [1, 2, 3, 4, 5]
 
-print(head)    # 1
-print(middle)  # [2, 3, 4]
-print(tail)    # 5
+\*head, tail = [1, 2, 3, 4, 5]
+
+print(head) # [1, 2, 3, 4]
+print(tail) # 5
+
+```
+
+```
+
+head, \*middle, tail = [1, 2, 3, 4, 5]
+
+print(head) # 1
+print(middle) # [2, 3, 4]
+print(tail) # 5
+
 ```
 
 ## Iterable unpacking
@@ -608,12 +858,15 @@ print(tail)    # 5
   as positional arguments to a function
 
 ```
+
 # arguments.unpack.iterable.py
+
 def func(a, b, c):
-    print(a, b, c)
+print(a, b, c)
 
 values = (1, 3, -7)
-func(*values) # equivalent to: func(1, 3, -7)
+func(\*values) # equivalent to: func(1, 3, -7)
+
 ```
 
 ## Dictionary unpacking
@@ -623,12 +876,14 @@ func(*values) # equivalent to: func(1, 3, -7)
   arguments, constructed from the keys and values of a dictionary, to a function
 
 ```
+
 # arguments.unpack.dict.py
+
 def func(a, b, c):
-    print(a, b, c)
+print(a, b, c)
 
 values = {'b': 1, 'c': 2, 'a': 42}
-func(**values) # equivalent to func(b=1, c=2, a=42)
+func(\*\*values) # equivalent to func(b=1, c=2, a=42)
 
 ```
 
@@ -643,22 +898,25 @@ func(**values) # equivalent to func(b=1, c=2, a=42)
 **Example of using and modifying a global variable:**
 
 ```
+
 # Define a global variable
+
 global_var = "Hello"
 
 def access_global():
-    print(f"Inside function (accessing): {global_var}")
+print(f"Inside function (accessing): {global_var}")
 
 def modify_global():
-    global global_var  # Declare intent to modify the global variable
-    global_var = "World"
-    print(f"Inside function (modifying): {global_var}")
+global global_var # Declare intent to modify the global variable
+global_var = "World"
+print(f"Inside function (modifying): {global_var}")
 
 access_global()
 print(f"Outside function (after access): {global_var}")
 
 modify_global()
 print(f"Outside function (after modification): {global_var}")
+
 ```
 
 ## Arbitrary Positional Arguments
@@ -667,6 +925,7 @@ print(f"Outside function (after modification): {global_var}")
 - **Syntax**: Precede a parameter name in the function definition with a single asterisk (`*`).
 
 ```
+
     def calculate_sum(*numbers):
         total = 0
         for num in numbers:
@@ -675,6 +934,7 @@ print(f"Outside function (after modification): {global_var}")
 
     calculate_sum(1, 2, 3)  # numbers will be (1, 2, 3)
     calculate_sum(10, 20, 30, 40, 50) # numbers will be (10, 20, 30, 40, 50)
+
 ```
 
 ## Mixing Positional and Arbitrary Arguments
@@ -682,14 +942,16 @@ print(f"Outside function (after modification): {global_var}")
 - The parameter that accepts an arbitrary number of arguments must be placed last in the function definition
 
 ```
-def make_pizza(size, *toppings):
-    #Summarize the pizza we are about to make.
-    print(f"\nMaking a {size}-inch pizza with the following toppings:")
-    for topping in toppings:
-        print(f"- {topping}")
+
+def make_pizza(size, \*toppings):
+#Summarize the pizza we are about to make.
+print(f"\nMaking a {size}-inch pizza with the following toppings:")
+for topping in toppings:
+print(f"- {topping}")
 
 make_pizza(16, 'pepperoni')
 make_pizza(12, 'mushrooms', 'green peppers', 'extra cheese')
+
 ```
 
 ## Arbitrary Keyword Arguments
@@ -697,19 +959,20 @@ make_pizza(12, 'mushrooms', 'green peppers', 'extra cheese')
 - This is achieved by placing a double asterisk `**` before a parameter name in the function definition. This parameter will then collect all the passed keyword arguments into a dictionary.
 
 ```
-def build_profile(first, last, **user_info):
-    # Build a dictionary containing everything we know about a user.
-    user_info['first_name'] = first
-    user_info['last_name'] = last
-    return user_info
+
+def build_profile(first, last, \*\*user_info): # Build a dictionary containing everything we know about a user.
+user_info['first_name'] = first
+user_info['last_name'] = last
+return user_info
 
 user_profile = build_profile(
-    'albert',
-    'einstein',
-    location='princeton',
-    field='physics'
+'albert',
+'einstein',
+location='princeton',
+field='physics'
 )
 print(user_profile)
+
 ```
 
 ## Type hint
@@ -718,48 +981,57 @@ print(user_profile)
 - Variable and Function Type Hints
 
 ```
+
 age: int = 25
 def greet(name: str) -> str:
-    return f"Hello, {name}!"
+return f"Hello, {name}!"
+
 ```
 
 - Function Return Type
 
 ```
+
 def add_numbers(x: int, y: int) -> int:
-    return x + y
+return x + y
+
 ```
 
 - Optional Types and Collections
 
 ```
+
 from typing import Optional, List, Tuple
 
 def get_user(id: int) -> Optional[str]:
-    return None if id == 0 else "User"
+return None if id == 0 else "User"
 
 def sum(num: List[int]) -> int:
-    return sum(num)
+return sum(num)
 
 def get_name_and_age() -> Tuple[str, int]:
-    return ("Abc", 25)
+return ("Abc", 25)
+
 ```
 
 - Python ≤ 3.8
 
 ```
+
 from typing import List, Optional, Tuple
 
 def f(data: List[int]) -> Optional[Tuple[int, str]]:
-    return None
+return None
 
 ```
 
 - Python ≥ 3.10
 
 ```
+
 def f(data: list[int]) -> tuple[int, str] | None:
-    return None
+return None
+
 ```
 
 - When Forward References Are Needed in Python
@@ -771,44 +1043,56 @@ def f(data: list[int]) -> tuple[int, str] | None:
   - When referencing a type defined later in the file
 
 ```
+
 class User:
-    def clone(self) -> "User":
-        return User()
+def clone(self) -> "User":
+return User()
+
 ```
 
 ```
+
 class A:
-    def set_b(self, b: "B"): ...
+def set_b(self, b: "B"): ...
 
 class B:
-    def set_a(self, a: "A"): ...
+def set_a(self, a: "A"): ...
+
 ```
 
 ```
+
 class Node:
-    def __init__(self, value: int, left: "Node" = None, right: "Node" = None):
-        self.value = value
+def **init**(self, value: int, left: "Node" = None, right: "Node" = None):
+self.value = value
+
 ```
 
 ```
+
 class Product:
-    @classmethod
-    def from_name(cls, name: str) -> "Product":
-        return cls(name)
+@classmethod
+def from_name(cls, name: str) -> "Product":
+return cls(name)
+
 ```
 
 ```
+
 from typing import List
 
 class Shape:
-    def combine(self, others: List["Shape"]) -> "Shape":
-        return self
+def combine(self, others: List["Shape"]) -> "Shape":
+return self
+
 ```
 
 ```
+
 # When referencing a type defined later in the file
 
 def make(obj: "Factory"): ...
+
 ```
 
 - Conclusion — Which Approach Should You Use?
@@ -822,17 +1106,17 @@ def make(obj: "Factory"): ...
 - Use Self - python 3.11+
 
 ```
+
 from typing import Self
 
 class User:
-    def __init__(self, name: str):
-        self.name = name
+def **init**(self, name: str):
+self.name = name
 
     @classmethod
     def from_fullname(cls, fullname: str) -> Self:
         first, last = fullname.split()
         return cls(first + " " + last)
-
 
 u = User.from_fullname("John Doe")
 
@@ -841,13 +1125,14 @@ u = User.from_fullname("John Doe")
 - Use Generics + `Type[T]` - python 3.9 -> 3.10
 
 ```
+
 from typing import Type, TypeVar
 
 T = TypeVar("T", bound="User")
 
 class User:
-    def __init__(self, name: str):
-        self.name = name
+def **init**(self, name: str):
+self.name = name
 
     @classmethod
     def from_fullname(cls: Type[T], fullname: str) -> T:
@@ -865,22 +1150,26 @@ class User:
 - Declare
 
 ```
+
 def decorator(func):
-    def wrapper():
-        print("Before calling the function.")
-        func()
-        print("After calling the function.")
-    return wrapper
+def wrapper():
+print("Before calling the function.")
+func()
+print("After calling the function.")
+return wrapper
 
 # Using the @ symbol is equivalent to calling the decorator on the function it wraps and assigning the
+
 # return value to the original name in the same scope
+
 # greet = decorator(greet)
 
 @decorator # Applying the decorator to a function
 def greet():
-    print("Hello, World!")
+print("Hello, World!")
 
 greet()
+
 ```
 
 ## Define function Decorators with `functools.wraps`
@@ -889,18 +1178,20 @@ greet()
 - This behavior is problematic because it undermines tools that do introspection, such as debuggers
 
 ```
+
 def decorator(func):
-    def wrapper_do_twice():
-        print("Something is happening before the function is called.")
-        func()
-        print("Something is happening after the function is called.")
-    return wrapper
+def wrapper_do_twice():
+print("Something is happening before the function is called.")
+func()
+print("Something is happening after the function is called.")
+return wrapper
 
 @decorator
 def say_whee():
-    print("Whee!")
+print("Whee!")
 
-print(say_whee.__name__)
+print(say_whee.**name**)
+
 # wrapper_do_twice
 
 ```
@@ -908,23 +1199,26 @@ print(say_whee.__name__)
 - To fix this, decorators should use the @wraps decorator, which will preserve information about the original function
 
 ```
+
 # import functools
+
 from functools import wraps
 
-def do_twice(func):
-    # @functools.wraps
-    @wraps(func)
-    def wrapper_do_twice(*args, **kwargs):
-        func(*args, **kwargs)
-        return func(*args, **kwargs)
-    return wrapper_do_twice
+def do_twice(func): # @functools.wraps
+@wraps(func)
+def wrapper_do_twice(*args, \*\*kwargs):
+func(*args, **kwargs)
+return func(\*args, **kwargs)
+return wrapper_do_twice
 
 @do_twice
 def say_whee():
-    print("Whee!")
+print("Whee!")
 
-print(say_whee.__name__)
+print(say_whee.**name**)
+
 # say_whee
+
 ```
 
 ## Decorators function with parameter
@@ -935,19 +1229,21 @@ print(say_whee.__name__)
   - `@decorator_name`: Syntax sugar for `add = decorator_name(add)`.
 
 ```
+
 def decorator_name(func):
-    def wrapper(*args, **kwargs):
-        print("Before execution")
-        result = func(*args, **kwargs)
-        print("After execution")
-        return result
-    return wrapper
+def wrapper(*args, \*\*kwargs):
+print("Before execution")
+result = func(*args, \*\*kwargs)
+print("After execution")
+return result
+return wrapper
 
 @decorator_name
 def add(a, b):
-    return a + b
+return a + b
 
 print(add(5, 3))
+
 ```
 
 ## Decorators with parameter - A decorator factory
@@ -961,63 +1257,68 @@ print(add(5, 3))
 - Before: We want a decorator that prints an error message when the result of a function is greater than a certain threshold
 
 ```
+
 from time import time
 from functools import wraps
 def measure(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        t = time()
-        result = func(*args, **kwargs)
-        print(func.__name__, 'took:', time() - t)
-        return result
-    return wrapper
+@wraps(func)
+def wrapper(*args, \*\*kwargs):
+t = time()
+result = func(*args, \*\*kwargs)
+print(func.**name**, 'took:', time() - t)
+return result
+return wrapper
 
 def max_result(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        result = func(*args, **kwargs)
-        if result > 100:
-            print(
-                f'Result is too big ({result}). '
-                'Max allowed is 100.'
-            )
-        return result
-    return wrapper
+@wraps(func)
+def wrapper(*args, \*\*kwargs):
+result = func(*args, \*\*kwargs)
+if result > 100:
+print(
+f'Result is too big ({result}). '
+'Max allowed is 100.'
+)
+return result
+return wrapper
 
 @measure
 @max_result
 def cube(n):
-    return n ** 3
+return n \*\* 3
 
 print(cube(2))
 print(cube(5))
+
 ```
 
 - After
 
 ```
+
 # decorators/decorators.factory.py
+
 from functools import wraps
 
 def max_result(threshold):
-    def decorator(func):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            result = func(*args, **kwargs)
-            if result > threshold:
-                print(
-                    f'Result is too big ({result}). '
-                    f'Max allowed is {threshold}.'
-                )
-            return result
-        return wrapper
-    return decorator
+def decorator(func):
+@wraps(func)
+def wrapper(*args, \*\*kwargs):
+result = func(*args, \*\*kwargs)
+if result > threshold:
+print(
+f'Result is too big ({result}). '
+f'Max allowed is {threshold}.'
+)
+return result
+return wrapper
+return decorator
 
 @max_result(75)
 def cube(n):
-    return n ** 3
+return n \*\* 3
 
 print(cube(5))
+
 ```
 
 # Generator
@@ -1057,10 +1358,12 @@ print(cube(5))
 - Exception: `StopIteration`
 
 ```
+
 # first.n.squares.manual.py
+
 def get_squares_gen(n):
-    for x in range(n):
-        yield x ** 2
+for x in range(n):
+yield x \*\* 2
 
 squares = get_squares_gen(4) # this creates a generator object
 
@@ -1069,9 +1372,13 @@ print(next(squares)) # prints: 0
 print(next(squares)) # prints: 1
 print(next(squares)) # prints: 4
 print(next(squares)) # prints: 9
+
 # the following raises StopIteration, the generator is exhausted,
+
 # any further call to next will keep raising StopIteration
+
 print(next(squares))
+
 ```
 
 ## Generator functions
@@ -1083,10 +1390,10 @@ print(next(squares))
 - Syntax
 
 ```
-def generator_function_name(parameters):
-    # Your code here
-    yield expression
-    # Additional code can follow
+
+def generator_function_name(parameters): # Your code here
+yield expression # Additional code can follow
+
 ```
 
 - The result of the two print statements will be the same: [0, 1, 4, 9, 16, 25, 36,
@@ -1095,17 +1402,20 @@ def generator_function_name(parameters):
   - `get_squares_gen()`: is a generator and behaves very differently. Each time the interpreter reaches the yield line, its execution is suspended. The only reason those print statements return the same result is because we fed `get_squares_gen()` to the `list()` constructor
 
 ```
+
 # first.n.squares.py
+
 def get_squares(n): # classic function approach
-    return [x ** 2 for x in range(n)]
+return [x ** 2 for x in range(n)]
 
 print(get_squares(10))
 
 def get_squares_gen(n): # generator approach
-    for x in range(n):
-        yield x ** 2 # we yield, we don't return
+for x in range(n):
+yield x \*\* 2 # we yield, we don't return
 
 print(list(get_squares_gen(10)))
+
 ```
 
 ## `return` in generator function
@@ -1113,18 +1423,20 @@ print(list(get_squares_gen(10)))
 - It will cause a StopIteration exception to be raised, effectively ending the iteration
 
 ```
+
 def geometric_progression(a, q):
-    k = 0
-    while True:
-        result = a * q**k
-        if result <= 100000:
-            yield result
-        else:
-            return
-        k += 1
+k = 0
+while True:
+result = a \* q\*\*k
+if result <= 100000:
+yield result
+else:
+return
+k += 1
 
 for n in geometric_progression(2, 5):
-    print(n)
+print(n)
+
 ```
 
 ## `send()` in generator function
@@ -1133,30 +1445,34 @@ for n in geometric_progression(2, 5):
 - Syntax:
 
 ```
+
 generator.send(value)
+
 ```
 
 - Example
 
 ```
-def counter(start=0):
-    n = start
-    while True:
-        result = yield n  # A
-        print(type(result), result)  # B
-        if result == 'Q':
-            break
-        n += 1
 
+def counter(start=0):
+n = start
+while True:
+result = yield n # A
+print(type(result), result) # B
+if result == 'Q':
+break
+n += 1
 
 c = counter()
-print(next(c))  # C
-print(c.send('Wow!'))  # D
-print(next(c))  # E
-print(c.send('Q'))  # F
+print(next(c)) # C
+print(c.send('Wow!')) # D
+print(next(c)) # E
+print(c.send('Q')) # F
+
 ```
 
 ```
+
 0
 <class 'str'> Wow!
 1
@@ -1164,9 +1480,10 @@ print(c.send('Q'))  # F
 2
 <class 'str'> Q
 Traceback (most recent call last):
- File "gen.send.py", line 15, in <module>
- print(c.send('Q')) # F
+File "gen.send.py", line 15, in <module>
+print(c.send('Q')) # F
 StopIteration
+
 ```
 
 - Step #C: Within the generator, n is set to the same value as start. The while loop is entered, execution stops (#A), and n (0) is yielded back to the caller. 0 is printed on the console.
@@ -1179,24 +1496,30 @@ StopIteration
 - not use `yeild from`. Prints the numbers 4, 9, and 16 on the console
 
 ```
+
 # gen.yield.for.py
+
 def print_squares(start, end):
-    for n in range(start, end):
-        yield n ** 2
+for n in range(start, end):
+yield n \*\* 2
 
 for n in print_squares(2, 5):
-    print(n)
+print(n)
+
 ```
 
 - use `yeild from`. Prints the numbers 4, 9, and 16 on the console
 
 ```
+
 # gen.yield.from.py
+
 def print_squares(start, end):
-    yield from (n ** 2 for n in range(start, end))
+yield from (n \*\* 2 for n in range(start, end))
 
 for n in print_squares(2, 5):
-    print(n)
+print(n)
+
 ```
 
 ## Generator expressions
@@ -1206,7 +1529,9 @@ for n in print_squares(2, 5):
 - Syntax
 
 ```
+
 (expression for item in iterable)
+
 ```
 
 # Package and module
@@ -1223,39 +1548,47 @@ for n in print_squares(2, 5):
   - Create reusable modules: Write modules that can be both executed independently and imported by other scripts without automatically running their main logic
 
 ```
+
 # my_module.py
 
 def greet(name):
-    return f"Hello, {name}!"
+return f"Hello, {name}!"
 
-if __name__ == '__main__':
-    # This code will only run when my_module.py is executed directly
-    print(greet("World"))
-    print(f"This script's __name__ is: {__name__}")
+if **name** == '**main**': # This code will only run when my_module.py is executed directly
+print(greet("World"))
+print(f"This script's **name** is: {**name**}")
+
 ```
 
 If you run python my_module.py, the output will be:
 
 ```
+
 Hello, World!
-This script's __name__ is: __main__
+This script's **name** is: **main**
+
 ```
 
 If you import my_module into another script:
 
 ```
+
 # another_script.py
+
 import my_module
 
 print(my_module.greet("Python"))
-print(f"my_module's __name__ when imported is: {my_module.__name__}")
+print(f"my_module's **name** when imported is: {my_module.**name**}")
+
 ```
 
 The output will be:
 
 ```
+
 Hello, Python!
-my_module's __name__ when imported is: my_module
+my_module's **name** when imported is: my_module
+
 ```
 
 ## Imports
@@ -1267,33 +1600,40 @@ my_module's __name__ when imported is: my_module
 - An absolute path is the full, complete address of a file or directory, starting from the root of the file system
 
 ```
+
 my_project/
 │
 ├── app/
-│   ├── __init__.py
-│   ├── services/
-│   │   ├── __init__.py
-│   │   └── calculator.py
-│   └── utils/
-│       ├── __init__.py
-│       └── formatter.py
+│ ├── **init**.py
+│ ├── services/
+│ │ ├── **init**.py
+│ │ └── calculator.py
+│ └── utils/
+│ ├── **init**.py
+│ └── formatter.py
 │
 └── main.py
+
 ```
 
 ```
+
 # my_project/app/services/calculator.py
 
 def add(a, b):
-    return a + b
+return a + b
+
 ```
 
 ```
+
 # main.py
+
 from app.services.calculator import add
 
 result = add(5, 3)
 print(result)
+
 ```
 
 ## Relative Imports
@@ -1305,59 +1645,76 @@ print(result)
   - Use `.folder_name` when the module is inside a subfolder of the current folder.
 
 ```
+
 project/
-    app/
-        __init__.py
-        utils/
-            __init__.py
-            formatter.py
-        services/
-            __init__.py
-            printer.py
+app/
+**init**.py
+utils/
+**init**.py
+formatter.py
+services/
+**init**.py
+printer.py
+
 ```
 
 ```
+
 # utils/formatter.py
+
 def to_upper(s):
-    return s.upper()
+return s.upper()
 
 ```
 
 ```
+
 # services/printer.py
+
 from ..utils.formatter import to_upper
 
 def print_upper(text):
-    print(to_upper(text))
+print(to_upper(text))
 
 ```
 
 ```
+
 my_project/
 │
 ├── main.py
 └── utils/
-    ├── __init__.py
-    ├── math_tools.py
-    └── string_tools.py
+├── **init**.py
+├── math_tools.py
+└── string_tools.py
+
 ```
 
 ```
+
 # utils/math_tools.py
+
 def add(a, b):
-    return a + b
+return a + b
+
 ```
 
 ```
+
 # utils/string_tools.py
+
 def shout(text):
-    return text.upper()
+return text.upper()
+
 ```
 
 ```
-# utils/__init__.py
+
+# utils/**init**.py
+
 from . import math_tools
 from . import string_tools
+
 ```
 
 ## `__init__` file
@@ -1381,53 +1738,76 @@ from . import string_tools
 - Creating a Simple Package Using `__init__.py` File
 
 ```
+
 mypackage/
-    __init__.py
-    module1.py
-    module2.py
+**init**.py
+module1.py
+module2.py
 main.py
+
 ```
 
 ```
-# __init__.py
-# Define the __all__ variable
-__all__ = ["module1", "module2"]
+
+# **init**.py
+
+# Define the **all** variable
+
+**all** = ["module1", "module2"]
 
 # Import the submodules
+
 from . import module1
 from . import module2
+
 ```
 
 ```
+
 # module1.py
+
 # Define a function called func1
+
 def func1():
-    print("This is func1 from module1")
+print("This is func1 from module1")
+
 ```
 
 ```
+
 # module2.py
+
 # Define a function called func2
+
 def func2():
-    print("This is func2 from module2")
+print("This is func2 from module2")
+
 ```
 
 ```
+
 # main.py
+
 # Import the package
+
 import mypackage
 
 # Import the modules
+
 import mypackage.module1
 import mypackage.module2
 
 # Call the functions
+
 mypackage.module1.func1()
 mypackage.module2.func2()
 
 # Output
+
 # This is func1 from module1
+
 # This is func2 from module2
+
 ```
 
 ## Set Up Virtual Environment and Install Dependencies
@@ -1435,32 +1815,40 @@ mypackage.module2.func2()
 - Step 1: Create a virtual environment (recommended).
 
 ```
+
 python -m venv venv
 
 # python -m venv <<folder_name>>
+
 ```
 
 - Step 2: Activate the virtual environment
   - On the window
 
 ```
+
 venv\Scripts\activate
 
 # <<folder_name>>\Scripts\activate
+
 ```
 
 - On macOS / Linux:
 
 ```
+
 source venv/bin/activate
 
 # source <<folder_name>>/bin/activate
+
 ```
 
 - Step 3: Install required libraries from requirements.txt
 
 ```
+
 pip install -r requirements.txt
+
 ```
 
 # Other
@@ -1473,20 +1861,27 @@ pip install -r requirements.txt
 - Step 2: Run your Python script using the -m pdb option:
 
 ```
+
 python3 -m pdb your_file_name.py
+
 ```
 
 On Window
 
 ```
+
 python -m pdb your_file_name.py
+
 ```
 
 If it is not py file
 
 ```
+
 python -m pdb -m flask run
+
 # python -m pdb -m <command-line>
+
 ```
 
 ### Method 2: Start the debugger from the command line and debug at the line where the breakpoint is set.
@@ -1497,8 +1892,10 @@ python -m pdb -m flask run
 **With python < 3.7**
 
 ```
+
 import pdb;
 pdb.set_trace()
+
 ```
 
 **With python >= 3.7** you can simply use the built-in function `breakpoint()` as a shortcut.
@@ -1506,20 +1903,27 @@ pdb.set_trace()
 - Step 3: Run your script normally from the command line
 
 ```
+
 python3 your_file_name.py
+
 ```
 
 On Window
 
 ```
+
 python your_file_name.py
+
 ```
 
 If it is not py file
 
 ```
+
 python -m pdb -m flask run
+
 # python -m pdb -m <command-line>
+
 ```
 
 ### pdb Commands
@@ -1538,22 +1942,28 @@ python -m pdb -m flask run
 ## Format datetime to string
 
 ```
+
 from datetime import datetime
 
 # Get the current date and time
+
 now = datetime.now()
 
 # Example 1: YYYY-MM-DD HH:MM:SS format
+
 formatted_date_time = now.strftime("%Y-%m-%d %H:%M:%S")
 print(f"Current date and time: {formatted_date_time}")
 
 # Example 2: Month Day, Year (e.g., November 27, 2025)
+
 formatted_date = now.strftime("%B %d, %Y")
 print(f"Formatted date: {formatted_date}")
 
 # Example 3: Abbreviated weekday and 12-hour time with AM/PM
+
 formatted_time = now.strftime("%a %I:%M %p")
 print(f"Formatted time: {formatted_time}")
+
 ```
 
 **Common strftime() format codes:**
@@ -1574,40 +1984,50 @@ print(f"Formatted time: {formatted_time}")
 ## index of the day of the week from a date in Python
 
 ```
+
 from datetime import date
 
 # Create a date object
+
 my_date = date(2025, 11, 27)
 
 # Get the index of the day of the week
+
 # Monday is 0, Tuesday is 1, ..., Sunday is 6
+
 day_index = my_date.weekday()
 
 print(f"The date is: {my_date}")
 print(f"The index of the day of the week is: {day_index}")
+
 ```
 
 ## Add days to a date in Python
 
 ```
+
 from datetime import datetime, timedelta
 
 # Define a starting date
+
 original_date = datetime(2023, 1, 15)
 print(f"Original date: {original_date}")
 
 # Add a specific number of days
+
 days_to_add = 7
 new_date = original_date + timedelta(days=days_to_add)
 print(f"Date after adding {days_to_add} days: {new_date}")
 
 # Example with a different number of days
+
 another_date = datetime(2024, 10, 26, 10, 30, 0)
 print(f"Another original date: {another_date}")
 
 more_days = 30
 future_date = another_date + timedelta(days=more_days)
 print(f"Date after adding {more_days} days: {future_date}")
+
 ```
 
 ## Errors
@@ -1619,21 +2039,18 @@ print(f"Date after adding {more_days} days: {future_date}")
   - `else` Optional Code to execute if no exception occurred in the try block
 
 ```
-try:
-    # Code that might raise an exception
-    result = 10 / 0
-except ZeroDivisionError:
-    # Code to handle the specific exception
-    print("Cannot divide by zero!")
-except Exception as e:
-    # Catch-all for other exceptions
-    print(f"An unexpected error occurred: {e}")
-else:
-    # Optional: Code to execute if no exception occurred in the try block
-    print("No exceptions were raised.")
-finally:
-    # Optional: Code that always executes, regardless of exception
-    print("Execution finished.")
+
+try: # Code that might raise an exception
+result = 10 / 0
+except ZeroDivisionError: # Code to handle the specific exception
+print("Cannot divide by zero!")
+except Exception as e: # Catch-all for other exceptions
+print(f"An unexpected error occurred: {e}")
+else: # Optional: Code to execute if no exception occurred in the try block
+print("No exceptions were raised.")
+finally: # Optional: Code that always executes, regardless of exception
+print("Execution finished.")
+
 ```
 
 - Exception Object (e) Attributes & Methods
@@ -1651,85 +2068,87 @@ finally:
 - Built-in exception hierarchy of Python
 
 ```
+
 BaseException
 ├── Exception
-│   ├── ArithmeticError
-│   │   ├── FloatingPointError
-│   │   ├── OverflowError
-│   │   └── ZeroDivisionError
-│   │
-│   ├── AssertionError
-│   ├── AttributeError
-│   ├── BufferError
-│   ├── EOFError
-│   ├── ExceptionGroup
-│   ├── ImportError
-│   │   └── ModuleNotFoundError
-│   │
-│   ├── LookupError
-│   │   ├── IndexError
-│   │   └── KeyError
-│   │
-│   ├── MemoryError
-│   ├── NameError
-│   │   └── UnboundLocalError
-│   │
-│   ├── OSError
-│   │   ├── BlockingIOError
-│   │   ├── ChildProcessError
-│   │   ├── ConnectionError
-│   │   │   ├── BrokenPipeError
-│   │   │   ├── ConnectionAbortedError
-│   │   │   ├── ConnectionRefusedError
-│   │   │   └── ConnectionResetError
-│   │   │
-│   │   ├── FileExistsError
-│   │   ├── FileNotFoundError
-│   │   ├── InterruptedError
-│   │   ├── IsADirectoryError
-│   │   ├── NotADirectoryError
-│   │   ├── PermissionError
-│   │   ├── ProcessLookupError
-│   │   ├── TimeoutError
-│   │   └── UnsupportedOperation
-│   │
-│   ├── ReferenceError
-│   ├── RuntimeError
-│   │   ├── NotImplementedError
-│   │   └── RecursionError
-│   │
-│   ├── StopAsyncIteration
-│   ├── StopIteration
-│   ├── SyntaxError
-│   │   └── IndentationError
-│   │       └── TabError
-│   │
-│   ├── SystemError
-│   ├── TypeError
-│   ├── ValueError
-│   │   ├── UnicodeError
-│   │   │   ├── UnicodeDecodeError
-│   │   │   ├── UnicodeEncodeError
-│   │   │   └── UnicodeTranslateError
-│   │   │
-│   │   └── UnsupportedOperation (also appears under OSError subclass)
-│   │
-│   ├── Warning
-│   │   ├── UserWarning
-│   │   ├── DeprecationWarning
-│   │   ├── PendingDeprecationWarning
-│   │   ├── SyntaxWarning
-│   │   ├── RuntimeWarning
-│   │   ├── FutureWarning
-│   │   ├── ImportWarning
-│   │   ├── UnicodeWarning
-│   │   └── ResourceWarning
-│   │
-│   └── KeyboardInterrupt
+│ ├── ArithmeticError
+│ │ ├── FloatingPointError
+│ │ ├── OverflowError
+│ │ └── ZeroDivisionError
+│ │
+│ ├── AssertionError
+│ ├── AttributeError
+│ ├── BufferError
+│ ├── EOFError
+│ ├── ExceptionGroup
+│ ├── ImportError
+│ │ └── ModuleNotFoundError
+│ │
+│ ├── LookupError
+│ │ ├── IndexError
+│ │ └── KeyError
+│ │
+│ ├── MemoryError
+│ ├── NameError
+│ │ └── UnboundLocalError
+│ │
+│ ├── OSError
+│ │ ├── BlockingIOError
+│ │ ├── ChildProcessError
+│ │ ├── ConnectionError
+│ │ │ ├── BrokenPipeError
+│ │ │ ├── ConnectionAbortedError
+│ │ │ ├── ConnectionRefusedError
+│ │ │ └── ConnectionResetError
+│ │ │
+│ │ ├── FileExistsError
+│ │ ├── FileNotFoundError
+│ │ ├── InterruptedError
+│ │ ├── IsADirectoryError
+│ │ ├── NotADirectoryError
+│ │ ├── PermissionError
+│ │ ├── ProcessLookupError
+│ │ ├── TimeoutError
+│ │ └── UnsupportedOperation
+│ │
+│ ├── ReferenceError
+│ ├── RuntimeError
+│ │ ├── NotImplementedError
+│ │ └── RecursionError
+│ │
+│ ├── StopAsyncIteration
+│ ├── StopIteration
+│ ├── SyntaxError
+│ │ └── IndentationError
+│ │ └── TabError
+│ │
+│ ├── SystemError
+│ ├── TypeError
+│ ├── ValueError
+│ │ ├── UnicodeError
+│ │ │ ├── UnicodeDecodeError
+│ │ │ ├── UnicodeEncodeError
+│ │ │ └── UnicodeTranslateError
+│ │ │
+│ │ └── UnsupportedOperation (also appears under OSError subclass)
+│ │
+│ ├── Warning
+│ │ ├── UserWarning
+│ │ ├── DeprecationWarning
+│ │ ├── PendingDeprecationWarning
+│ │ ├── SyntaxWarning
+│ │ ├── RuntimeWarning
+│ │ ├── FutureWarning
+│ │ ├── ImportWarning
+│ │ ├── UnicodeWarning
+│ │ └── ResourceWarning
+│ │
+│ └── KeyboardInterrupt
 │
 ├── GeneratorExit
 ├── KeyboardInterrupt
 └── SystemExit
+
 ```
 
 ## Custom error classes
@@ -1743,19 +2162,18 @@ BaseException
 - Defining a Custom Exception
 
 ```
-class MyCustomError(Exception):
-    # Exception raised for custom error scenarios.
-    # Attributes:
-    # message -- explanation of the error
+
+class MyCustomError(Exception): # Exception raised for custom error scenarios. # Attributes: # message -- explanation of the error
 
     def __init__(self, message):
         self.message = message
         super().__init__(self.message)
+
 ```
 
 ```
-class MyCustomError(Exception):
-    # Exception raised for custom error in the application.
+
+class MyCustomError(Exception): # Exception raised for custom error in the application.
 
     def __init__(self, message, error_code):
         super().__init__(message)
@@ -1763,6 +2181,7 @@ class MyCustomError(Exception):
 
     def __str__(self):
         return f"{self.message} (Error Code: {self.error_code})"
+
 ```
 
 ## Raise an exception
@@ -1770,9 +2189,11 @@ class MyCustomError(Exception):
 - `raise` is the correct Python keyword for signaling an error or an unusual condition in your program, effectively halting its normal flow
 
 ```
+
 x = -5
-    if x < 0:
-        raise ValueError("Sorry, no numbers below zero are allowed.")
+if x < 0:
+raise ValueError("Sorry, no numbers below zero are allowed.")
+
 ```
 
 ## Using raise with a custom exception.
@@ -1780,19 +2201,23 @@ x = -5
 - Raising a Custom Exception
 
 ```
+
 def divide(a, b):
-    if b == 0:
-        raise MyCustomError("Division by zero is not allowed", 400)
-    return a / b
+if b == 0:
+raise MyCustomError("Division by zero is not allowed", 400)
+return a / b
+
 ```
 
 - Handling Custom Exceptions
 
 ```
+
 try:
-    result = divide(10, 0)
+result = divide(10, 0)
 except MyCustomError as e:
-    print(f"Caught an error: {e}")
+print(f"Caught an error: {e}")
+
 ```
 
 ## Re-raising an exception
@@ -1800,13 +2225,13 @@ except MyCustomError as e:
 - Within an except block, you can use a bare raise statement without any arguments to re-raise the exception that was just caught. This is useful for adding context or performing some logging before propagating the exception further up the call stack
 
 ```
-try:
-    # Some operation that might raise an exception
-    result = 10 / 0
+
+try: # Some operation that might raise an exception
+result = 10 / 0
 except ZeroDivisionError as e:
-    print(f"An error occurred: {e}")
-    # Re-raises the ZeroDivisionError
-    raise
+print(f"An error occurred: {e}") # Re-raises the ZeroDivisionError
+raise
+
 ```
 
 ## Python Docstrings - `__doc__` or `help()`
@@ -1818,27 +2243,31 @@ except ZeroDivisionError as e:
   - Unlike comments (#), docstrings can be accessed at runtime using `__doc__` or `help()`
 
 ```
-def my_function():
-    """Demonstrates triple quotes docstring and does nothing."""
-    return None
 
-print("Using __doc__:")
-print(my_function.__doc__)
+def my_function():
+"""Demonstrates triple quotes docstring and does nothing."""
+return None
+
+print("Using **doc**:")
+print(my_function.**doc**)
 
 print("Using help():")
 help(my_function)
+
 ```
 
 Output
 
 ```
-Using __doc__:
+
+Using **doc**:
 Demonstrates triple quotes docstring and does nothing.
 Using help():
-Help on function my_function in module __main__:
+Help on function my_function in module **main**:
 
 my_function()
-    Demonstrates triple quotes docstring and does no...
+Demonstrates triple quotes docstring and does no...
+
 ```
 
 ## API - Application programing interface
@@ -1885,16 +2314,18 @@ An HTTP request consists of **four main parts**:
 ### Example
 
 ```
+
 POST /users HTTP/1.1
 Host: api.example.com
 Content-Type: application/json
 Authorization: Bearer token123
 
 {
-    "name": "Alice",
-    "email": "alice@example.com
+"name": "Alice",
+"email": "alice@example.com
 "
 }
+
 ```
 
 ### Request Line
@@ -1902,7 +2333,9 @@ Authorization: Bearer token123
 - The request line contains: `METHOD /path HTTP/version`
 
 ```
+
 GET /users/1 HTTP/1.1
+
 ```
 
 - Components:
@@ -1940,7 +2373,9 @@ GET /users/1 HTTP/1.1
 - Example:
 
 ```
+
 Content-Type: application/json
+
 ```
 
 ### Request Body
@@ -1956,10 +2391,12 @@ Content-Type: application/json
 - Example (JSON):
 
 ```
+
 {
-    "username": "john",
-    "password": "secret"
+"username": "john",
+"password": "secret"
 }
+
 ```
 
 ### Query Parameters
@@ -1971,7 +2408,9 @@ Content-Type: application/json
 Example:
 
 ```
+
 GET /users?page=2&limit=10
+
 ```
 
 ### HTTP Request vs HTTP Response
@@ -2059,7 +2498,9 @@ GET /users?page=2&limit=10
 - A UUID is a 128-bit (16-byte) value, typically represented as a 36-character string (32 hexadecimal characters and 4 hyphens)
 
 ```
+
 550e8400-e29b-41d4-a716-446655440000
+
 ```
 
 ### Why is it called “Universally Unique”?
@@ -2094,8 +2535,10 @@ GET /users?page=2&limit=10
 ### How to use
 
 ```
+
 import uuid
 uuid.uuid4().hex
+
 ```
 
 ## SQLAlchemy Database URL with Special Characters
@@ -2107,13 +2550,17 @@ uuid.uuid4().hex
 - Syntax
 
 ```
+
 dialect+driver://username:password@host:port/database
+
 ```
 
 - Example
 
 ```
+
 postgresql+psycopg2://username:password@localhost:5432/mydatabase
+
 ```
 
 ### Common Issue with Special Characters
@@ -2121,10 +2568,13 @@ postgresql+psycopg2://username:password@localhost:5432/mydatabase
 - If your password contains `@`, `:`, or other special characters, a URL like this:
 
 ```
+
 postgresql+psycopg2://sonda:Son@22011995@localhost:5432/rest_api_flask_python
 
 # will fail with:
+
 # sqlalchemy.exc.OperationalError: could not translate host name "22011995@localhost" to address
+
 ```
 
 - Reason: SQLAlchemy interprets the first @ as the separator between password and host, so the host is parsed incorrectly.
@@ -2137,12 +2587,14 @@ postgresql+psycopg2://sonda:Son@22011995@localhost:5432/rest_api_flask_python
 ### Encode Password Programmatically in Python
 
 ```
+
 from urllib.parse import quote_plus
 
 password = "Son@22011995"
-encoded_password = quote_plus(password)  # returns 'Son%4022011995'
+encoded_password = quote_plus(password) # returns 'Son%4022011995'
 
 db_url = f"postgresql+psycopg2://sonda:{encoded_password}@localhost:5432/rest_api_flask_python"
+
 ```
 
 # Python Built-in Functions
@@ -2226,8 +2678,10 @@ db_url = f"postgresql+psycopg2://sonda:{encoded_password}@localhost:5432/rest_ap
 - The operation modifies the original object directly, instead of creating a new one.
 
 ```
+
 a = [1, 2, 3]
 a.append(4)
+
 ```
 
 - The list a is modified directly
@@ -2275,33 +2729,41 @@ a.append(4)
 - This merge creates an entirely new dict object z where we unpack every value from x and y. This way of merging two dictionaries feels unnatural and hardly obvious. If both dictionaries have the same keys, the values of dictionary x are overwritten by the values of dictionary y.
 
 ```
+
 x = {"key1": "value1 from x", "key2": "value2 from x"}
 y = {"key2": "value2 from y", "key3": "value3 from y"}
 
 z = {**x, **y}
 print(z)
+
 # {'key1': 'value1 from x', 'key2': 'value2 from y', 'key3': 'value3 from y'}
+
 ```
 
 - If the key already exists, the new value will overwrite the old one.
 
 ```
+
 # before merging
+
 x = {"key1": "value1 from x", "key2": "value2 from x"}
 y = {"key2": "value2 from y", "key3": "value3 from y"}
-print(id(x))  # 2670466407744
-print(id(y))  # 2670466407808
+print(id(x)) # 2670466407744
+print(id(y)) # 2670466407808
 
 # after merging
+
 x | y
-print(id(x))  # 2670466407744
-print(id(y))  # 2670466407808
+print(id(x)) # 2670466407744
+print(id(y)) # 2670466407808
 
 # assigning the expression to the variable `z`
+
 z = x | y
-print(id(z))  # 2670466542912
-print(z is x)  # False
-print(z is y)  # False
+print(id(z)) # 2670466542912
+print(z is x) # False
+print(z is y) # False
+
 ```
 
 # Python Libraries
@@ -2448,3 +2910,7 @@ print(z is y)  # False
   - Track email events (delivered, opened, clicked, bounced, spam complaints)
   - Manage domains, templates, and email logs
   - Integrate via REST API or SMTP with backend applications (Python, Node.js, Java, etc.)
+
+```
+
+```
