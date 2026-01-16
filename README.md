@@ -365,7 +365,7 @@ print(c)
 | f-string (expr)    | `f"{a+b}"`                | Inline expressions        | `f"{2+3}"`                   | `5`          |
 | f-string (format)  | `f"{n:.2f}"`              | Format numbers            | `f"{3.14159:.2f}"`           | `3.14`       |
 | f-string (padding) | `f"{n:05}"`               | Zero padding              | `f"{42:05}"`                 | `00042`      |
-| f-string (align)   | `f"{s:^10}"`              | Center text               | `f"{'hi':^10}"`              | ` hi  `      |
+| f-string (align)   | `f"{s:^10}"`              | Center text               | `f"{'hi':^10}"`              | `hi `        |
 | `format()`         | `"{}".format(x)`          | Classic formatter         | `"Hello {}".format("Bob")`   | `Hello Bob`  |
 | `format()`         | `"{0} {1}".format(a,b)`   | Positional args           | `"{0}-{1}".format(1,2)`      | `1-2`        |
 | `format()`         | `"{name}".format(name=x)` | Named args                | `"{name}".format(name="An")` | `An`         |
@@ -399,6 +399,21 @@ txt = "We are the so-called \"Vikings\" from the north."
 | `\N{name}`       | Unicode name     | Unicode character          | `"\N{GREEK SMALL LETTER PI}"` | π              |
 | `\uXXXX`         | Unicode (16-bit) | Unicode char               | `"\u03C0"`                    | π              |
 | `\UXXXXXXXX`     | Unicode (32-bit) | Unicode char               | `"\U0001F600"`                | 😀             |
+
+- Encoding and decoding strings
+
+```
+s = "This is üŋíc0de" # unicode string: code points
+type(s)
+# <class 'str'>
+encoded_s = s.encode('utf-8') # utf-8 encoded version of s
+encoded_s
+# b'This is \xc3\xbc\xc5\x8b\xc3\xadc0de' # result: bytes object
+type(encoded_s) # another way to verify it
+# <class 'bytes'>
+encoded_s.decode('utf-8') # let's revert to the original
+# 'This is üŋíc0de'
+```
 
 # OOP
 
