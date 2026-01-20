@@ -1,490 +1,281 @@
-- [Flask Terminology](#flask-terminology)
-  - [`class flask.Flask`](#class-flaskflask)
-    - [About the First Parameter - `import_name`](#about-the-first-parameter---import_name)
-    - [`route(rule, **options)`](#routerule-options)
-    - [`get(rule, **option)`](#getrule-option)
-    - [`post(rule, **options)`](#postrule-options)
-    - [`delete(rule, **options)`](#deleterule-options)
-  - [`class flask.Request`](#class-flaskrequest)
-    - [`get_json`](#get_json)
-  - [URL variables | Route parameters](#url-variables--route-parameters)
-  - [Builtin Configuration Values](#builtin-configuration-values)
-    - [`PROPAGATE_EXCEPTIONS`](#propagate_exceptions)
-- [Flask REST API](#flask-rest-api)
-  - [First REST API](#first-rest-api)
-  - [Create store in REST API](#create-store-in-rest-api)
-  - [Create items in our REST API](#create-items-in-our-rest-api)
-- [Flask CLI](#flask-cli)
-  - [Environment Variables From dotenv](#environment-variables-from-dotenv)
-    - [FLASK_APP](#flask_app)
-    - [FLASK_DEBUG](#flask_debug)
-    - [FLASK_RUN_PORT](#flask_run_port)
-    - [FLASK_RUN_HOST](#flask_run_host)
-  - [flask run](#flask-run)
-- [Flask-Smorest](#flask-smorest)
-  - [Why use Flask-Smorest](#why-use-flask-smorest)
-  - [`flask_smorest.abort`](#flask_smorestabort)
-    - [How to use](#how-to-use)
-    - [Why you should use `flask_smorest.abort` in Flask](#why-you-should-use-flask_smorestabort-in-flask)
-  - [How to use Flask-Smorest `MethodViews` and `Blueprints`](#how-to-use-flask-smorest-methodviews-and-blueprints)
-    - [`Blueprints`](#blueprints)
-    - [MethodViews](#methodviews)
-    - [Import blueprints and Flask-Smorest configuration](#import-blueprints-and-flask-smorest-configuration)
-  - [`marshmallow`](#marshmallow)
-- [JSON](#json)
+- [Basic Application Structure](#basic-application-structure)
+  - [Initialization](#initialization)
+  - [Routes and View Functions](#routes-and-view-functions)
+    - [URL dynamic](#url-dynamic)
+  - [Command-Line Options](#command-line-options)
+  - [The Request-Response Cycle](#the-request-response-cycle)
+    - [Application and Request Contexts](#application-and-request-contexts)
+    - [Request Dispatching](#request-dispatching)
+    - [The Request Object](#the-request-object)
+    - [Request Hooks](#request-hooks)
+    - [Responses](#responses)
+      - [Redirect](#redirect)
+      - [Abort](#abort)
+    - [Handling basic configurations](#handling-basic-configurations)
+    - [Setting up with Docker](#setting-up-with-docker)
 
-# Flask Terminology
+# Basic Application Structure
 
-## `class flask.Flask`
+## Initialization
 
-- class flask.Flask(import_name, static_url_path=None, static_folder='static', static_host=None, host_matching=False, subdomain_matching=False, template_folder='templates', instance_path=None, instance_relative_config=False, root_path=None)
-
-- The flask object implements a WSGI application and acts as the central object. It is passed the name of the module or package of the application. Once it is created it will act as a central registry for the view functions, the URL rules, template configuration and much more.
-
-### About the First Parameter - `import_name`
-
-- The idea of the first parameter is to give Flask an idea of what belongs to your application. This name is used to find resources on the filesystem, can be used by extensions to improve debugging information and a lot more.
-
-- So it’s important what you provide there. If you are using a single module, **name** is always the correct value. If you however are using a package, it’s usually recommended to hardcode the name of your package there.
-
-- For example if your application is defined in yourapplication/app.py you should create it with one of the two versions below:
+- The only required argument to the Flask class constructor is the name of the main module or package of the application. For most applications, Python’s `__name__` variable is the correct value for this argument
 
 ```
-app = Flask('yourapplication')
-app = Flask(__name__.split('.')[0])
-```
+# learn.py
 
-### `route(rule, **options)`
-
-- Decorate a view function to register it with the given URL rule and options
-- The endpoint decorator `@app.route("/")` registers the route's endpoint with Flask.
-- Parameters:
-  - `rule` (str) – The URL rule string.
-
-```
 from flask import Flask
+app = Flask(__name__)
+```
+
+- Run flask app by cli command: `flask --app learn --debug run`
+
+## Routes and View Functions
+
+- Clients such as web browsers send requests to the web server, which in turn sends them to the Flask application instance. The Flask application instance needs to know what code it needs to run for each URL requested, so it keeps a mapping of URLs to Python functions. The association between a URL and the function that handles it is called a route.
+- The most convenient way to define a route in a Flask application is through the `app.route` decorator exposed by the application instance
+
+```
+@app.route('/')
+def index():
+    return '<h1>Hello World!</h1>'
+```
+
+- Flask also offers a more traditional way to set up the application routes with the `app.add_url_rule()`
+  method
+- `app.add_url_rule()` Parameters:
+  - rule (str) – The URL rule string.
+  - endpoint (str | None) – The endpoint name to associate with the rule and view function. Used when routing and building URLs. Defaults to `view_func.__name__`.
+  - view_func (ft.RouteCallable | None) – The view function to associate with the endpoint name.
+  - provide_automatic_options (bool | None) – Add the OPTIONS method and respond to OPTIONS requests automatically.
+  - options (t.Any) – Extra options passed to the Rule object.
+
+- The alternative for `app.route` decorator
+
+```
+def index():
+    return '<h1>Hello World!</h1>'
+
+app.add_url_rule('/', 'index', index)
+```
+
+- Full example `app.add_url_rule()`
+
+```
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-@app.route("/")
-def home():
-    return "Hello"
+def user_detail(user_id):
+    return jsonify({
+        "user_id": user_id,
+        "method": request.method
+    })
 
-```
+app.add_url_rule(
+    rule="/users/<int:user_id>",          # rule
+    endpoint="user_detail_endpoint",       # endpoint
+    view_func=user_detail,                 # view_func
+    provide_automatic_options=True,        # provide_automatic_options
+    methods=["GET", "POST"],               # options
+    strict_slashes=False                   # options
+)
 
-### `get(rule, **option)`
-
-- Shortcut for route() with methods=["GET"].
-
-```
-@app.get("/store")
-def get_stores():
-    return {"stores": stores}
-```
-
-### `post(rule, **options)`
-
-- Shortcut for route() with methods=["POST"].
-
-### `delete(rule, **options)`
-
-Shortcut for route() with methods=["DELETE"].
-
-## `class flask.Request`
-
-- The request object used by default in Flask. Remembers the matched endpoint and view arguments.
-
-### `get_json`
-
-- get_json(force=False, silent=False, cache=True)
-- Parse data as JSON.
-- If the mimetype does not indicate JSON (`application/json`, see `is_json`), or parsing fails, `on_json_loading_failed()` is called and its return value is used as the return value. By default this raises a 415 Unsupported Media Type resp.
-
-## URL variables | Route parameters
-
-- How to Use: define a route parameter in the URL rule within the `@app.route()` decorator using angle brackets `<variable_name>`.
-- The name you use in the URL must match the name of the argument in the corresponding Python function. Your function then receives the `<variable_name>` as a keyword argument
-
-- Basic example
-
-```
-from flask import Flask
-app = Flask(__name__)
-
-@app.route('/user/<username>')
-def show_user_profile(username):
-    # show the user profile for that user
-    return f'User: {username}'
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     app.run(debug=True)
 ```
 
-- URL Converters: By default, the parameter type is a string (without slashes). Flask supports various type converters to filter the parameters in the URL
+### URL dynamic
 
-| **Type**   | **Description**                                |
-| ---------- | ---------------------------------------------- |
-| **string** | _(Default)_ Accepts any text without slashes.  |
-| **int**    | Accepts positive integers.                     |
-| **float**  | Accepts positive floating-point values.        |
-| **path**   | Similar to `string`, but also accepts slashes. |
-| **uuid**   | Accepts UUID strings.                          |
+- You can add variable sections to a URL by marking sections with `<variable_name>`. Your function then receives the `<variable_name>` as a keyword argument. Optionally, you can use a converter to specify the type of the argument like `<converter:variable_name>`.
 
-- Example with an Integer Converter
-
-```
-@app.route('/post/<int:post_id>')
-def show_post(post_id):
-    # show the post with the given id, which is an integer
-    return f'Post ID: {post_id}'
-
-```
-
-## Builtin Configuration Values
-
-- The following configuration values are used internally by Flask:
-
-### `PROPAGATE_EXCEPTIONS`
-
-- Exceptions are re-raised rather than being handled by the app’s error handlers. If not set, this is implicitly `true` if `TESTING` or `DEBUG` is enabled.
-- Default: `None`
-
-# Flask REST API
-
-## First REST API
+| Converter | Description                                          |
+| --------- | ---------------------------------------------------- |
+| `string`  | (Default) Accepts any text **without a slash (`/`)** |
+| `int`     | Accepts **positive integers**                        |
+| `float`   | Accepts **positive floating-point values**           |
+| `path`    | Like `string` but also accepts **slashes (`/`)**     |
+| `uuid`    | Accepts **UUID strings**                             |
 
 ```
 from flask import Flask
-
 app = Flask(__name__)
 
-stores = [{"name": "My Store", "items": [{"name": "my item", "price": 15.99}]}]
+@app.route('/')
+def index():
+    return '<h1>Hello World!</h1>'
 
-@app.get("/store")
-def get_stores():
-    return {"stores": stores}
+@app.route('/user/<name>')
+def user(name):
+    return '<h1>Hello, {}!</h1>'.format(name)
 ```
 
-## Create store in REST API
-
-- Create store
+## Command-Line Options
 
 ```
-from flask import Flask, request
-
-stores = [
-    {
-        "name": "My Store",
-        "is_active": True,
-        "items": [
-            {
-                "name": "my item",
-                "price": 15.99
-            }
-        ]
-    }
-]
-
-app = Flask(__name__)
-
-@app.post("/store")
-def create_store():
-    request_data = request.get_json()
-    new_store = {"name": request_data["name"], "items": []}
-    stores.append(new_store)
-    return new_store, 201
-```
-
-## Create items in our REST API
+flask --help
+flask run --help
 
 ```
-@app.post("/store/<string:name>/item")
-def create_item(name):
-    request_data = request.get_json()
-    for store in stores:
-        if store["name"] == name:
-            new_item = {"name": request_data["name"], "price": request_data["price"]}
-            store["items"].append(new_item)
-            return new_item
-    return {"message": "Store not found"}, 404
-```
 
-# Flask CLI
+## The Request-Response Cycle
 
-## Environment Variables From dotenv
+### Application and Request Contexts
 
-- If `python-dotenv` is installed, running the flask command will set environment variables defined in the files `.env` and `.flaskenv`. You can also specify an extra file to load with the `--env-file` option. Dotenv files can be used to avoid having to set `--app` or `FLASK_APP` manually, and to set configuration using environment variables similar to how some deployment services work.
-- The files are only loaded by the flask command or calling `run()`. If you would like to load these files when running in production, you should call `load_dotenv()` manually.
-
-### FLASK_APP
-
-- option is used to specify how to load the application.
-- `FLASK_APP = src/hello`: Sets the current working directory to src then imports hello.
-
-- `FLASK_APP = hello.web`: Imports the path hello.web.
-
-- `FLASK_APP = hello:app2`: Uses the app2 Flask instance in hello.
-
-- `FLASK_APP = 'hello:create_app("dev")'`: The create_app factory in hello is called with the string `'dev'` as the argument
-
-### FLASK_DEBUG
-
-- Debug mode is enabled.
-- Default: `Flase`
-
-### FLASK_RUN_PORT
-
-- To set the port for the run command
+- Flask uses contexts to temporarily make certain objects globally accessible
 
 ```
-FLASK_RUN_PORT=9999
-```
-
-### FLASK_RUN_HOST
-
-- To set the host for the run command
-- You cannot just choose any random IP address; it must match the IP address assigned to your machine by the router.
-  - To check this: Open the Command Prompt (cmd) and type the command ipconfig.
-  - Look for the line: IPv4 Address. If the number displayed there is different from `192.168.3.2`, you must use that specific number in your `.flaskenv` file.
-
-```
-FLASK_RUN_HOST=192.168.3.2 # wrong
-FLASK_RUN_HOST=192.168.2.67 # correct
-```
-
-- Recommendation: This command instructs Flask to listen on all available network interfaces of the machine (including Wi-Fi, LAN, and localhost)
-
-```
-FLASK_RUN_HOST=0.0.0.0
-```
-
-- If you do not specify a host address, the default IP address is `localhost` (`127.0.0.1`).
-- The Loopback IP Address
-  - `127.0.0.0` to `127.255.255.255` is reserved for loopback, i.e., a host’s own address,
-    also known as the localhost addres
-  - `127.0.0.1` is typically configured as the default loopback address on operating systems.
-
-## flask run
-
-- Run web application
-- Parameter
-
-  - `host` (str | None) – the hostname to listen on. Set this to `'0.0.0.0'` to have the server available externally as well. Defaults to `'127.0.0.1'` or the host in the SERVER_NAME config variable if present.
-
-  - `port` (int | None) – the port of the webserver. Defaults to `5000` or the port defined in the SERVER_NAME config variable if present.
-
-  - `debug` (bool | None) – if given, enable or disable debug mode. See `debug`.
-
-  - `load_dotenv` (bool) – Load the nearest .env and .flaskenv files to set environment variables. Will also change the working directory to the directory containing the first file found.
-
-  - `options` (Any) – the `options` to be forwarded to the underlying Werkzeug server. See werkzeug.serving.run_simple() for more information.
-
-- Example: `flask run --host=0.0.0.0 --port=5000 --debug`
-
-# Flask-Smorest
-
-## Why use Flask-Smorest
-
-- I was looking to compare the three libraries in a few key areas:
-
-  - Ease of use and getting started. Many REST APIs are essentially microservices, so being able to whip one up quickly and without having to go through a steep learning curve is definitely interesting.
-  - Maintainability and expandability. Although many start as microservices, sometimes we have to maintain projects for a long time. And sometimes, they grow past what we originally envisioned.
-  - Activity in the library itself. Even if a library is suitable now, if it is not actively maintained and improved, it may not be suitable in the future. We'd like to teach something that you will use for years to come.
-  - Documentation and usage of best practice. The library should help you write better code by having strong documentation and guiding you into following best practice. If possible, it should use existing, actively maintained libraries as dependencies instead of implementing their own versions of them.
-  - Developer experience in production projects. The main point here was: how easy is it to produce API documentation with the library of choice. Hundreds of students have asked me how to integrate Swagger in their APIs, so it would be great if the library we teach gave it to you out of the box.
-
-- Flask-Smorest is the most well-rounded. It ticks all the boxes above
-
-## `flask_smorest.abort`
-
-### How to use
-
-```
-from flask_smorest import abort
-
-@app.get("/store/<string:store_id>")
-def get_store(store_id):
-    try:
-        # Here you might also want to add the items in this store
-        # We'll do that later on in the course
-        return stores[store_id]
-    except KeyError:
-        abort(404, message="Store not found.")
-```
-
-### Why you should use `flask_smorest.abort` in Flask
-
-- Errors are control flow, not normal data
-- `abort()` immediately stops execution
-
-```
-def service():
-    if invalid:
-        abort(400)
-
-def view():
-    service()
-    save_to_db()  # ❌ will not be executed
-
-# With return, you must propagate the error through every layer.
-# With abort(), you raise the error once and execution stops immediately.
-```
-
-- Clear separation of concerns
-- Consistent and centralized error responses
-- Correct HTTP semantics
-- Better scalability and maintainability
-
-## How to use Flask-Smorest `MethodViews` and `Blueprints`
-
-### `Blueprints`
-
-- The Blueprint arguments are the same as the Flask Blueprint1, with an added optional description keyword argument:
-- **stores** is the name of the blueprint. This will be shown in the documentation and is prepended to the endpoint names when you use url_for (we won't use it).
-  `__name__` is the **import name**.
-- The description will be shown in the documentation UI.
-
-```
-# resources/store.py
-import uuid
 from flask import request
-from flask.views import MethodView
-from flask_smorest import Blueprint, abort
-from db import stores
 
+@app.route('/')
+def index():
+    user_agent = request.headers.get('User-Agent')
+    return '<p>Your browser is {}</p>'.format(user_agent)
+```
 
-blp = Blueprint("stores", __name__, description="Operations on stores")
+- There are two contexts in Flask: the `application context` and the `request context`
+
+| Variable name | Context             | Description                                                                                                                              |
+| ------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| current_app   | Application context | The application instance for the active application.                                                                                     |
+| g             | Application context | An object that the application can use for temporary storage during the handling of a request. This variable is reset with each request. |
+| request       | Request context     | The request object, which encapsulates the contents of an HTTP request sent by the client.                                               |
+| session       | Request context     | The user session, a dictionary that the application uses to store data that is preserved between requests for a specific user.           |
+
+### Request Dispatching
+
+- When the application receives a request from a client, it needs to find out what view function to invoke to service it. For this task, Flask looks up the URL given in the request in the application’s URL map, which contains a mapping of URLs to the view
+  functions that handle them.
+- Flask builds this map using the data provided in the `app.route` decorator, or the equivalent non-decorator version,
+  `app.add_url_rule()`
+- Flask attaches methods to each route so that different request methods sent to the same URL can be handled by different view functions
+- Example to see what the URL map in a Flask application looks like
+
+```
+# in terminal
+# server.py is python file declare app = Flask(__name__)
+
+(venv) $ python
+from server import app
+
+app.url_map
+
+>>>Map([<Rule '/' (HEAD, OPTIONS, GET) -> index>,
+>>><Rule '/static/<filename>' (HEAD, OPTIONS, GET) -> static>,
+>>><Rule '/user/<name>' (HEAD, OPTIONS, GET) -> user>])
 
 ```
 
-### MethodViews
-
-- The endpoint is associated to the MethodView class. Here, the class is called Store and the endpoint is `/store/<string:store_id>`.
-- There are two methods inside the Store class: get and delete. These are going to map directly to `GET` `/store/<string:store_id>` and `DELETE` `/store/<string:store_id>`.
+### The Request Object
 
 ```
-@blp.route("/store/<string:store_id>")
-class Store(MethodView):
-    def get(self, store_id):
-        pass
-
-    def delete(self, store_id):
-        pass
+from flask import request
 ```
 
-### Import blueprints and Flask-Smorest configuration
+| Attribute / Method | Description                                                                           |
+| ------------------ | ------------------------------------------------------------------------------------- |
+| `form`             | A dictionary with all the form fields submitted with the request.                     |
+| `args`             | A dictionary with all the arguments passed in the query string of the URL.            |
+| `values`           | A dictionary that combines the values in `form` and `args`.                           |
+| `cookies`          | A dictionary with all the cookies included in the request.                            |
+| `headers`          | A dictionary with all the HTTP headers included in the request.                       |
+| `files`            | A dictionary with all the file uploads included with the request.                     |
+| `get_data()`       | Returns the buffered data from the request body.                                      |
+| `get_json()`       | Returns a Python dictionary with the parsed JSON included in the body of the request. |
+| `blueprint`        | The name of the Flask blueprint that is handling the request.                         |
+| `endpoint`         | The name of the Flask endpoint that is handling the request.                          |
+| `method`           | The HTTP request method, such as `GET` or `POST`.                                     |
+| `scheme`           | The URL scheme (`http` or `https`).                                                   |
+| `is_secure()`      | Returns `True` if the request came through a secure (HTTPS) connection.               |
+| `host`             | The host defined in the request, including the port number if given by the client.    |
+| `path`             | The path portion of the URL.                                                          |
+| `query_string`     | The query string portion of the URL, as a raw binary value.                           |
+| `full_path`        | The path and query string portions of the URL.                                        |
+| `url`              | The complete URL requested by the client.                                             |
+| `base_url`         | Same as `url`, but without the query string component.                                |
+| `remote_addr`      | The IP address of the client.                                                         |
+| `environ`          | The raw WSGI environment dictionary for the request.                                  |
+
+### Request Hooks
+
+- Sometimes it is useful to execute code before or after each request is processed
+- For example, at the start of each request it may be necessary to create a database connection or authenticate the user making the request
+- Instead of duplicating the code that performs these actions in every view function, Flask gives you the option to register
+  common functions to be invoked before or after a request is dispatched
+
+- Request hooks are implemented as **decorators**. These are the four hooks supported by Flask:
+  - `before_request`: Registers a function to run before each request.
+  - `before_first_request`: Registers a function to run only before the first request is handled. This can be aconvenient way to add server initialization tasks.
+  - `after_request`: Registers a function to run after each request, but only if no unhandled exceptions occurred.
+  - `teardown_request`: Registers a function to run after each request, even if unhandled exceptions occurred.
+
+### Responses
+
+- In most cases the response is a simple string that is sent back to the client as an HTML page
+- Flask by default sets to `200`, the code that indicates that the request was carried out successfully
+- When a view function needs to respond with a different status code, it can add the numeric code as a second return value after the response tex
 
 ```
-from flask import Flask
-from flask_smorest import Api
-
-from resources.item import blp as ItemBlueprint
-from resources.store import blp as StoreBlueprint
-
-
-app = Flask(__name__)
-
-app.config["PROPAGATE_EXCEPTIONS"] = True
-app.config["API_TITLE"] = "Stores REST API"
-app.config["API_VERSION"] = "v1"
-app.config["OPENAPI_VERSION"] = "3.0.3"
-app.config["OPENAPI_URL_PREFIX"] = "/"
-app.config["OPENAPI_SWAGGER_UI_PATH"] = "/swagger-ui"
-app.config["OPENAPI_SWAGGER_UI_URL"] = "https://cdn.jsdelivr.net/npm/swagger-ui-dist/"
-
-api = Api(app)
-
-api.register_blueprint(ItemBlueprint)
-api.register_blueprint(StoreBlueprint)
-
+@app.route('/')
+def index():
+    return '<h1>Bad Request</h1>', 400
 ```
 
-## `marshmallow`
-
-- Marshmallow is a Python library used to validate, serialize, and deserialize data.
-
-- It allows developers to:
-
-  - Validate incoming data (e.g. API request payloads)
-  -
-  - Convert raw input data (JSON, dict) into Python objects (deserialization)
-  -
-  - Convert Python objects into JSON-ready data (serialization)
-  -
-  - Enforce data structure and types using schemas
-  -
-  - Produce consistent and meaningful validation errors
-
-- Marshmallow helps keep APIs safe, predictable, and maintainable by ensuring that all input and output data follows well-defined rules.
+- Flask view functions have the option of returning a **response object**
+- The `make_response()` function takes one, two, or three arguments, the same values that can be returned from a view function, and returns an equivalent response object
 
 ```
-from marshmallow import Schema, fields, validates_schema, ValidationError
+from flask import make_response
 
-
-class ItemSchema(Schema):
-    id = fields.Str(dump_only=True)
-    name = fields.Str(required=True)
-    price = fields.Float(required=True)
-    store_id = fields.Str(required=True)
-
-class ItemUpdateSchema(Schema):
-    name = fields.Str()
-    price = fields.Float()
-
-    @validates_schema
-    def validate_at_least_one(self, data, **kwargs):
-        if not data:
-            raise ValidationError("At least one field is required")
-
-class StoreSchema(Schema):
-    id = fields.Str(dump_only=True)
-    name = fields.Str(required=True)
-```
-
-```
-from schemas import ItemSchema
-
-@blp.arguments(ItemSchema)
-def post(self, item_data):
-    for item in items.values():
-        if (
-            item_data["name"] == item["name"]
-            and item_data["store_id"] == item["store_id"]
-        ):
-            abort(400, message=f"Item already exists.")
-
-    item_id = uuid.uuid4().hex
-    item = {**item_data, "id": item_id}
-    items[item_id] = item
-
-    return item
+@app.route('/')
+def index():
+    response = make_response('<h1>This document carries a cookie!</h1>')
+    response.set_cookie('answer', '42')
+    return response
 
 ```
 
-# JSON
+| Attribute / Method | Description                                                                       |
+| ------------------ | --------------------------------------------------------------------------------- |
+| `status_code`      | The numeric HTTP status code                                                      |
+| `headers`          | A dictionary-like object with all the headers that will be sent with the response |
+| `set_cookie()`     | Adds a cookie to the response                                                     |
+| `delete_cookie()`  | Removes a cookie                                                                  |
+| `content_length`   | The length of the response body                                                   |
+| `content_type`     | The media type of the response body                                               |
+| `set_data()`       | Sets the response body as a string or bytes value                                 |
+| `get_data()`       | Gets the response body                                                            |
+
+#### Redirect
+
+- There is a special type of response called a redirect. This response does not include a page document; it just gives the browser a new URL to navigate to
+- A redirect is typically indicated with a 302 response status code and the URL to go to given in a Location header
+- Flask provides a `redirect()` helper function that creates this type of response
 
 ```
-{
-    "key": "value",
-    "another": 25,
-    "listic_data": [
-        1,
-        3,
-        7
-    ],
-    "sub_objects": {
-        "name": "Rolf",
-        "age": 25
-    }
-}
+from flask import redirect
+@app.route('/')
+def index():
+    return redirect('http://www.example.com')
 ```
 
-- So at its core, you've got:
-  - Strings
-  - Numbers
-  - Booleans (true or false)
-  - Lists
-  - Objects (akin to dictionaries in Python). Note that objects are not ordered, so the keys could come back in any order. This is not a problem!
-- When we return a Python dictionary in a Flask route, Flask automatically turns it into JSON for us, so we don't have to. Remember that "turning it into JSON" means two things:
-  - Change Python keywords and values so they match the JSON standard (e.g. True to true).
-  - Turn the whole thing into a single string that our API can return.
+#### Abort
+
+- Another special response is issued with the `abort()` function, which is used for error handling
+- `abort()` does not return control back to the function because it raises an
+  exception
+
+```
+from flask import abort
+
+
+@app.route('/user/<id>')
+def get_user(id):
+    user = load_user(id)
+    if not user:
+        abort(404)
+    return '<h1>Hello, {}</h1>'.format(user.name)
+```
+
+### Handling basic configurations
+
+### Setting up with Docker
