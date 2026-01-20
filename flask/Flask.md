@@ -12,7 +12,7 @@
       - [Redirect](#redirect)
       - [Abort](#abort)
     - [Handling basic configurations](#handling-basic-configurations)
-    - [Setting up with Docker](#setting-up-with-docker)
+    - [Configuring using class-based settings](#configuring-using-class-based-settings)
 
 # Basic Application Structure
 
@@ -278,4 +278,136 @@ def get_user(id):
 
 ### Handling basic configurations
 
+- The `config` is actually a subclass of a dictionary and can be modified just like any dictionary:
+
+```
+app = Flask(__name__)
+app.config['DEBUG'] = True
+```
+
+- To update multiple keys at once you can use the `dict.update()` method:
+
+```
+app.config.update(
+    TESTING=True,
+    SECRET_KEY='192b9bdd22ab9ed4d12e236c78afcb9a393ec15f71bbf5dc987d54727823bcbf'
+)
+```
+
+- Alternatively, we can pass debug as a named argument to app.run, as follows:
+
+```
+app.run(debug=True)
+```
+
+- In new versions of Flask, the debug mode can also be set on an environment variable
+
+```
+# Windows (Command Prompt – CMD)
+
+set FLASK_APP=app.py
+set FLASK_ENV=development
+set FLASK_DEBUG=1
+flask run
+```
+
+```
+# Windows (PowerShell)
+
+$env:FLASK_APP="app.py"
+$env:FLASK_ENV="development"
+$env:FLASK_DEBUG="1"
+flask run
+```
+
+```
+# macOS / Linux (bash, zsh)
+
+export FLASK_APP=app.py
+export FLASK_ENV=development
+export FLASK_DEBUG=1
+flask run
+```
+
+- From a Python configuration file (`*.cfg`), where the configuration can be fetched using the following statement:
+
+```
+# myconfig.cfg
+
+DEBUG = True
+SECRET_KEY = "super-secret-key"
+DATABASE_URI = "postgresql://user:pass@localhost:5432/mydb"
+TIMEOUT = 30
+```
+
+```
+# fetch config
+
+app.config.from_pyfile("myconfig.cfg")
+```
+
+- Configuring from Python Files, where the configuration can be fetched using the following statement:
+
+```
+app.config.from_object('myapplication.default_settings')
+``
+
+- New in Flask version 2.0 is a capability to load from generic configuration file formats such as JSON or TOML:
+
+```
+
+import tomllib
+import json
+
+app.config.from_file('config.json', load=json.load)
+
+app.config.from_file('config.toml', load=toml.load)
+
+```
+
+
+
 ### Setting up with Docker
+```
+
+### Configuring using class-based settings
+
+- An effective way of laying out configurations for different deployment modes, such as production, testing, staging, and so on, can be cleanly done using the inheritance pattern of classes
+
+```
+# configuration.py file
+
+# Base config class
+class BaseConfig(object):
+    SECRET_KEY = 'A random secret key'
+    DEBUG = True
+    TESTING = False
+    NEW_CONFIG_VARIABLE = 'my value'
+
+# Production specific config'
+class ProductionConfig(BaseConfig):
+    DEBUG = False
+    SECRET_KEY = open('/path/to/secret/file').read()
+
+# Staging specific config'
+class StagingConfig(BaseConfig):
+    DEBUG = True
+
+# Development environment specific config
+class DevelopmentConfig(BaseConfig):
+    DEBUG = True
+    TESTING = True
+    SECRET_KEY = 'Another random secret key
+```
+
+- Important information: In a production configuration, the secret key is generally stored in a separate file because, for security reasons, it should not be a part of your version control system. This should be kept in the local filesystem on the machine itself, whether it is your machine or a server
+
+- Now, we can use any of the preceding classes while loading the application’s configuration via `from_object()`. Let’s say that we save the preceding class-based configuration in a file named configuration.py, as follows:
+
+```
+app.config.from_object('configuration.DevelopmentConfig')
+
+# or
+# from configuration import DevelopmentConfig
+# app.config.from_object(DevelopmentConfig)
+```
