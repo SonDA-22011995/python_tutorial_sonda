@@ -13,6 +13,14 @@
       - [Abort](#abort)
     - [Handling basic configurations](#handling-basic-configurations)
     - [Configuring using class-based settings](#configuring-using-class-based-settings)
+- [Templates](#templates)
+  - [The Jinja2 Template Engine](#the-jinja2-template-engine)
+    - [Rendering Templates](#rendering-templates)
+    - [Comments](#comments)
+    - [Variables](#variables)
+    - [Filters](#filters)
+    - [Line Statements](#line-statements)
+    - [if statement](#if-statement)
 
 # Basic Application Structure
 
@@ -28,6 +36,12 @@ app = Flask(__name__)
 ```
 
 - Run flask app by cli command: `flask --app learn --debug run`
+- `--app hello`: The given name is imported, automatically detecting an app (app or application) or factory (create_app or make_app).
+- `--app` has three parts: an optional path that sets the current working directory, a Python file or dotted import path, and an optional variable name of the instance or factory. If the name is a factory, it can optionally be followed by arguments in parentheses. The following values demonstrate these parts:
+- `--app src/hello`: Sets the current working directory to src then imports hello.
+- `--app hello.web`: Imports the path hello.web.
+- `--app hello:app2`: Uses the app2 Flask instance in hello.
+- `--app 'hello:create_app("dev")'`: The create_app factory in hello is called with the string 'dev' as the argument.
 
 ## Routes and View Functions
 
@@ -410,4 +424,102 @@ app.config.from_object('configuration.DevelopmentConfig')
 # or
 # from configuration import DevelopmentConfig
 # app.config.from_object(DevelopmentConfig)
+```
+
+- In Flask CLI
+
+```
+set FLASK_CONFIG=configuration.DevelopmentConfig
+flask run
+```
+
+# Templates
+
+## The Jinja2 Template Engine
+
+### Rendering Templates
+
+```
+from flask import Flask, render_template
+
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/user/<name>')
+def user(name):
+    return render_template('user.html', name=name)
+```
+
+### Comments
+
+- Syntax: `{# ... #}`
+
+```
+{# note: commented-out template because we no longer use this
+    {% for user in users %}
+        ...
+    {% endfor %}
+#}
+```
+
+### Variables
+
+- Syntax `{{ <variable_name> }}`
+- Jinja2 recognizes variables of any type, even complex types such as lists, dictionaries, and objects. The following are some more examples of variables used in templates
+
+```
+<p>A value from a dictionary: {{ mydict['key'] }}.</p>
+<p>A value from a list: {{ mylist[3] }}.</p>
+<p>A value from a list, with a variable index: {{ mylist[myintvar] }}.</p>
+<p>A value from an object's method: {{ myobj.somemethod() }}.</p>
+```
+
+### Filters
+
+- Syntax `{{ <variable_name>|<filter_name>}}`
+
+| Filter name | Description                                                                      |
+| ----------- | -------------------------------------------------------------------------------- |
+| safe        | Renders the value without applying escaping                                      |
+| capitalize  | Converts the first character of the value to uppercase and the rest to lowercase |
+| lower       | Converts the value to lowercase characters                                       |
+| upper       | Converts the value to uppercase characters                                       |
+| title       | Capitalizes each word in the value                                               |
+| trim        | Removes leading and trailing whitespace from the value                           |
+| striptags   | Removes any HTML tags from the value before rendering                            |
+
+### Line Statements
+
+- Syntax:
+
+```
+{% for item in seq: %}
+    ...
+{% endfor %}
+```
+
+### if statement
+
+- Syntax
+
+```
+{% if users %}
+<ul>
+{% for user in users %}
+    <li>{{ user.username|e }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+```
+
+```
+{% if kenny.sick %}
+    Kenny is sick.
+{% elif kenny.dead %}
+    You killed Kenny!  You bastard!!!
+{% else %}
+    Kenny looks okay --- so far
+{% endif %}
 ```
