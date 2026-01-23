@@ -26,7 +26,10 @@
     - [`include`](#include)
     - [Template inheritance](#template-inheritance)
   - [Links](#links)
-  - [Custom Error Pages](#custom-error-pages)
+  - [Handling Application Errors](#handling-application-errors)
+    - [Registering](#registering)
+    - [Generic Exception Handlers](#generic-exception-handlers)
+    - [Custom Error Pages](#custom-error-pages)
 
 # Basic Application Structure
 
@@ -658,4 +661,117 @@ def blogs(id: int):
   - `values (Any)` – Values to use for the variable parts of the URL rule. Unknown keys are appended as query string arguments, like ?a=b&c=d.
   - Return type: str
 
-## Custom Error Pages
+## Handling Application Errors
+
+### Registering
+
+- Register handlers by decorating a function with `errorhandler()`. Or use `register_error_handler()` to register the function later. Remember to set the error code when returning the response.
+- `werkzeug.exceptions.HTTPException` subclasses like BadRequest and their HTTP codes are interchangeable when registering handlers. (BadRequest.code == 400)
+
+```
+@app.errorhandler(werkzeug.exceptions.BadRequest)
+def handle_bad_request(e):
+    return 'bad request!', 400
+
+# or, without the decorator
+app.register_error_handler(400, handle_bad_request)
+```
+
+```
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('500.html'), 500
+```
+
+### Generic Exception Handlers
+
+```
+from flask import json
+from werkzeug.exceptions import HTTPException
+
+@app.errorhandler(HTTPException)
+def handle_exception(e):
+    """Return JSON instead of HTML for HTTP errors."""
+    # start with the correct headers and status code from the error
+    response = e.get_response()
+    # replace the body with JSON
+    response.data = json.dumps({
+        "code": e.code,
+        "name": e.name,
+        "description": e.description,
+    })
+    response.content_type = "application/json"
+    return response
+
+# python exception
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    # pass through HTTP errors
+    if isinstance(e, HTTPException):
+        return e
+
+    # now you're handling non-HTTP exceptions only
+    return render_template("500_generic.html", e=e), 500
+```
+
+### Custom Error Pages
+
+```
+from flask import abort, render_template, request
+
+# a username needs to be supplied in the query args
+# a successful request would be like /profile?username=jack
+@app.route("/profile")
+def user_profile():
+    username = request.arg.get("username")
+    # if a username isn't supplied in the request, return a 400 bad request
+    if username is None:
+        abort(400)
+
+    user = get_user(username=username)
+    # if a user can't be found by their username, return 404 not found
+    if user is None:
+        abort(404)
+
+    return render_template("profile.html", user=user)
+```
+
+```
+from flask import render_template
+
+@app.errorhandler(404)
+def page_not_found(e):
+    # note that we set the 404 status explicitly
+    return render_template('404.html'), 404
+```
+
+- When using Application Factories:
+
+```
+from flask import Flask, render_template
+
+def page_not_found(e):
+  return render_template('404.html'), 404
+
+def create_app(config_filename):
+    app = Flask(__name__)
+    app.register_error_handler(404, page_not_found)
+    return app
+```
+
+- An example template might be this:
+
+```
+{% extends "layout.html" %}
+{% block title %}Page Not Found{% endblock %}
+{% block body %}
+  <h1>Page Not Found</h1>
+  <p>What you were looking for is just not there.
+  <p><a href="{{ url_for('index') }}">go somewhere nice</a>
+{% endblock %}
+```
