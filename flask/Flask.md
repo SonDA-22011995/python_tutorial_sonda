@@ -18,9 +18,15 @@
     - [Rendering Templates](#rendering-templates)
     - [Comments](#comments)
     - [Variables](#variables)
+    - [Working with Manual Escaping](#working-with-manual-escaping)
     - [Filters](#filters)
-    - [Line Statements](#line-statements)
-    - [if statement](#if-statement)
+    - [`for` Statements](#for-statements)
+    - [`if` statement](#if-statement)
+    - [`macro`](#macro)
+    - [`include`](#include)
+    - [Template inheritance](#template-inheritance)
+  - [Links](#links)
+  - [Custom Error Pages](#custom-error-pages)
 
 # Basic Application Structure
 
@@ -476,6 +482,14 @@ def user(name):
 <p>A value from an object's method: {{ myobj.somemethod() }}.</p>
 ```
 
+### Working with Manual Escaping
+
+- Escaping works by piping the variable through the `|e` filter
+
+```
+{{ user.username|e }}
+```
+
 ### Filters
 
 - Syntax `{{ <variable_name>|<filter_name>}}`
@@ -490,7 +504,7 @@ def user(name):
 | trim        | Removes leading and trailing whitespace from the value                           |
 | striptags   | Removes any HTML tags from the value before rendering                            |
 
-### Line Statements
+### `for` Statements
 
 - Syntax:
 
@@ -500,7 +514,7 @@ def user(name):
 {% endfor %}
 ```
 
-### if statement
+### `if` statement
 
 - Syntax
 
@@ -523,3 +537,125 @@ def user(name):
     Kenny looks okay --- so far
 {% endif %}
 ```
+
+### `macro`
+
+- `macros` are similar to functions in Python code
+
+- Declare:
+
+```
+{% macro render_comment(comment) %}
+    <li>{{ comment }}</li>
+{% endmacro %}
+
+- How to use
+<ul>
+    {% for comment in comments %}
+    {{ render_comment(comment) }}
+    {% endfor %}
+</ul>
+```
+
+- To make `macros` more reusable, they can be stored in standalone files that are then `imported` from all the templates that need them
+
+```
+{% import 'macros.html' as macros %}
+
+<ul>
+    {% for comment in comments %}
+    {{ macros.render_comment(comment) }}
+    {% endfor %}
+</ul>
+```
+
+### `include`
+
+- The `include` tag renders another template and outputs the result into the current template.
+- The included template has access to context of the current template by default. Use `without context` to use a separate context instead. `with context` is also valid, but is the default behavior
+
+```
+{% include 'header.html' %}
+Body goes here.
+{% include 'footer.html' %}
+```
+
+```
+{% include "sidebar.html" without context %}
+{% include "sidebar.html" ignore missing %}
+{% include "sidebar.html" ignore missing with context %}
+{% include "sidebar.html" ignore missing without context %}
+```
+
+### Template inheritance
+
+- Template inheritance allows you to build a base “skeleton” template that contains all the common elements of your site and defines blocks that child templates can override.
+
+- Base Template: In this example, the `{% block %}` tags define four blocks that child templates can fill in. All the block tag does is tell the template engine that a child template may override those placeholders in the template.
+
+```
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% block head %}
+    <link rel="stylesheet" href="style.css" />
+    <title>{% block title %}{% endblock %} - My Webpage</title>
+    {% endblock %}
+</head>
+<body>
+    <div id="content">{% block content %}{% endblock %}</div>
+    <div id="footer">
+        {% block footer %}
+        &copy; Copyright 2008 by <a href="http://domain.invalid/">you</a>.
+        {% endblock %}
+    </div>
+</body>
+</html>
+```
+
+- Child Template:
+  - The `{% extends %}` tag is the key here. It tells the template engine that this template “extends” another template
+  - The filename of the template depends on the template loader. For example, the **FileSystemLoader** allows you to access other templates by giving the filename. You can access templates in subdirectories with a slash: `{% extends "layout/default.html" %}`
+
+```
+{% extends "base.html" %}
+{% block title %}Index{% endblock %}
+{% block head %}
+    {{ super() }}
+    <style type="text/css">
+        .important { color: #336699; }
+    </style>
+{% endblock %}
+{% block content %}
+    <h1>Index</h1>
+    <p class="important">
+      Welcome to my awesome homepage.
+    </p>
+{% endblock %}
+```
+
+## Links
+
+- Flask provides the `url_for()` helper function, which generates URLs from the information stored in the application’s URL map
+- In its simplest usage, this function takes the view function name (funtion name declare in `@app.route` decorator or endpoint name for routes defined with `app.add_url_route()`) as its single argument and returns its URL
+- For example, `url_for('user', name='john', page=2, version=1)` would return `/user/john?page=2&version=1`.
+
+```
+@app.route('/blogs/<int:id>')
+def blogs(id: int):
+```
+
+```
+<a href="{{ url_for('blogs',id=blog.get('id')) }}">Read</a>
+```
+
+- `flask.url_for` Parameters:
+  - `endpoint (str)` – The endpoint name associated with the URL to generate. If this starts with a ., the current blueprint name (if any) will be used.
+  - `_anchor (str | None)` – If given, append this as #anchor to the URL.
+  - `_method (str | None)` – If given, generate the URL associated with this method for the endpoint.
+  - `_scheme (str | None)` – If given, the URL will have this scheme if it is external.
+  - `_external (bool | None)` – If given, prefer the URL to be internal (False) or require it to be external (True). External URLs include the scheme and domain. When not in an active request, URLs are external by default.
+  - `values (Any)` – Values to use for the variable parts of the URL rule. Unknown keys are appended as query string arguments, like ?a=b&c=d.
+  - Return type: str
+
+## Custom Error Pages
