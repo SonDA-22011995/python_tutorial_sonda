@@ -10,6 +10,7 @@
     - [Fractions and decimals](#fractions-and-decimals)
   - [Immutable sequences](#immutable-sequences)
     - [String](#string)
+    - [Tuple](#tuple)
 - [OOP](#oop)
   - [The `class attributes`](#the-class-attributes)
   - [The `@staticmethod` method](#the-staticmethod-method)
@@ -415,6 +416,8 @@ encoded_s.decode('utf-8') # let's revert to the original
 # 'This is üŋíc0de'
 ```
 
+### Tuple
+
 # OOP
 
 ## The `class attributes`
@@ -677,7 +680,6 @@ print(rolf.grades)
 ```
 
 - Why This Happens
-
   - Default parameter values are evaluated once, when the function is defined—not each time it is called.
 
   - So the default [] (empty list) is created only once.
@@ -1790,7 +1792,6 @@ from . import string_tools
 - Package Recognition: In older Python versions (prior to 3.3), the `__init__.py` file was required for Python to recognize a directory as a package. While no longer strictly mandatory in Python 3.3+ (due to implicit namespace packages), it is still widely used and considered a best practice for most projects
 - The `__all__` variable is a list of strings that indicate the names that should be imported when using the `*` operator
 - Key purposes
-
   - It marks the directory as a Python Package so that the interpreter can find the modules inside it.
   - It can contain initialization code for the Package, such as importing submodules, defining variables, or executing other code.
   - Import up two levels: `from .... import x`
@@ -2221,7 +2222,6 @@ BaseException
 ## Custom error classes
 
 - Why Define Custom Exceptions?
-
   - **Clarity**: They provide clear, specific error messages that are relevant to your application.
   - **Granularity**: They allow for more fine-grained error handling, making it easier to pinpoint and address specific issues.
   - **Reusability**: They can be reused across different parts of your application or even in different projects.
@@ -2406,7 +2406,6 @@ GET /users/1 HTTP/1.1
 ```
 
 - Components:
-
   - **HTTP Method**– what action the client wants to perform
   - **Path (URL)** – the resource being accessed
   - **HTTP Version** – protocol version (HTTP/1.1, HTTP/2)
@@ -2791,6 +2790,13 @@ a.append(4)
 | len               | len(d)              | Return number of items                      | ❌       | int          | len(d)               |
 | in                | k in d              | Check if key exists                         | ❌       | bool         | 'a' in d             |
 
+- Convert List[Dict] to Dict[Dict[id]: Dict]
+
+```
+blogs_by_id = {blog["id"]:blog for blog in blogs}
+blog = blogs_by_id.get(id)
+```
+
 ## Merge dictionaries (Python ≥ 3.9)
 
 - This merge creates an entirely new dict object z where we unpack every value from x and y. This way of merging two dictionaries feels unnatural and hardly obvious. If both dictionaries have the same keys, the values of dictionary x are overwritten by the values of dictionary y.
@@ -2840,7 +2846,6 @@ print(z is y) # False
 - Role: Core web framework
 
 - Main functions
-
   - Build web applications and REST APIs
   - URL routing (@app.route)
   - Handle HTTP requests and responses
@@ -2862,7 +2867,6 @@ print(z is y) # False
 - Role: Environment variable management
 
 - Main functions
-
   - Load environment variables from a `.env` file
   - Separate configuration from source code
   - Manage secrets such as database URLs and JWT keys
@@ -2872,7 +2876,6 @@ print(z is y) # False
 - Role: Serialization, deserialization, and validation library
 
 - Main functions
-
   - Convert Python objects → JSON-friendly data (serialization)
   - Convert input data (JSON) → Python objects (deserialization)
   - Validate request data using schemas
@@ -2882,7 +2885,6 @@ print(z is y) # False
 
 - Role: Core ORM and SQL toolkit
 - Main functions
-
   - Object–Relational Mapping (ORM)
   - Map Python classes to database tables
   - Build database queries using Python instead of raw SQL
@@ -2908,7 +2910,6 @@ print(z is y) # False
 
 - Role: Authentication and authorization using JWT
 - Main functions
-
   - Create access tokens and refresh tokens
   - Protect endpoints with decorators (@jwt_required)
   - Support fresh tokens and refresh tokens
@@ -2935,7 +2936,6 @@ print(z is y) # False
 - Role: Database schema migration engine
 
 - Main functions
-
   - Manage database schema changes over time
   - Generate migration scripts by comparing models and database state
   - Apply schema upgrades and downgrades
@@ -2946,7 +2946,6 @@ print(z is y) # False
 - Role: Browser automation and web testing tool
 
 - Main functions
-
   - Automate real browser interactions (Chrome, Firefox, Edge, etc.)
   - Simulate user actions (click, type, scroll, submit forms)
   - Test dynamic web applications (JavaScript-heavy sites)
@@ -2969,7 +2968,6 @@ print(z is y) # False
 - Role: Transactional email service for sending, receiving, and tracking emails via API or SMTP
 
 - Main functions
-
   - Send transactional emails (verification, password reset, notifications)
   - Send bulk and marketing emails with high deliverability
   - Receive and route inbound emails via webhooks
