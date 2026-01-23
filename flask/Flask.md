@@ -30,6 +30,7 @@
     - [Registering](#registering)
     - [Generic Exception Handlers](#generic-exception-handlers)
     - [Custom Error Pages](#custom-error-pages)
+  - [Organizing static files](#organizing-static-files)
 
 # Basic Application Structure
 
@@ -444,6 +445,25 @@ flask run
 
 # Templates
 
+- Flask will look for templates in the templates folder. So if your application is a module, this folder is next to that module, if it’s a package it’s actually inside your package:
+
+- Case 1: a module:
+
+```
+/application.py
+/templates
+    /hello.html
+```
+
+Case 2: a package:
+
+```
+/application
+    /__init__.py
+    /templates
+        /hello.html
+```
+
 ## The Jinja2 Template Engine
 
 ### Rendering Templates
@@ -774,4 +794,79 @@ def create_app(config_filename):
   <p>What you were looking for is just not there.
   <p><a href="{{ url_for('index') }}">go somewhere nice</a>
 {% endblock %}
+```
+
+## Organizing static files
+
+- Flask recommends a specific way of organizing static files in an application, as follows:
+
+```
+my_app/
+├── app.py
+├── config.py
+├── __init__.py
+├── static/
+│   ├── css/
+│   ├── js/
+│   └── images/
+│       └── logo.png
+```
+
+- While rendering this in templates (say, the logo.png file), we can refer to the static files using the
+  following code `<img src='/static/images/logo.png'>`
+
+- It is always a good practice to use url_for to create URLs for static files rather than explicitly
+  defining them, as follows `<img src="{{ url_for('static', filename='logo.png') }}">`
+
+- `static_folder` The folder with static files that is served at. Default to 'static'
+- `static_url_path` Relative to the application root_path or an absolute path. Defaults to '/static'.
+
+```
+app = Flask(
+    _name_,
+    static_url_path='/differentstatic',
+    static_folder='/path/to/static/folder'
+)
+```
+
+- Changing static-folder
+
+```
+my_app/
+├── app.py
+└── assets/
+    └── logo.png
+```
+
+```
+app = Flask(
+    __name__,
+    static_folder="assets"
+)
+```
+
+```
+# url static file
+http://localhost:5000/static/logo.png
+```
+
+- Changing url path
+
+```
+my_app/
+├── app.py
+└── static/
+    └── logo.png
+```
+
+```
+app = Flask(
+    __name__,
+    static_url_path="/public"
+)
+```
+
+```
+# url
+http://localhost:5000/public/logo.png
 ```
