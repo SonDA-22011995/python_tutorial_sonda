@@ -537,6 +537,24 @@ def user(name):
 {% endfor %}
 ```
 
+| Variable           | Description                                                                |
+| ------------------ | -------------------------------------------------------------------------- |
+| `loop.index`       | The current iteration of the loop (**1-indexed**)                          |
+| `loop.index0`      | The current iteration of the loop (**0-indexed**)                          |
+| `loop.revindex`    | The number of iterations from the end of the loop (**1-indexed**)          |
+| `loop.revindex0`   | The number of iterations from the end of the loop (**0-indexed**)          |
+| `loop.first`       | `True` if this is the first iteration                                      |
+| `loop.last`        | `True` if this is the last iteration                                       |
+| `loop.length`      | The total number of items in the sequence                                  |
+| `loop.cycle()`     | A helper function to cycle through values (e.g. CSS classes, colors, etc.) |
+| `loop.depth`       | The current depth of a recursive loop (**starts at 1**)                    |
+| `loop.depth0`      | The current depth of a recursive loop (**starts at 0**)                    |
+| `loop.previtem`    | The item from the previous iteration (undefined in the first iteration)    |
+| `loop.nextitem`    | The item from the next iteration (undefined in the last iteration)         |
+| `loop.changed(*v)` | `True` if the passed value differs from the previous call                  |
+
+- Inside of a for-loop block, you can access some special variables:
+
 ### `if` statement
 
 - Syntax
