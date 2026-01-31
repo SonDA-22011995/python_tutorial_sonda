@@ -416,6 +416,16 @@ encoded_s.decode('utf-8') # let's revert to the original
 # 'This is üŋíc0de'
 ```
 
+- Sequence repetition operator: Applies to `str`,`list`,`tuple`,`bytes`
+
+```
+(1, 2) * 3
+# (1, 2, 1, 2, 1, 2)
+
+'abc' * 3
+# 'abcabcabc'
+```
+
 ### Tuple
 
 # OOP
