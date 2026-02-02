@@ -29,12 +29,12 @@
     - [`include`](#include)
     - [Template inheritance](#template-inheritance)
     - [Context Processors](#context-processors)
+    - [Registering Filters](#registering-filters)
   - [Links](#links)
   - [Handling Application Errors](#handling-application-errors)
     - [Registering](#registering)
     - [Generic Exception Handlers](#generic-exception-handlers)
     - [Custom Error Pages](#custom-error-pages)
-  - [Registering Filters](#registering-filters)
   - [Organizing static files](#organizing-static-files)
 - [Web Forms](#web-forms)
 - [Other](#other)
@@ -827,6 +827,29 @@ def utility_processor():
 {{ format_price(0.33) }}
 ```
 
+### Registering Filters
+
+- If you want to register your own filters in Jinja you have two ways to do that. You can either put them by hand into the `jinja_env` of the application or use the `template_filter()` decorator.
+
+```
+@app.template_filter('reverse')
+def reverse_filter(s):
+    return s[::-1]
+```
+
+```
+def reverse_filter(s):
+    return s[::-1]
+app.jinja_env.filters['reverse'] = reverse_filter
+```
+
+- Once registered, you can use the filter in your templates in the same way as Jinja’s builtin filters, for example if you have a Python list in context called mylist
+
+```
+{% for x in mylist | reverse %}
+{% endfor %}
+```
+
 ## Links
 
 - Flask provides the `url_for()` helper function, which generates URLs from the information stored in the application’s URL map
@@ -964,29 +987,6 @@ def create_app(config_filename):
   <p>What you were looking for is just not there.
   <p><a href="{{ url_for('index') }}">go somewhere nice</a>
 {% endblock %}
-```
-
-## Registering Filters
-
-- If you want to register your own filters in Jinja you have two ways to do that. You can either put them by hand into the `jinja_env` of the application or use the `template_filter()` decorator.
-
-```
-@app.template_filter('reverse')
-def reverse_filter(s):
-    return s[::-1]
-```
-
-```
-def reverse_filter(s):
-    return s[::-1]
-app.jinja_env.filters['reverse'] = reverse_filter
-```
-
-- Once registered, you can use the filter in your templates in the same way as Jinja’s builtin filters, for example if you have a Python list in context called mylist
-
-```
-{% for x in mylist | reverse %}
-{% endfor %}
 ```
 
 ## Organizing static files
