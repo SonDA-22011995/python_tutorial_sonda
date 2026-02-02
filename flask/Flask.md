@@ -11,8 +11,11 @@
     - [Responses](#responses)
       - [Redirect](#redirect)
       - [Abort](#abort)
-    - [Handling basic configurations](#handling-basic-configurations)
-    - [Configuring using class-based settings](#configuring-using-class-based-settings)
+  - [Handling basic configurations](#handling-basic-configurations)
+  - [Instance Folders](#instance-folders)
+  - [Setting up with Docker](#setting-up-with-docker)
+  - [Configuring using class-based settings](#configuring-using-class-based-settings)
+  - [Composition of views and models](#composition-of-views-and-models)
 - [Templates](#templates)
   - [The Jinja2 Template Engine](#the-jinja2-template-engine)
     - [Rendering Templates](#rendering-templates)
@@ -30,7 +33,12 @@
     - [Registering](#registering)
     - [Generic Exception Handlers](#generic-exception-handlers)
     - [Custom Error Pages](#custom-error-pages)
+  - [Registering Filters](#registering-filters)
+  - [Context Processors](#context-processors)
   - [Organizing static files](#organizing-static-files)
+- [Web Forms](#web-forms)
+- [Other](#other)
+  - [How to decode user session](#how-to-decode-user-session)
 
 # Basic Application Structure
 
@@ -300,7 +308,7 @@ def get_user(id):
     return '<h1>Hello, {}</h1>'.format(user.name)
 ```
 
-### Handling basic configurations
+## Handling basic configurations
 
 - The `config` is actually a subclass of a dictionary and can be modified just like any dictionary:
 
@@ -374,27 +382,65 @@ app.config.from_pyfile("myconfig.cfg")
 
 ```
 app.config.from_object('myapplication.default_settings')
-``
+```
 
 - New in Flask version 2.0 is a capability to load from generic configuration file formats such as JSON or TOML:
 
 ```
-
 import tomllib
 import json
 
 app.config.from_file('config.json', load=json.load)
 
 app.config.from_file('config.toml', load=toml.load)
-
 ```
 
+## Instance Folders
 
+- The instance folder is designed to not be under version control and be deployment specific. It’s the perfect place to drop things that either change at runtime or configuration files
+- By default, the instance folder is picked up from the application automatically if we have a folder named instance in our application at the application level, as follows
 
-### Setting up with Docker
+```
+# Uninstalled module
+my_app/
+    app.py
+    instance/
+        config.cfg
 ```
 
-### Configuring using class-based settings
+```
+# Uninstalled package:
+/myapp
+    /__init__.py
+/instance
+```
+
+- For explicit configuration use the instance_path parameter
+
+```
+app = Flask(__name__, instance_path='/absolute/path/to/instance/folder')
+```
+
+- To load the configuration file from the instance folder, we can use the instance_relative_config parameter on the application object, as follow
+
+```
+app = Flask(
+    __name__, instance_path='path/to/instance/folder',
+    instance_relative_config=True
+)
+app.config.from_pyfile('config.cfg', silent=True)
+```
+
+- In the preceding code, first, the instance folder is loaded from the given path; then, the configuration file is loaded from the config.cfg file in the given instance folder. Here, silent=True is optional and is used to suppress the error if config.cfg is not found in the instance folder. If silent=True is not given and the file is not found, then the application will fail, giving the following error
+
+```
+IOError: [Errno 2] Unable to load configuration file (No such file or
+directory): '/absolute/path/to/config/file'
+```
+
+## Setting up with Docker
+
+## Configuring using class-based settings
 
 - An effective way of laying out configurations for different deployment modes, such as production, testing, staging, and so on, can be cleanly done using the inheritance pattern of classes
 
@@ -443,6 +489,8 @@ set FLASK_CONFIG=configuration.DevelopmentConfig
 flask run
 ```
 
+## Composition of views and models
+
 # Templates
 
 - Flask will look for templates in the templates folder. So if your application is a module, this folder is next to that module, if it’s a package it’s actually inside your package:
@@ -468,6 +516,8 @@ Case 2: a package:
 
 ### Rendering Templates
 
+- To render a template you can use the `render_template()` method. All you have to do is provide the name of the template and the variables you want to pass to the template engine as keyword arguments
+
 ```
 from flask import Flask, render_template
 
@@ -480,6 +530,8 @@ def index():
 def user(name):
     return render_template('user.html', name=name)
 ```
+
+- `name` this value is passed to the context of the template to be rendered – that is, user.html – and the resulting template is rendered
 
 ### Comments
 
@@ -814,6 +866,48 @@ def create_app(config_filename):
 {% endblock %}
 ```
 
+## Registering Filters
+
+- If you want to register your own filters in Jinja you have two ways to do that. You can either put them by hand into the `jinja_env` of the application or use the `template_filter()` decorator.
+
+```
+@app.template_filter('reverse')
+def reverse_filter(s):
+    return s[::-1]
+```
+
+```
+def reverse_filter(s):
+    return s[::-1]
+app.jinja_env.filters['reverse'] = reverse_filter
+```
+
+- Once registered, you can use the filter in your templates in the same way as Jinja’s builtin filters, for example if you have a Python list in context called mylist
+
+```
+{% for x in mylist | reverse %}
+{% endfor %}
+```
+
+## Context Processors
+
+- To inject new variables automatically into the context of a template, context processors exist in Flask
+- Context processors run before the template is rendered and have the ability to inject new values into the template context.
+- A context processor is a function that returns a dictionary. The keys and values of this dictionary are then merged with the template context, for all templates in the app
+- The context processor below makes the `format_price` function available to all templates:
+
+```
+@app.context_processor
+def utility_processor():
+    def format_price(amount, currency="€"):
+        return f"{amount:.2f}{currency}"
+    return dict(format_price=format_price)
+```
+
+```
+{{ format_price(0.33) }}
+```
+
 ## Organizing static files
 
 - Flask recommends a specific way of organizing static files in an application, as follows:
@@ -887,4 +981,17 @@ app = Flask(
 ```
 # url
 http://localhost:5000/public/logo.png
+```
+
+# Web Forms
+
+# Other
+
+## How to decode user session
+
+```
+import base64
+
+base64.urlsafe_b64decode( '<<user_session>>===' )
+
 ```
