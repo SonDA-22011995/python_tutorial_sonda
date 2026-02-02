@@ -28,13 +28,13 @@
     - [`macro`](#macro)
     - [`include`](#include)
     - [Template inheritance](#template-inheritance)
+    - [Context Processors](#context-processors)
   - [Links](#links)
   - [Handling Application Errors](#handling-application-errors)
     - [Registering](#registering)
     - [Generic Exception Handlers](#generic-exception-handlers)
     - [Custom Error Pages](#custom-error-pages)
   - [Registering Filters](#registering-filters)
-  - [Context Processors](#context-processors)
   - [Organizing static files](#organizing-static-files)
 - [Web Forms](#web-forms)
 - [Other](#other)
@@ -491,6 +491,87 @@ flask run
 
 ## Composition of views and models
 
+- As our application becomes bigger, we might want to structure it in a modular manner
+- File structure. After that, create a new file called `run.py` in the topmost folder. As its name implies, this file will be used to run the application
+
+```
+flask_app/
+    run.py
+    my_app/
+        __init__.py
+        hello/
+            __init__.py
+            models.py
+            views.py
+```
+
+- The `flask_app/run.py`
+
+```
+from my_app import app
+
+app.run(debug=True)
+```
+
+- The `flask_app/my_app/__init__.py`
+
+```
+from flask import Flask
+import my_app.hello.views
+
+app = Flask(__name__)
+```
+
+- The `flask_app/my_app/hello/__init__.py`
+
+```
+# No content.
+# We need this file just to make this folder a python module.
+```
+
+- The `flask_app/my_app/hello/models.py`
+
+```
+MESSAGES = {
+    'default': 'Hello to the World of Flask!',
+}
+```
+
+- The `flask_app/my_app/hello/views.py`
+
+```
+from my_app import app
+from my_app.hello.models import MESSAGES
+
+@app.route('/')
+@app.route('/hello')
+def hello_world():
+    return MESSAGES['default']
+
+@app.route('/show/<key>')
+def get_message(key):
+    return MESSAGES.get(key) or "%s not found!" % key
+
+@app.route('/add/<key>/<message>')
+def add_or_update_message(key, message):
+    MESSAGES[key] = message
+    return "%s Added/Updated" % key
+```
+
+- We can run this app using just `run.py`, as follows:
+
+```
+python run.py
+```
+
+- To run the application in the development environment, modify the `run.py` file with the following:
+
+```
+from my_app import app
+app.env="development"
+app.run(debug=True)
+```
+
 # Templates
 
 - Flask will look for templates in the templates folder. So if your application is a module, this folder is next to that module, if it’s a package it’s actually inside your package:
@@ -727,6 +808,25 @@ Body goes here.
 {% endblock %}
 ```
 
+### Context Processors
+
+- To inject new variables automatically into the context of a template, context processors exist in Flask
+- Context processors run before the template is rendered and have the ability to inject new values into the template context.
+- A context processor is a function that returns a dictionary. The keys and values of this dictionary are then merged with the template context, for all templates in the app
+- The context processor below makes the `format_price` function available to all templates:
+
+```
+@app.context_processor
+def utility_processor():
+    def format_price(amount, currency="€"):
+        return f"{amount:.2f}{currency}"
+    return dict(format_price=format_price)
+```
+
+```
+{{ format_price(0.33) }}
+```
+
 ## Links
 
 - Flask provides the `url_for()` helper function, which generates URLs from the information stored in the application’s URL map
@@ -887,25 +987,6 @@ app.jinja_env.filters['reverse'] = reverse_filter
 ```
 {% for x in mylist | reverse %}
 {% endfor %}
-```
-
-## Context Processors
-
-- To inject new variables automatically into the context of a template, context processors exist in Flask
-- Context processors run before the template is rendered and have the ability to inject new values into the template context.
-- A context processor is a function that returns a dictionary. The keys and values of this dictionary are then merged with the template context, for all templates in the app
-- The context processor below makes the `format_price` function available to all templates:
-
-```
-@app.context_processor
-def utility_processor():
-    def format_price(amount, currency="€"):
-        return f"{amount:.2f}{currency}"
-    return dict(format_price=format_price)
-```
-
-```
-{{ format_price(0.33) }}
 ```
 
 ## Organizing static files
