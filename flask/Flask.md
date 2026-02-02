@@ -43,6 +43,12 @@
   - [Form Classes](#form-classes)
     - [The list of standard field Basic](#the-list-of-standard-field-basic)
     - [The list of WTForms built-in validators](#the-list-of-wtforms-built-in-validators)
+  - [Form Handling in View Functions](#form-handling-in-view-functions)
+  - [HTML Rendering of Forms](#html-rendering-of-forms)
+  - [Display any error messages](#display-any-error-messages)
+  - [Redirects and User Sessions](#redirects-and-user-sessions)
+  - [Message Flashing](#message-flashing)
+  - [Custom validations](#custom-validations)
 - [Other](#other)
   - [How to decode user session](#how-to-decode-user-session)
 
@@ -1103,17 +1109,18 @@ app.config['SECRET_KEY'] = <<your_secret_key>>
 ## Form Classes
 
 - There are three main parts of `WTForms—forms`, `fields`, and `validators`
-  - `WTForms—forms`: is represented in the server by a class that inherits from the class `FlaskForm`
+  - `WTForms—forms`is represented in the server by a class that inherits from the class `FlaskForm`
   - `fields`: representations of input fields and perform rudimentary type checking
   - `validators`: are functions that are attached to fields that make sure that the data submitted in the form is within our constraints
 
 ```
-from wtforms import Form, BooleanField, StringField, validators
+from flask_wtf import FlaskForm as Form
+from wtforms import StringField, TextAreaField
+from wtforms.validators import DataRequired, Length
 
-class RegistrationForm(Form):
-    username     = StringField('Username', [validators.Length(min=4, max=25)])
-    email        = StringField('Email Address', [validators.Length(min=6, max=35)])
-    accept_rules = BooleanField('I accept the site rules', [validators.InputRequired()])
+class CommentForm(Form):
+    name = StringField('Name',validators=[DataRequired(), Length(max=255)])
+    text = TextAreaField('Comment', validators=[DataRequired()])
 ```
 
 ### The list of standard field Basic
@@ -1167,6 +1174,84 @@ class RegistrationForm(Form):
 | **NoneOf**           | Ensures value is NOT in a forbidden list.                              | Use to block reserved words, banned values.                                                      |
 | **ReadOnly**         | Ensures submitted value matches existing field data.                   | Use for fields that must not be changed by the client.                                           |
 | **Disabled**         | Ensures no data is submitted for the field.                            | Use for disabled fields that should never be modified.                                           |
+
+## Form Handling in View Functions
+
+- `form.validate_on_submit` method of the form returns True when the form was submitted and the data was accepted by all the field validators.
+- `form.name.data` you don’t have to pass request.form to Flask-WTF; it will load automatically
+
+```
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    name = None
+    form = NameForm()
+    if form.validate_on_submit():
+        name = form.name.data
+        form.name.data = ''
+    return render_template('index.html', form=form, name=name)
+```
+
+## HTML Rendering of Forms
+
+- A CSRF token hidden field is created automatically. You can render this in your template by `form.csrf_token`
+- If your form has multiple hidden fields, you can render them in one block using `form.hidden_tag()`.
+- Rendering the `novalidate` attribute on the form tag, or the `formnovalidate` attribute on a submit button
+
+```
+<form method="POST" action="{{url_for('login')}}" novalidate>
+    #  {{ form.hidden_tag() }}
+    {{ form.csrf_token }}
+    {{ form.name.label(class="css_class") }} {{ form.name(size=20, class="css_class") }}
+    <input type="submit" value="Go">
+</form>
+```
+
+## Display any error messages
+
+```
+@app.route('/submit', methods=['GET', 'POST'])
+def submit():
+    form = MyForm()
+    if form.validate_on_submit():
+        return redirect('/success')
+    return render_template('submit.html', form=form)
+```
+
+- If your forms include validation, you’ll need to add to your template to display any error messages. Using the `form.name` field from the example above, that would look like this:
+
+```
+{% if form.name.errors %}
+    <ul class="errors">
+    {% for error in form.name.errors %}
+        <li>{{ error }}</li>
+    {% endfor %}
+    </ul>
+{% endif %}
+```
+
+## Redirects and User Sessions
+
+- Consequently, it is considered good practice for web applications to never leave a `POST` request as the last request sent by the browser
+- This is achieved by responding to POST requests with a redirect instead of a normal response
+- When the browser receives a redirect response, it issues a `GET` request for the redirect URL, and that is the page that it displays
+- But this approach brings a second problem. When the application handles the `POST` request, it has access to the name entered by the user in form.name.data, but as soon as that request ends the form data is lost. Because the POST request is handled with a redirect, the application needs to store the name so that the redirected request can have it and use it to build the actual response.
+- Applications can “remember” things from one request to the next by storing them in the user session, a private storage that is available to each connected client
+- `form.name.data` is now placed in the user session as `session['name']` so that it is remembered beyond the request
+
+```
+from flask import Flask, render_template, session, redirect, url_for
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    form = NameForm()
+    if form.validate_on_submit():
+        session['name'] = form.name.data
+        return redirect(url_for('index'))
+    return render_template('index.html', form=form, name=session.get('name'))
+```
+
+## Message Flashing
+
+## Custom validations
 
 # Other
 
