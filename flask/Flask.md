@@ -1,5 +1,6 @@
 - [Basic Application Structure](#basic-application-structure)
   - [Initialization](#initialization)
+  - [Generate a different secret key](#generate-a-different-secret-key)
   - [Routes and View Functions](#routes-and-view-functions)
     - [URL dynamic](#url-dynamic)
   - [Command-Line Options](#command-line-options)
@@ -37,6 +38,11 @@
     - [Custom Error Pages](#custom-error-pages)
   - [Organizing static files](#organizing-static-files)
 - [Web Forms](#web-forms)
+  - [Install Flask-WTF](#install-flask-wtf)
+  - [Configuration](#configuration)
+  - [Form Classes](#form-classes)
+    - [The list of standard field Basic](#the-list-of-standard-field-basic)
+    - [The list of WTForms built-in validators](#the-list-of-wtforms-built-in-validators)
 - [Other](#other)
   - [How to decode user session](#how-to-decode-user-session)
 
@@ -60,6 +66,18 @@ app = Flask(__name__)
 - `--app hello.web`: Imports the path hello.web.
 - `--app hello:app2`: Uses the app2 Flask instance in hello.
 - `--app 'hello:create_app("dev")'`: The create_app factory in hello is called with the string 'dev' as the argument.
+
+## Generate a different secret key
+
+```
+import secrets
+str(secrets.SystemRandom().getrandbits(128))
+```
+
+```
+import os
+os.urandom(24).hex()
+```
 
 ## Routes and View Functions
 
@@ -1065,6 +1083,90 @@ http://localhost:5000/public/logo.png
 ```
 
 # Web Forms
+
+## Install Flask-WTF
+
+```
+pip install flask-wtf
+```
+
+## Configuration
+
+- A CSRF (cross-site request forgery) attack occurs when a malicious website sends requests to the application server on which the user is currently logged in
+- Flask-WTF requires a secret key to be configured in the application because this key is part of the mechanism the extension uses to protect all forms against cross-site request forgery (CSRF) attack
+
+```
+app = Flask(__name__)
+app.config['SECRET_KEY'] = <<your_secret_key>>
+```
+
+## Form Classes
+
+- There are three main parts of `WTForms—forms`, `fields`, and `validators`
+  - `WTForms—forms`: is represented in the server by a class that inherits from the class `FlaskForm`
+  - `fields`: representations of input fields and perform rudimentary type checking
+  - `validators`: are functions that are attached to fields that make sure that the data submitted in the form is within our constraints
+
+```
+from wtforms import Form, BooleanField, StringField, validators
+
+class RegistrationForm(Form):
+    username     = StringField('Username', [validators.Length(min=4, max=25)])
+    email        = StringField('Email Address', [validators.Length(min=6, max=35)])
+    accept_rules = BooleanField('I accept the site rules', [validators.InputRequired()])
+```
+
+### The list of standard field Basic
+
+| Field Name              | HTML Input          | When to Use / Meaning                                                       |
+| ----------------------- | ------------------- | --------------------------------------------------------------------------- |
+| **StringField**         | `text`              | Default text input. Use for usernames, titles, short text.                  |
+| **TextAreaField**       | `textarea`          | Multi-line text input. Use for descriptions, comments, notes.               |
+| **PasswordField**       | `password`          | Password input. Value is not re-rendered. Always hash on backend.           |
+| **HiddenField**         | `hidden`            | Store internal data (IDs, tokens). Must be validated (do not trust client). |
+| **BooleanField**        | `checkbox`          | True/False input. Use for flags, toggles, agreement checkboxes.             |
+| **IntegerField**        | `text`              | Integer numbers. Use for quantities, counters, ages.                        |
+| **FloatField**          | `text`              | Floating-point numbers (IEEE float). Rarely used due to precision issues.   |
+| **DecimalField**        | `text`              | Decimal numbers with precision. Use for money and financial values.         |
+| **IntegerRangeField**   | `range`             | Slider for integer values. Use for ratings, ranges.                         |
+| **DecimalRangeField**   | `range`             | Slider for decimal values. Use when a numeric range UI is needed.           |
+| **DateField**           | `date`              | Date input. Stores `datetime.date`. Use for birthdays, due dates.           |
+| **TimeField**           | `time`              | Time input. Stores `datetime.time`. Use for schedules, hours.               |
+| **DateTimeField**       | `text`              | Date + time as text. Stores `datetime.datetime`.                            |
+| **DateTimeLocalField**  | `datetime-local`    | Native browser date-time picker. Preferred for UX.                          |
+| **MonthField**          | `month`             | Month picker. Stores date with day = 1.                                     |
+| **SelectField**         | `select`            | Dropdown selection (single value). Use `coerce` for non-string types.       |
+| **SelectMultipleField** | `select (multiple)` | Multiple selections. Returns a list of values.                              |
+| **RadioField**          | `radio`             | Single selection shown as radio buttons. Alternative to SelectField.        |
+| **EmailField**          | `email`             | Email input. Browser-level email validation.                                |
+| **URLField**            | `url`               | URL input. Browser-level URL validation.                                    |
+| **TelField**            | `tel`               | Telephone number input. UX-focused, not strict validation.                  |
+| **SearchField**         | `search`            | Search input field. Mainly for UI semantics.                                |
+| **ColorField**          | `color`             | Color picker input. Returns a hex color value.                              |
+| **FileField**           | `file`              | Single file upload. Only stores filename; framework handles file data.      |
+| **MultipleFileField**   | `file`              | Multiple file uploads. Returns list of filenames.                           |
+| **SubmitField**         | `submit`            | Submit button. Useful to detect which button was pressed.                   |
+
+### The list of WTForms built-in validators
+
+| Validator            | Purpose                                                                | When to Use                                                                                      |
+| -------------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| **DataRequired**     | Ensures coerced field data is truthy (non-empty, non-zero, non-false). | Use when the final parsed value must be meaningful. Avoid for numeric fields where `0` is valid. |
+| **InputRequired** ⭐ | Ensures input data was actually submitted by the user.                 | Preferred validator for required fields. Use instead of `DataRequired` in most cases.            |
+| **Optional**         | Allows empty input and stops further validation.                       | Use for optional fields that should skip other validators if left empty.                         |
+| **Email**            | Validates email address format (uses `email_validator`).               | Use for email fields; can also check domain deliverability.                                      |
+| **EqualTo**          | Compares value of two fields.                                          | Use for password confirmation, email confirmation, repeated inputs.                              |
+| **Length**           | Validates string length (min/max).                                     | Use for usernames, passwords, text fields with size limits.                                      |
+| **NumberRange**      | Validates numeric value is within a range.                             | Use for prices, quantities, ratings, percentages.                                                |
+| **Regexp**           | Validates input using a regular expression.                            | Use for custom patterns (usernames, codes, formats).                                             |
+| **URL**              | Validates URL format via regex.                                        | Use for website links; allow localhost or IP if needed.                                          |
+| **IPAddress**        | Validates IPv4 and/or IPv6 addresses.                                  | Use for network configuration, firewall rules, logs.                                             |
+| **MacAddress**       | Validates MAC address format.                                          | Use for hardware/network identification forms.                                                   |
+| **UUID**             | Validates UUID format.                                                 | Use for IDs, tokens, API identifiers.                                                            |
+| **AnyOf**            | Ensures value is in an allowed list.                                   | Use when value must match a fixed whitelist.                                                     |
+| **NoneOf**           | Ensures value is NOT in a forbidden list.                              | Use to block reserved words, banned values.                                                      |
+| **ReadOnly**         | Ensures submitted value matches existing field data.                   | Use for fields that must not be changed by the client.                                           |
+| **Disabled**         | Ensures no data is submitted for the field.                            | Use for disabled fields that should never be modified.                                           |
 
 # Other
 
