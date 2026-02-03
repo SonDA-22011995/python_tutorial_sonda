@@ -41,6 +41,7 @@
 - [Web Forms](#web-forms)
   - [Install Flask-WTF](#install-flask-wtf)
   - [Configuration](#configuration)
+    - [Protecting applications from CSRF](#protecting-applications-from-csrf)
   - [Form Classes](#form-classes)
     - [The list of standard field Basic](#the-list-of-standard-field-basic)
     - [The list of WTForms built-in validators](#the-list-of-wtforms-built-in-validators)
@@ -51,6 +52,7 @@
   - [Message Flashing](#message-flashing)
   - [Custom validations](#custom-validations)
   - [Custom widgets](#custom-widgets)
+- [Databases](#databases)
 - [Other](#other)
   - [How to decode user session](#how-to-decode-user-session)
 
@@ -1120,6 +1122,69 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = <<your_secret_key>>
 ```
 
+### Protecting applications from CSRF
+
+- Some configuration bits also need to be done in our application
+
+```
+app.config['WTF_CSRF_SECRET_KEY'] = 'random key for form'
+```
+
+- With CSRF enabled, we will have to provide an additional field in our forms; this is a hidden field and
+  contains the CSRF token. WTForms takes care of the hidden field for us, and we just have to add
+  `{{ form.csrf_token }}` to our form:
+
+```
+<form method="POST" action="/some-action-like-create-
+  product">
+    {{ form.csrf_token }}
+</form>
+```
+
+- For this, we need to include another step in our application’s configuration:
+
+```
+from flask_wtf.csrf import CSRFProtect
+#
+# Add configurations #
+CSRFProtect(app)
+```
+
+- The preceding configuration will allow us to access the CSRF token using {{ csrf_token() }}
+  anywhere in our templates. Now, there are two ways to add a CSRF token to AJAX POST requests.
+
+- One way is to fetch the CSRF token in our script tag and use it in the POST request:
+
+```
+<script type="text/javascript">
+    var csrfToken = "{{ csrf_token() }}";
+</script>
+```
+
+- Another way is to render the token in a meta tag and use it whenever required:
+
+```
+<meta name="csrf-token" content="{{ csrf_token() }}"/>
+```
+
+- The difference between the two approaches is that the first approach may have to be repeated in
+  multiple places, depending on the number of script tags in the application
+
+- Now, to add the CSRF token to the AJAX POST request, we have to add the X-CSRFToken attribute
+  to it. This attribute’s value can be taken from either of the two approaches stated here. We will take
+  the second one for our example:
+
+```
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!/^(GET|HEAD|OPTIONS|TRACE)$/i
+          .test(settings.type)) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken)
+        }
+    }
+})
+```
+
 ## Form Classes
 
 - There are three main parts of `WTForms—forms`, `fields`, and `validators`
@@ -1324,6 +1389,44 @@ class FourtyTwoForm(Form):
 ```
 
 ## Custom widgets
+
+- In the below example, we extended the behavior of the existing TextInput widget to append a CSS class as needed
+
+```
+class MyTextInput(TextInput):
+    def __init__(self, error_class='has_errors'):
+        super(MyTextInput, self).__init__()
+        self.error_class = error_class
+
+    def __call__(self, field, **kwargs):
+        if field.errors:
+            c = kwargs.pop('class', '') or kwargs.pop('class_', '')
+            kwargs['class'] = '%s %s' % (self.error_class, c)
+        return super(MyTextInput, self).__call__(field, **kwargs)
+```
+
+- However, widgets need not extend from an existing widget, and indeed don’t even have to be a class. For example, here is a widget that renders a SelectMultipleField as a collection of checkboxes
+
+```
+def select_multi_checkbox(field, ul_class='', **kwargs):
+    kwargs.setdefault('type', 'checkbox')
+    field_id = kwargs.pop('id', field.id)
+    html = ['<ul %s>' % html_params(id=field_id, class_=ul_class)]
+    for value, label, checked, render_kw in field.iter_choices():
+        choice_id = '%s-%s' % (field_id, value)
+        options = dict(kwargs, name=field.name, value=value, id=choice_id)
+        if checked:
+            options['checked'] = 'checked'
+        html.append('<li><input %s /> ' % html_params(**options))
+        html.append('<label for="%s">%s</label></li>' % (choice_id, label))
+    html.append('</ul>')
+    return ''.join(html)
+
+class TestForm(Form):
+    tester = SelectMultipleField(choices=my_choices, widget=select_multi_checkbox)
+```
+
+# Databases
 
 # Other
 
