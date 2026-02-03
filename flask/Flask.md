@@ -26,6 +26,7 @@
     - [Filters](#filters)
     - [`for` Statements](#for-statements)
     - [`if` statement](#if-statement)
+    - [`with` Statement](#with-statement)
     - [`macro`](#macro)
     - [`include`](#include)
     - [Template inheritance](#template-inheritance)
@@ -49,6 +50,7 @@
   - [Redirects and User Sessions](#redirects-and-user-sessions)
   - [Message Flashing](#message-flashing)
   - [Custom validations](#custom-validations)
+  - [Custom widgets](#custom-widgets)
 - [Other](#other)
   - [How to decode user session](#how-to-decode-user-session)
 
@@ -736,6 +738,18 @@ def user(name):
 {% endif %}
 ```
 
+### `with` Statement
+
+- The `with` statement makes it possible to create a new inner scope. Variables set within this scope are not visible outside of the scope.
+
+```
+{% with %}
+    {% set foo = 42 %}
+    {{ foo }}           # foo is 42 here
+{% endwith %}
+# foo is not visible here any longer
+```
+
 ### `macro`
 
 - `macros` are similar to functions in Python code
@@ -1252,6 +1266,8 @@ def index():
 
 ## Message Flashing
 
+- The flashing system basically makes it possible to record a message at the end of a request and access it next request and only next request
+
 ```
 from flask import Flask, render_template, session, redirect, url_for, flash
 @app.route('/', methods=['GET', 'POST'])
@@ -1306,6 +1322,8 @@ class FourtyTwoForm(Form):
         if field.data != 42:
             raise ValidationError('Must be 42')
 ```
+
+## Custom widgets
 
 # Other
 
