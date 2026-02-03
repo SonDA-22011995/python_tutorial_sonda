@@ -1110,7 +1110,8 @@ app.config['SECRET_KEY'] = <<your_secret_key>>
 
 - There are three main parts of `WTForms—forms`, `fields`, and `validators`
   - `WTForms—forms`is represented in the server by a class that inherits from the class `FlaskForm`
-  - `fields`: representations of input fields and perform rudimentary type checking
+  - `fields`: representations of input fields and perform rudimentary type checking. Fields contain a number of useful properties, such as a **label**, **description**, and **a list of validation errors**, in addition to the data the field contains
+  - Every field has a `widget` instance. The widget’s job is rendering an HTML representation of that field. Widget instances can be specified for each field but every field has one by default which makes sense. Some fields are simply conveniences, for example `TextAreaField` is simply a `StringField` with the default widget being a TextArea.
   - `validators`: are functions that are attached to fields that make sure that the data submitted in the form is within our constraints
 
 ```
@@ -1251,7 +1252,60 @@ def index():
 
 ## Message Flashing
 
+```
+from flask import Flask, render_template, session, redirect, url_for, flash
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    form = NameForm()
+    if form.validate_on_submit():
+        old_name = session.get('name')
+        if old_name is not None and old_name != form.name.data:
+            flash('Looks like you have changed your name!')
+        session['name'] = form.name.data
+        return redirect(url_for('index'))
+    return render_template('index.html',form = form, name = session.get('name'))
+```
+
+```
+{% block content %}
+<div class="container">
+    {% for message in get_flashed_messages() %}
+    <div class="alert alert-warning">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% block page_content %}{% endblock %}
+</div>
+{% endblock %}
+
+```
+
 ## Custom validations
+
+- There are two ways to provide custom validators. By defining a custom validator and using it on a field
+
+```
+from wtforms.validators import ValidationError
+
+def is_42(form, field):
+    if field.data != 42:
+        raise ValidationError('Must be 42')
+
+class FourtyTwoForm(Form):
+    num = IntegerField('Number', [is_42])
+```
+
+- Or by providing an in-form field-specific validator:
+
+```
+class FourtyTwoForm(Form):
+    num = IntegerField('Number')
+
+    def validate_num(form, field):
+        if field.data != 42:
+            raise ValidationError('Must be 42')
+```
 
 # Other
 
