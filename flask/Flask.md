@@ -975,6 +975,7 @@ def handle_exception(e):
 ### Custom Error Pages
 
 ```
+import logging
 from flask import abort, render_template, request
 
 # a username needs to be supplied in the query args
@@ -984,12 +985,14 @@ def user_profile():
     username = request.arg.get("username")
     # if a username isn't supplied in the request, return a 400 bad request
     if username is None:
-        abort(400)
+        logging.warning(<<error_message>>)
+        abort(400, description=<<error_message>>)
 
     user = get_user(username=username)
     # if a user can't be found by their username, return 404 not found
     if user is None:
-        abort(404)
+        logging.warning(<<error_message>>)
+        abort(404,description=<<error_message>>)
 
     return render_template("profile.html", user=user)
 ```
@@ -1000,7 +1003,7 @@ from flask import render_template
 @app.errorhandler(404)
 def page_not_found(e):
     # note that we set the 404 status explicitly
-    return render_template('404.html'), 404
+    return render_template('404.html', message=e.description), 404
 ```
 
 - When using Application Factories:
@@ -1009,7 +1012,7 @@ def page_not_found(e):
 from flask import Flask, render_template
 
 def page_not_found(e):
-  return render_template('404.html'), 404
+  return render_template('404.html', message=e.description), 404
 
 def create_app(config_filename):
     app = Flask(__name__)
@@ -1024,8 +1027,9 @@ def create_app(config_filename):
 {% block title %}Page Not Found{% endblock %}
 {% block body %}
   <h1>Page Not Found</h1>
-  <p>What you were looking for is just not there.
-  <p><a href="{{ url_for('index') }}">go somewhere nice</a>
+  <p>What you were looking for is just not there.</p>
+  <p>{{ message }}</p>
+  <a href="{{ url_for('index') }}">go somewhere nice</a>
 {% endblock %}
 ```
 
