@@ -1207,6 +1207,13 @@ class CommentForm(Form):
     text = TextAreaField('Comment', validators=[DataRequired()])
 ```
 
+- `data`– Take existing data from keys in this dict matching form field attributes. obj takes precedence if it also has a matching attribute. Only used if formdata is not passed.
+
+```
+from add_form import AddForm
+form = AddForm(data=book)
+```
+
 ### The list of standard field Basic
 
 | Field Name              | HTML Input          | When to Use / Meaning                                                       |
