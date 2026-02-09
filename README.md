@@ -20,6 +20,7 @@
   - [The `__str__` method](#the-__str__-method)
   - [The `__repr__` method](#the-__repr__-method)
   - [Don't use mutable defaults parameters](#dont-use-mutable-defaults-parameters)
+  - [`__eq__()` method](#__eq__-method)
 - [Function](#function)
   - [Argument vs Parameter](#argument-vs-parameter)
   - [Keyword-only arguments](#keyword-only-arguments)
@@ -709,6 +710,42 @@ def **init**(self, name: str, grades: Optional[list[int]] = None):
 self.name = name
 self.grades = grades or []
 
+```
+
+## `__eq__()` method
+
+- The `__eq__()` method in Python is a "dunder" (double-underscore) method that defines the behavior of the equality operator (==) for a class.
+- By implementing `__eq__()`, you can customize how instances of your class are compared for equality based on their values or attributes, rather than their memory location.
+- How it Works: When you use the `==` operator to compare two objects (e.g., `obj1 == obj2`), Python automatically calls `obj1.__eq__(obj2)` behind the scene
+  - The method takes two arguments: `self` (the object on the left of the == operator) and `other` (the object on the right).
+  - It should return a boolean value (True or False) to indicate whether the objects are considered equal based on your custom logic.
+  - If you don't define `__eq__()` in your class, the default behavior is to compare object identity (memory location), similar to the is operator, meaning two different instances are always unequal by default.
+
+```
+class Person:
+    def __init__(self, first_name, last_name, age):
+        self.first_name = first_name
+        self.last_name = last_name
+        self.age = age
+
+    def __eq__(self, other):
+        # Check if the other object is an instance of the same class
+        # (optional but recommended for robust comparison)
+        if not isinstance(other, Person):
+            return NotImplemented
+
+        # Define equality based on the 'age' attribute
+        return self.age == other.age
+
+# Create instances
+john = Person('John', 'Doe', 25)
+jane = Person('Jane', 'Doe', 25)
+someone_else = Person('Peter', 'Pan', 30)
+
+# Compare instances using the == operator (which calls __eq__())
+print(f"john == jane: {john == jane}") # Output: john == jane: True
+print(f"john == someone_else: {john == someone_else}") # Output: john == someone_else: False
+print(f"john == 25: {john == 25}") # Output: john == 25: False (due to the isinstance check)
 ```
 
 # Function
