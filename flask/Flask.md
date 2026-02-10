@@ -17,6 +17,8 @@
   - [Setting up with Docker](#setting-up-with-docker)
   - [Configuring using class-based settings](#configuring-using-class-based-settings)
   - [Composition of views and models](#composition-of-views-and-models)
+  - [Flask shell](#flask-shell)
+    - [Flask.shell\_context\_processor](#flaskshell_context_processor)
 - [Templates](#templates)
   - [The Jinja2 Template Engine](#the-jinja2-template-engine)
     - [Rendering Templates](#rendering-templates)
@@ -60,8 +62,11 @@
     - [Configure the Extension](#configure-the-extension)
     - [Configuring Logging](#configuring-logging)
   - [Model Definition](#model-definition)
+    - [Declarative table with `mapped_column()`](#declarative-table-with-mapped_column)
     - [Native Support for Dataclasses Mapped as ORM Models](#native-support-for-dataclasses-mapped-as-orm-models)
     - [Generic CamelCase Types](#generic-camelcase-types)
+    - [Most common SQLAlchemy column options](#most-common-sqlalchemy-column-options)
+    - [Relationships](#relationships)
   - [Create the Tables](#create-the-tables)
 - [Other](#other)
   - [How to decode user session](#how-to-decode-user-session)
@@ -608,6 +613,25 @@ python run.py
 from my_app import app
 app.env="development"
 app.run(debug=True)
+```
+
+## Flask shell
+
+### Flask.shell_context_processor
+
+- Registers a shell context processor function
+
+```
+# manage.py
+from main import app, db, User
+
+@app.shell_context_processor
+def make_shell_context():
+    return dict(app=app, db=db, User=User)
+```
+
+```
+flask --app manage shell
 ```
 
 # Templates
@@ -1527,6 +1551,7 @@ logging.getLogger("sqlalchemy.engine").setLevel(logging.DEBUG)
 ## Model Definition
 
 - `__tablename__`: generate a table name if not Flask-SQLAlchemy’s model will automatically generate a table name.If it’s automatically generated, then the model will generate a table name by converting the **CamelCase** class name to **snake_case**
+- SQLAlchemy will assume that the name of the variable is the same as the name of the column
 
 ```
 from sqlalchemy import Integer, String
@@ -1540,6 +1565,8 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % self.name
 ```
+
+### Declarative table with `mapped_column()`
 
 ### Native Support for Dataclasses Mapped as ORM Models
 
@@ -1599,6 +1626,8 @@ u1
 
 ### Generic CamelCase Types
 
+- The **CamelCase** types are to the greatest degree possible database agnostic, meaning they can all be used on any database backend where they will behave in such a way as appropriate to that backend in order to produce the desired behavior.
+
 | Object Name   | Description                                                                               |
 | ------------- | ----------------------------------------------------------------------------------------- |
 | BigInteger    | A type for bigger int integers.                                                           |
@@ -1623,6 +1652,18 @@ u1
 | Unicode       | A variable length Unicode string type.                                                    |
 | UnicodeText   | An unbounded-length Unicode string type.                                                  |
 | Uuid          | Represent a database agnostic UUID datatype.                                              |
+
+### Most common SQLAlchemy column options
+
+| Option Name | Description                                                                       |
+| ----------- | --------------------------------------------------------------------------------- |
+| primary_key | If set to `True`, the column is the table’s primary key.                          |
+| unique      | If set to `True`, do not allow duplicate values for this column.                  |
+| index       | If set to `True`, create an index for this column to improve query efficiency.    |
+| nullable    | If set to `True`, allow empty (`NULL`) values. If `False`, `NULL` is not allowed. |
+| default     | Defines a default value for the column.                                           |
+
+### Relationships
 
 ## Create the Tables
 
