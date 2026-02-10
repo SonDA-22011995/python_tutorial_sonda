@@ -52,7 +52,17 @@
   - [Message Flashing](#message-flashing)
   - [Custom validations](#custom-validations)
   - [Custom widgets](#custom-widgets)
-- [Databases](#databases)
+- [Flask-SQLAlchemy](#flask-sqlalchemy)
+  - [Installation](#installation)
+    - [Database URLs](#database-urls)
+    - [Escaping Special Characters](#escaping-special-characters)
+    - [Initialize the Extension](#initialize-the-extension)
+    - [Configure the Extension](#configure-the-extension)
+    - [Configuring Logging](#configuring-logging)
+  - [Model Definition](#model-definition)
+    - [Native Support for Dataclasses Mapped as ORM Models](#native-support-for-dataclasses-mapped-as-orm-models)
+    - [Generic CamelCase Types](#generic-camelcase-types)
+  - [Create the Tables](#create-the-tables)
 - [Other](#other)
   - [How to decode user session](#how-to-decode-user-session)
 
@@ -1437,7 +1447,191 @@ class TestForm(Form):
     tester = SelectMultipleField(choices=my_choices, widget=select_multi_checkbox)
 ```
 
-# Databases
+# Flask-SQLAlchemy
+
+## Installation
+
+```
+pip install --upgrade Flask-SQLAlchemy
+```
+
+- `--upgrade`: to upgrade existing Python packages to the latest available version from the Python Package Index (PyPI).
+
+### Database URLs
+
+- Syntax
+
+```
+databasetype+driver://user:password@host:port/db_name
+```
+
+| Database   | Driver / Dialect | Connection String Example                           |
+| ---------- | ---------------- | --------------------------------------------------- |
+| SQLite     | builtin          | sqlite:///database.db                               |
+| MySQL      | pymysql          | mysql+pymysql://user:password@ip:port/db_name       |
+| PostgreSQL | psycopg2         | postgresql+psycopg2://user:password@ip:port/db_name |
+| MSSQL      | pyodbc           | mssql+pyodbc://user:password@dsn_name               |
+| Oracle     | cx_oracle        | oracle+cx_oracle://user:password@ip:port/db_name    |
+
+### Escaping Special Characters
+
+```
+import urllib.parse
+urllib.parse.quote_plus(<<Database_URLS>>)
+```
+
+### Initialize the Extension
+
+- Pass a subclass of either DeclarativeBase or DeclarativeBaseNoMeta to the constructor.
+
+```
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import DeclarativeBase
+
+class Base(DeclarativeBase):
+  pass
+
+db = SQLAlchemy(model_class=Base)
+```
+
+### Configure the Extension
+
+```
+# create the app
+app = Flask(__name__)
+# configure the SQLite database, relative to the app instance folder
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///project.db"
+# initialize the app with the extension
+db.init_app(app)
+```
+
+### Configuring Logging
+
+- `sqlalchemy.engine` - controls SQL echoing. Set to logging.INFO for SQL query output, `logging.DEBUG` for query + result set output. These settings are equivalent to `echo=True` and `echo="debug"` on `create_engine.echo`, respectively
+
+```
+import logging
+
+logging.basicConfig()
+logging.getLogger("sqlalchemy.engine").setLevel(logging.INFO)
+logging.getLogger("sqlalchemy.engine").setLevel(logging.DEBUG)
+```
+
+- `sqlalchemy.pool` - controls connection pool logging. Set to `logging.INFO` to log connection invalidation and recycle events; set to `logging.DEBUG` to additionally log all pool checkins and checkouts. These settings are equivalent to `pool_echo=True` and `pool_echo="debug"` on `create_engine.echo_pool`, respectively.
+
+- `sqlalchemy.dialects` - controls custom logging for SQL dialects, to the extent that logging is used within specific dialects, which is generally minimal.
+
+- `sqlalchemy.orm` - controls logging of various ORM functions to the extent that logging is used within the ORM, which is generally minimal. Set to logging.INFO to log some top-level information on mapper configurations.
+
+## Model Definition
+
+- `__tablename__`: generate a table name if not Flask-SQLAlchemy’s model will automatically generate a table name.If it’s automatically generated, then the model will generate a table name by converting the **CamelCase** class name to **snake_case**
+
+```
+from sqlalchemy import Integer, String
+from sqlalchemy.orm import Mapped, mapped_column
+
+class User(db.Model):
+    __tablename__ = 'users'
+    id: Mapped[int] = mapped_column(primary_key=True)
+    username: Mapped[str] = mapped_column(unique=True)
+
+    def __repr__(self):
+        return '<User %r>' % self.name
+```
+
+### Native Support for Dataclasses Mapped as ORM Models
+
+- To enable dataclasses using class inheritance we make use of the `MappedAsDataclass` mixin, either directly on each class, or on the `Base` class
+- Using the dataclasses feature, mapped classes gain an `__init__()` method that supports positional arguments as well as customizable default values for optional keyword arguments.
+- As mentioned previously, dataclasses also generate many useful methods such as `__str__()`, `__eq__()`.
+- Dataclass serialization methods such as dataclasses.asdict() and dataclasses.astuple() also work
+
+```
+from typing_extensions import Annotated
+from typing import List
+from typing import Optional
+from sqlalchemy import ForeignKey
+from sqlalchemy import String
+from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import MappedAsDataclass
+from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import relationship
+
+
+class Base(MappedAsDataclass, DeclarativeBase):
+    """subclasses will be converted to dataclasses"""
+
+
+intpk = Annotated[int, mapped_column(primary_key=True)]
+str30 = Annotated[str, mapped_column(String(30))]
+user_fk = Annotated[int, mapped_column(ForeignKey("user_account.id"))]
+
+
+class User(Base):
+    __tablename__ = "user_account"
+
+    id: Mapped[intpk] = mapped_column(init=False)
+    name: Mapped[str30]
+    fullname: Mapped[Optional[str]] = mapped_column(default=None)
+    addresses: Mapped[List["Address"]] = relationship(
+        back_populates="user", default_factory=list
+    )
+
+
+class Address(Base):
+    __tablename__ = "address"
+
+    id: Mapped[intpk] = mapped_column(init=False)
+    email_address: Mapped[str]
+    user_id: Mapped[user_fk] = mapped_column(init=False)
+    user: Mapped["User"] = relationship(back_populates="addresses", default=None)
+```
+
+```
+u1 = User("username", fullname="full name", addresses=[Address("email@address")])
+u1
+
+# User(id=None, name='username', fullname='full name', addresses=[Address(id=None, email_address='email@address', user_id=None, user=...)])
+```
+
+### Generic CamelCase Types
+
+| Object Name   | Description                                                                               |
+| ------------- | ----------------------------------------------------------------------------------------- |
+| BigInteger    | A type for bigger int integers.                                                           |
+| Boolean       | A bool datatype.                                                                          |
+| Date          | A type for datetime.date() objects.                                                       |
+| DateTime      | A type for datetime.datetime() objects.                                                   |
+| Double        | A type for double FLOAT floating point types.                                             |
+| Enum          | Generic Enum Type.                                                                        |
+| Float         | Type representing floating point types, such as FLOAT or REAL.                            |
+| Integer       | A type for int integers.                                                                  |
+| Interval      | A type for datetime.timedelta() objects.                                                  |
+| LargeBinary   | A type for large binary byte data.                                                        |
+| MatchType     | Refers to the return type of the MATCH operator.                                          |
+| Numeric       | Base for non-integer numeric types, such as NUMERIC, FLOAT, DECIMAL, and other variants.  |
+| NumericCommon | Common mixin for the Numeric and Float types.                                             |
+| PickleType    | Holds Python objects, which are serialized using pickle.                                  |
+| SchemaType    | Add capabilities to a type which allow for schema-level DDL to be associated with a type. |
+| SmallInteger  | A type for smaller int integers.                                                          |
+| String        | The base for all string and character types.                                              |
+| Text          | A variably sized string type.                                                             |
+| Time          | A type for datetime.time() objects.                                                       |
+| Unicode       | A variable length Unicode string type.                                                    |
+| UnicodeText   | An unbounded-length Unicode string type.                                                  |
+| Uuid          | Represent a database agnostic UUID datatype.                                              |
+
+## Create the Tables
+
+- Use `create_all()` to create the models and tables after defining them. If you define models in submodules, you must import them so that SQLAlchemy knows about them before calling `create_all`.
+
+```
+with app.app_context():
+    db.create_all()
+```
 
 # Other
 
