@@ -18,7 +18,7 @@
   - [Configuring using class-based settings](#configuring-using-class-based-settings)
   - [Composition of views and models](#composition-of-views-and-models)
   - [Flask shell](#flask-shell)
-    - [Flask.shell\_context\_processor](#flaskshell_context_processor)
+    - [Flask.shell_context_processor](#flaskshell_context_processor)
 - [Templates](#templates)
   - [The Jinja2 Template Engine](#the-jinja2-template-engine)
     - [Rendering Templates](#rendering-templates)
@@ -63,10 +63,14 @@
     - [Configuring Logging](#configuring-logging)
   - [Model Definition](#model-definition)
     - [Declarative table with `mapped_column()`](#declarative-table-with-mapped_column)
+    - [ORM Annotated Declarative - Automated Mapping with Type Annotations](#orm-annotated-declarative---automated-mapping-with-type-annotations)
     - [Native Support for Dataclasses Mapped as ORM Models](#native-support-for-dataclasses-mapped-as-orm-models)
     - [Generic CamelCase Types](#generic-camelcase-types)
     - [Most common SQLAlchemy column options](#most-common-sqlalchemy-column-options)
-    - [Relationships](#relationships)
+  - [Relationships between models](#relationships-between-models)
+    - [Common SQLAlchemy relationship options](#common-sqlalchemy-relationship-options)
+    - [One-to-many relationship](#one-to-many-relationship)
+    - [One To one](#one-to-one)
   - [Create the Tables](#create-the-tables)
 - [Other](#other)
   - [How to decode user session](#how-to-decode-user-session)
@@ -616,6 +620,8 @@ app.run(debug=True)
 ```
 
 ## Flask shell
+
+- To explore the data in your application, you can start an interactive Python shell with the shell command. An application context will be active, and the app instance will be imported.
 
 ### Flask.shell_context_processor
 
@@ -1566,7 +1572,85 @@ class User(db.Model):
         return '<User %r>' % self.name
 ```
 
+- Old way
+
+```
+class User(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    username = db.Column(db.String(255))
+    password = db.Column(db.String(255))
+
+    def __init__(self, username):
+        self.username = username
+
+    def __repr__(self):
+        return "<User '{}'>".format(self.username)
+```
+
 ### Declarative table with `mapped_column()`
+
+- `mapped_column()` supersedes the use of `Column()`
+- The `mapped_column()` construct accepts all arguments that are accepted by the `Column` construct, as well as additional ORM-specific arguments
+- There is an optional first argument in the `db.Column` or `mapped_column()` instance that allows us to specify the name of the column in the database. Without it, SQLAlchemy will assume that the name of the variable is the same as the name of the column
+
+```
+class User(Base):
+    __tablename__ = "user"
+
+    id: Mapped[int] = mapped_column("user_id", primary_key=True)
+    name: Mapped[str] = mapped_column("user_name")
+```
+
+### ORM Annotated Declarative - Automated Mapping with Type Annotations
+
+```
+from sqlalchemy import String
+from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
+
+
+class Base(DeclarativeBase):
+    pass
+
+
+class User(Base):
+    __tablename__ = "user"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String(50))
+    fullname: Mapped[str | None]
+    nickname: Mapped[str | None] = mapped_column(String(30))
+```
+
+- The example above demonstrates that if a class attribute is type-hinted with Mapped but doesn’t have an explicit `mapped_column()` assigned to it, SQLAlchemy will automatically create one. Furthermore, details like the column’s datatype and whether it can be null (nullability) are inferred from the Mapped annotation. However, you can always explicitly provide these arguments to `mapped_column()` to override these automatically-derived settings.
+- `mapped_column()` derives the **datatype** and **nullability** from the **Mapped** annotation
+  - **datatype** - the Python type given inside Mapped, as contained within the typing.Optional construct if present, is associated with a TypeEngine subclass such as Integer, String, DateTime, or Uuid, to name a few common types.
+
+```
+from typing import Optional
+
+from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
+
+
+class Base(DeclarativeBase):
+    pass
+
+
+class SomeClass(Base):
+    __tablename__ = "some_table"
+
+    # primary_key=True, therefore will be NOT NULL
+    id: Mapped[int] = mapped_column(primary_key=True)
+
+    # not Optional[], therefore will be NOT NULL
+    data: Mapped[str]
+
+    # Optional[], therefore will be NULL
+    additional_info: Mapped[Optional[str]]
+```
 
 ### Native Support for Dataclasses Mapped as ORM Models
 
@@ -1663,7 +1747,123 @@ u1
 | nullable    | If set to `True`, allow empty (`NULL`) values. If `False`, `NULL` is not allowed. |
 | default     | Defines a default value for the column.                                           |
 
-### Relationships
+## Relationships between models
+
+- SQLite and MySQL/MyISAM engines do not enforce relationship constraints. This might cause problems if you are using SQLite on your development environment and a different engine on production (MySQL with innodb), but you can tell SQLite to enforce foreign key constraints (with a performance penalty).
+
+```
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import event
+from sqlalchemy.engine import Engine
+
+app = Flask(__name__)
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
+
+db = SQLAlchemy(app)
+
+# 👇 AFTER db = SQLAlchemy(app)
+
+@event.listens_for(Engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON")
+    cursor.close()
+```
+
+### Common SQLAlchemy relationship options
+
+- `back_populates`: Add a back reference in the other model in the relationship
+
+### One-to-many relationship
+
+- Old way
+
+```
+class Post(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    title = db.Column(db.String(255))
+    text = db.Column(db.Text())
+    publish_date = db.Column(db.DateTime())
+    user_id = db.Column(db.Integer(), db.ForeignKey('user.id'))
+
+    def __init__(self, title):
+        self.title = title
+
+    def __repr__(self):
+        return "<Post '{}'>".format(self.title)
+```
+
+```
+class User(db.Model):
+    id = db.Column(db.Integer(), primary_key=True)
+    username = db.Column(db.String(255))
+    password = db.Column(db.String(255))
+
+    posts = db.relationship(
+        'Post',
+        backref='user',
+        lazy='dynamic'
+    )
+```
+
+- New way
+
+```
+# Forward Reference
+from __future__ import annotations
+from typing import List
+
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
+from sqlalchemy import ForeignKey
+from sqlalchemy.orm import relationship
+
+class Parent(Base):
+    __tablename__ = "parent_table"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    children: Mapped[List["Child"]] = relationship(back_populates="parent")
+
+
+class Child(Base):
+    __tablename__ = "child_table"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    parent_id: Mapped[int] = mapped_column(ForeignKey("parent_table.id"))
+    parent: Mapped["Parent"] = relationship(back_populates="children")
+```
+
+- Using Sets, Lists, or other Collection Types for One To Many
+
+The example from the previous section may be written to use a `set` rather than a list for the `Parent.children` collection using `Mapped[Set["Child"]]`:
+
+```
+class Parent(Base):
+    __tablename__ = "parent_table"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    children: Mapped[Set["Child"]] = relationship(back_populates="parent")
+```
+
+### One To one
+
+```
+class Parent(Base):
+    __tablename__ = "parent_table"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    child: Mapped["Child"] = relationship(back_populates="parent")
+
+class Child(Base):
+    __tablename__ = "child_table"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    parent_id: Mapped[int] = mapped_column(ForeignKey("parent_table.id"))
+    parent: Mapped["Parent"] = relationship(back_populates="child", single_parent=True)
+```
+
+- Whether or not relationship.single_parent is used, it is recommended that the database schema include a unique constraint to indicate that the Child.parent_id column should be unique, to ensure at the database level that only one Child row may refer to a particular Parent row at a time
 
 ## Create the Tables
 
