@@ -77,7 +77,8 @@
     - [Inserting Rows](#inserting-rows)
     - [Modifying Rows](#modifying-rows)
     - [Deleting Rows](#deleting-rows)
-    - [](#)
+    - [Select Rows](#select-rows)
+      - [Queries for Views](#queries-for-views)
 - [Other](#other)
   - [How to decode user session](#how-to-decode-user-session)
 
@@ -2014,12 +2015,20 @@ db.session.delete(user)
 db.session.commit()
 ```
 
-###
+### Select Rows
 
 ```
 user = db.session.execute(db.select(User).filter_by(username=username)).scalar_one()
 users = db.session.execute(db.select(User).order_by(User.username)).scalars()
 ```
+
+#### Queries for Views
+
+- `SQLAlchemy.get_or_404()` will raise a 404 if the row with the given id doesn’t exist, otherwise it will return the instance.
+
+- `SQLAlchemy.first_or_404()` will raise a 404 if the query does not return any results, otherwise it will return the first result.
+
+- `SQLAlchemy.one_or_404()` will raise a 404 if the query does not return exactly one result, otherwise it will return the result.
 
 # Other
 
