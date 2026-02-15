@@ -18,7 +18,7 @@
   - [Configuring using class-based settings](#configuring-using-class-based-settings)
   - [Composition of views and models](#composition-of-views-and-models)
   - [Flask shell](#flask-shell)
-    - [Flask.shell_context_processor](#flaskshell_context_processor)
+    - [Flask.shell\_context\_processor](#flaskshell_context_processor)
 - [Templates](#templates)
   - [The Jinja2 Template Engine](#the-jinja2-template-engine)
     - [Rendering Templates](#rendering-templates)
@@ -71,6 +71,7 @@
     - [Common SQLAlchemy relationship options](#common-sqlalchemy-relationship-options)
     - [One-to-many relationship](#one-to-many-relationship)
     - [One To one](#one-to-one)
+    - [Many to many](#many-to-many)
   - [Create the Tables](#create-the-tables)
 - [Other](#other)
   - [How to decode user session](#how-to-decode-user-session)
@@ -1775,6 +1776,41 @@ def set_sqlite_pragma(dbapi_connection, connection_record):
 
 - `back_populates`: Add a back reference in the other model in the relationship
 
+- `primaryjoin`: Specify the join condition between the two models explicitly. This is necessary only for ambiguous relationship
+
+```
+from sqlalchemy import Integer, ForeignKey, String, Column
+from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import relationship
+
+
+class Base(DeclarativeBase):
+    pass
+
+
+class User(Base):
+    __tablename__ = "user"
+    id = mapped_column(Integer, primary_key=True)
+    name = mapped_column(String)
+    boston_addresses = relationship(
+        "Address",
+        primaryjoin="and_(User.id==Address.user_id, Address.city=='Boston')",
+    )
+
+
+class Address(Base):
+    __tablename__ = "address"
+    id = mapped_column(Integer, primary_key=True)
+    user_id = mapped_column(Integer, ForeignKey("user.id"))
+
+    street = mapped_column(String)
+    city = mapped_column(String)
+    state = mapped_column(String)
+    zip = mapped_column(String)
+```
+
+- `lazy` Specify how the related items are to be loaded. Possible values are select (items are loaded on demand the first time they are accessed), immediate (items are loaded when the source object is loaded), joined (items are loaded immediately, but as a join), subquery (items are loaded immediately, but as a subquery), noload (items are never loaded), and dynamic (instead of loading the items, the query that can load them is given)
+
 ### One-to-many relationship
 
 - Old way
@@ -1848,6 +1884,8 @@ class Parent(Base):
 
 ### One To one
 
+- The first way
+
 ```
 class Parent(Base):
     __tablename__ = "parent_table"
@@ -1863,7 +1901,70 @@ class Child(Base):
     parent: Mapped["Parent"] = relationship(back_populates="child", single_parent=True)
 ```
 
+- The second way
+
+```
+class Parent(Base):
+    __tablename__ = "parent_table"
+
+    id = mapped_column(Integer, primary_key=True)
+    child = relationship("Child", uselist=False, back_populates="parent")
+
+
+class Child(Base):
+    __tablename__ = "child_table"
+
+    id = mapped_column(Integer, primary_key=True)
+    parent_id = mapped_column(ForeignKey("parent_table.id"))
+    parent = relationship("Parent", back_populates="child")
+```
+
 - Whether or not relationship.single_parent is used, it is recommended that the database schema include a unique constraint to indicate that the Child.parent_id column should be unique, to ensure at the database level that only one Child row may refer to a particular Parent row at a time
+
+### Many to many
+
+```
+from __future__ import annotations
+
+from sqlalchemy import Column
+from sqlalchemy import Table
+from sqlalchemy import ForeignKey
+from sqlalchemy import Integer
+from sqlalchemy.orm import Mapped
+from sqlalchemy.orm import mapped_column
+from sqlalchemy.orm import DeclarativeBase
+from sqlalchemy.orm import relationship
+
+
+class Base(DeclarativeBase):
+    pass
+
+
+association_table = Table(
+    "association_table",
+    Base.metadata,
+    Column("left_id", ForeignKey("left_table.id"), primary_key=True),
+    Column("right_id", ForeignKey("right_table.id"), primary_key=True),
+)
+
+
+class Parent(Base):
+    __tablename__ = "left_table"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    children: Mapped[List[Child]] = relationship(
+        secondary=association_table, back_populates="parents"
+    )
+
+
+class Child(Base):
+    __tablename__ = "right_table"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    parents: Mapped[List[Parent]] = relationship(
+        secondary=association_table, back_populates="children"
+    )
+```
 
 ## Create the Tables
 
