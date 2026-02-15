@@ -73,6 +73,11 @@
     - [One To one](#one-to-one)
     - [Many to many](#many-to-many)
   - [Create the Tables](#create-the-tables)
+  - [Modifying and Querying Data](#modifying-and-querying-data)
+    - [Inserting Rows](#inserting-rows)
+    - [Modifying Rows](#modifying-rows)
+    - [Deleting Rows](#deleting-rows)
+    - [](#)
 - [Other](#other)
   - [How to decode user session](#how-to-decode-user-session)
 
@@ -1973,6 +1978,47 @@ class Child(Base):
 ```
 with app.app_context():
     db.create_all()
+```
+
+## Modifying and Querying Data
+
+### Inserting Rows
+
+```
+user = User(username='fake_name')
+db.session.add(user)
+db.session.commit()
+```
+
+### Modifying Rows
+
+```
+User.query.filter_by(username='fake_name').update({
+ 'password': 'test'
+})
+
+# The updated models have already been added to the session
+db.session.commit()
+```
+
+```
+user.verified = True
+db.session.commit()
+```
+
+### Deleting Rows
+
+```
+user = User.query.filter_by(username='fake_name').first()
+db.session.delete(user)
+db.session.commit()
+```
+
+###
+
+```
+user = db.session.execute(db.select(User).filter_by(username=username)).scalar_one()
+users = db.session.execute(db.select(User).order_by(User.username)).scalars()
 ```
 
 # Other
