@@ -18,7 +18,7 @@
   - [Configuring using class-based settings](#configuring-using-class-based-settings)
   - [Composition of views and models](#composition-of-views-and-models)
   - [Flask shell](#flask-shell)
-    - [Flask.shell\_context\_processor](#flaskshell_context_processor)
+    - [Flask.shell_context_processor](#flaskshell_context_processor)
 - [Templates](#templates)
   - [The Jinja2 Template Engine](#the-jinja2-template-engine)
     - [Rendering Templates](#rendering-templates)
@@ -79,6 +79,11 @@
     - [Deleting Rows](#deleting-rows)
     - [Select Rows](#select-rows)
       - [Queries for Views](#queries-for-views)
+  - [Constraints and indexing](#constraints-and-indexing)
+    - [Not Null](#not-null)
+    - [UNIQUE](#unique)
+    - [CHECK Constraint](#check-constraint)
+    - [DEFAULT](#default)
 - [Other](#other)
   - [How to decode user session](#how-to-decode-user-session)
 
@@ -2018,6 +2023,8 @@ db.session.commit()
 ### Select Rows
 
 ```
+from sqlalchemy import select
+
 user = db.session.execute(db.select(User).filter_by(username=username)).scalar_one()
 users = db.session.execute(db.select(User).order_by(User.username)).scalars()
 ```
@@ -2029,6 +2036,70 @@ users = db.session.execute(db.select(User).order_by(User.username)).scalars()
 - `SQLAlchemy.first_or_404()` will raise a 404 if the query does not return any results, otherwise it will return the first result.
 
 - `SQLAlchemy.one_or_404()` will raise a 404 if the query does not return exactly one result, otherwise it will return the result.
+
+## Constraints and indexing
+
+### Not Null
+
+- New way
+
+```
+# implicit
+# name is NOT NULL by default because 'str' is a non-optional type
+name: Mapped[str]
+
+# explicity
+name: Mapped[str] = mapped_column(nullable=False)
+```
+
+- Old way
+
+```
+name = Column(String(50), nullable=False)
+```
+
+### UNIQUE
+
+```
+from sqlalchemy import Integer, UniqueConstraint
+
+class Location(Base):
+    __tablename__ = "locations"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    customer_id: Mapped[int] = mapped_column(Integer)
+    location_code: Mapped[str] = mapped_column(String(10))
+
+    __table_args__ = (
+        UniqueConstraint('customer_id', 'location_code', name='uix_customer_location_code'),
+    )
+
+```
+
+### CHECK Constraint
+
+```
+from sqlalchemy import Column, Integer, CheckConstraint
+from sqlalchemy.orm import declarative_base
+
+Base = declarative_base()
+
+class User(Base):
+    __tablename__ = 'user_account'
+    id = Column(Integer, primary_key=True)
+    name = Column(String(50))
+    age = Column(Integer)
+
+    __table_args__ = (
+        CheckConstraint('age >= 18', name='ck_user_age_gte_18'),
+    )
+
+```
+
+### DEFAULT
+
+```
+date = db.Column(db.DateTime(), default=datetime.datetime.now)
+```
 
 # Other
 
