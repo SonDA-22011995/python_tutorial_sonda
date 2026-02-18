@@ -11,6 +11,7 @@
   - [Immutable sequences](#immutable-sequences)
     - [String](#string)
     - [Tuple](#tuple)
+  - [Mutable sequences](#mutable-sequences)
 - [OOP](#oop)
   - [The `class attributes`](#the-class-attributes)
   - [The `@staticmethod` method](#the-staticmethod-method)
@@ -428,6 +429,83 @@ encoded_s.decode('utf-8') # let's revert to the original
 ```
 
 ### Tuple
+
+- Tuples are used to store multiple items in a single variable.
+- A tuples are unchangeable, meaning that we cannot change, add or remove items after the tuple has been created.
+- Tuple items are indexed, the first item has index `[0]`, the second item has index `[1]` etc.
+- Allow Duplicates: Since tuples are indexed, they can have items with the same value
+- Declare
+
+```
+thistuple = ("apple", "banana", "cherry", "apple", "cherry")
+a, b, c = 1, 2, 3
+```
+
+- Access
+
+```
+thistuple = ("apple", "banana", "cherry")
+print(thistuple[1])
+```
+
+```
+thistuple = ("apple", "banana", "cherry")
+print(thistuple[-1])
+```
+
+```
+thistuple = ("apple", "banana", "cherry", "orange", "kiwi", "melon", "mango")
+print(thistuple[2:5])
+```
+
+- Change Tuple Values: You can convert the tuple into a list, change the list, and convert the list back into a tuple.
+
+```
+x = ("apple", "banana", "cherry")
+y = list(x)
+y[1] = "kiwi"
+x = tuple(y)
+
+print(x)
+```
+
+- Unpacking a Tuple
+
+```
+fruits = ("apple", "banana", "cherry")
+
+(green, yellow, red) = fruits
+
+print(green)
+print(yellow)
+print(red)
+```
+
+- Loop Through a Tuple
+
+```
+thistuple = ("apple", "banana", "cherry")
+for x in thistuple:
+  print(x)
+```
+
+```
+thistuple = ("apple", "banana", "cherry")
+for i in range(len(thistuple)):
+  print(thistuple[i])
+```
+
+- Join Tuples: To join two or more tuples you can use the `+` operator:
+
+```
+tuple1 = ("a", "b" , "c")
+tuple2 = (1, 2, 3)
+
+tuple3 = tuple1 + tuple2
+print(tuple3)
+```
+
+## Mutable sequences
 
 # OOP
 
@@ -3022,7 +3100,3 @@ print(z is y) # False
   - Track email events (delivered, opened, clicked, bounced, spam complaints)
   - Manage domains, templates, and email logs
   - Integrate via REST API or SMTP with backend applications (Python, Node.js, Java, etc.)
-
-```
-
-```
