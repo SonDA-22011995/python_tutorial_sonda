@@ -84,6 +84,14 @@
     - [UNIQUE](#unique)
     - [CHECK Constraint](#check-constraint)
     - [DEFAULT](#default)
+- [Email Support with Flask-Mail](#email-support-with-flask-mail)
+  - [Installing](#installing)
+  - [Configuring](#configuring)
+  - [Example](#example)
+- [Sessions](#sessions)
+- [Global](#global)
+- [Class-based Views](#class-based-views)
+- [Creating Controllers with Blueprints](#creating-controllers-with-blueprints)
 - [Other](#other)
   - [How to decode user session](#how-to-decode-user-session)
 
@@ -118,6 +126,10 @@ str(secrets.SystemRandom().getrandbits(128))
 ```
 import os
 os.urandom(24).hex()
+```
+
+```
+python -c 'import secrets; print(secrets.token_hex())'
 ```
 
 ## Routes and View Functions
@@ -2100,6 +2112,115 @@ class User(Base):
 ```
 date = db.Column(db.DateTime(), default=datetime.datetime.now)
 ```
+
+# Email Support with Flask-Mail
+
+## Installing
+
+```
+pip install flask-mail
+```
+
+## Configuring
+
+```
+flask-mail.MAIL_SERVER: str = localhost
+flask-mail.MAIL_PORT: int = 25
+flask-mail.MAIL_USE_TLS: bool = False
+flask-mail.MAIL_USE_SSL: bool = False
+flask-mail.MAIL_DEBUG: bool = app.debug
+flask-mail.MAIL_USERNAME: str | None = None
+flask-mail.MAIL_PASSWORD: str | None = None
+flask-mail.MAIL_DEFAULT_SENDER: str | None = None
+flask-mail.MAIL_MAX_EMAILS: int | None = None
+flask-mail.MAIL_SUPPRESS_SEND: bool = app.testing
+flask-mail.MAIL_ASCII_ATTACHMENTS: bool = False
+```
+
+## Example
+
+```
+from flask import Flask
+from flask_mail import Mail, Message
+
+app = Flask(__name__)
+
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = 'your_email@gmail.com'
+app.config['MAIL_PASSWORD'] = 'your_password'
+
+mail = Mail(app)
+
+@app.route("/send")
+def send():
+    msg = Message(
+        "Hello",
+        sender="your_email@gmail.com",
+        recipients=["to@gmail.com"]
+    )
+    msg.body = "Hello from Flask"
+    mail.send(msg)
+    return "Sent!"
+
+```
+
+# Sessions
+
+- Sessions are the way Flask will store information across requests; to do this, Flask will use signed cookies using the previously set `SECRET_KEY` config to apply the `HMAC-SHA1` default cryptographic method. So, a user can read their session cookie but can't modify it. Flask also sets a default session lifetime that defaults to 31 days to prevent relay attacks; this can be changed by using the configuration key's `PERMANENT_SESSION_LIFETIME` config key
+
+```
+from flask import session
+
+# Set the secret key to some random bytes. Keep this really secret!
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+
+@app.route('/')
+def index():
+    if 'username' in session:
+        return f'Logged in as {session["username"]}'
+    return 'You are not logged in'
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        session['username'] = request.form['username']
+        return redirect(url_for('index'))
+    return '''
+        <form method="post">
+            <p><input type=text name=username>
+            <p><input type=submit value=Login>
+        </form>
+    '''
+
+@app.route('/logout')
+def logout():
+    # remove the username from the session if it's there
+    session.pop('username', None)
+    return redirect(url_for('index'))
+```
+
+# Global
+
+- **Global** is a thread-safe namespace store to keep data during a request's context. At the beginning of each request, a new global object is created, and at the end of the request the object is destroyed. It's the right place to keep a User object or any data that needs to be shared across views, templates, or Python functions that are called within the request context. This is done without the need to pass around any data
+
+```
+from flask import g
+....
+# Set some key with some value on a request context
+g.some_key = "some_value"
+# Get a key
+v = g.some_key
+# Get and remove a key
+v = g.pop('some_key', "default_if_not_present")
+```
+
+# Class-based Views
+
+# Creating Controllers with Blueprints
+
+- We have already seen the basic usage of the view functions in our main.py file. Now, the more complex and powerful versions will be introduced, and we will turn our disparate view functions into cohesive wholes. We will also discuss the internals of how Flask handles the lifetime of an HTTP request and advanced ways to define Flask views
 
 # Other
 
