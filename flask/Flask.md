@@ -95,6 +95,9 @@
   - [HTTP methods (Method Hints)](#http-methods-method-hints)
   - [Method class views](#method-class-views)
 - [Creating Controllers with Blueprints](#creating-controllers-with-blueprints)
+  - [Create a Blueprint](#create-a-blueprint)
+  - [Register view](#register-view)
+  - [Add the blueprint to our app](#add-the-blueprint-to-our-app)
 - [Other](#other)
   - [How to decode user session](#how-to-decode-user-session)
 
@@ -2373,7 +2376,63 @@ register_api(app, Story, "stories")
 
 # Creating Controllers with Blueprints
 
-- We have already seen the basic usage of the view functions in our main.py file. Now, the more complex and powerful versions will be introduced, and we will turn our disparate view functions into cohesive wholes. We will also discuss the internals of how Flask handles the lifetime of an HTTP request and advanced ways to define Flask views
+- In Flask, a blueprint is a method of extending an existing Flask app. They provide a way of combining groups of views with common functionality and allow developers to break their app down into different components. In our architecture, the blueprints will act as our controllers.
+
+## Create a Blueprint
+
+- The blueprint takes two required parameters, the name of the blueprint and the name of the package, which are used internally in Flask, and passing `__name__` to it will suffice
+- The `url_prefix` option automatically adds the provided URI to the start of every route in the blueprint.So, the URL is actually `/example/home
+- `template_folder` and `static_folder` are optional and define where the blueprint will look for files
+
+```
+from flask import Blueprint
+
+example = Blueprint(
+    'example',
+    __name__,
+    template_folder='templates/example',
+    static_folder='static/example',
+    url_prefix="/example"
+)
+```
+
+## Register view
+
+```
+@example.route('/')
+def home():
+    return render_template('home.html')
+```
+
+```
+from flask.views import MethodView
+
+class Home(MethodView)
+    def get(self):
+        return render_template('home.html')
+
+home_view = Home.as_view("home")
+
+example.add_url_rule("/",view_func=home_view, methods=["GET"])
+```
+
+- The `url_for()` function will now have to be told which blueprint the requested route is in
+
+```
+{{ url_for('example.home') }}
+```
+
+- The `url_for()` function will now have to be told whether the view is being rendered from within the same blueprint
+
+```
+{{ url_for('.home') }}
+```
+
+## Add the blueprint to our app
+
+```
+app.register_blueprint(example)
+```
 
 # Other
 
