@@ -91,6 +91,7 @@
 - [Sessions](#sessions)
 - [Global](#global)
 - [Class-based Views](#class-based-views)
+  - [URL Variables](#url-variables)
 - [Creating Controllers with Blueprints](#creating-controllers-with-blueprints)
 - [Other](#other)
   - [How to decode user session](#how-to-decode-user-session)
@@ -2217,6 +2218,54 @@ v = g.pop('some_key', "default_if_not_present")
 ```
 
 # Class-based Views
+
+- In most Flask apps, views are handled by functions. However, when many views share common functionality or there are pieces of your code that could be broken out into separate functions, it would be useful to implement our views as classes to take advantage of inheritance
+
+```
+from flask.views import View
+
+class GenericView(View):
+    def __init__(self, template, model):
+        self.template = template
+        self.model = model
+        super(GenericView, self).__init__()
+
+    def dispatch_request(self):
+        return render_template(self.template)
+
+app.add_url_rule(
+    '/',
+    view_func=GenericView.as_view(
+        'home', template='home.html'
+    )
+)
+```
+
+- `dispatch_request()` function is the equivalent of the view function
+- `app.add_url_rule()` function mimics the `app.route()` function as it ties a route to a function call
+- The `View.as_view()` method is passed to the `view_func` parameter because it transforms the View class into a
+  view function. The first argument defines the name of the view function, so functions such as `url_for()` can route to it. The remaining parameters are passed to the `__init__` function of the View class.
+- Next, we need to be able to register the same view class for different models and templates, to make it more useful than the original function. The class will take two arguments, the model and template, and store them on self. Then dispatch_request can reference these instead of hard-coded values
+
+## URL Variables
+
+- Any variables captured by the URL are passed as keyword arguments to the dispatch_request method, as they would be for a regular view function.
+
+```
+class DetailView(View):
+    def __init__(self, model):
+        self.model = model
+        self.template = f"{model.__name__.lower()}/detail.html"
+
+    def dispatch_request(self, id)
+        item = self.model.query.get_or_404(id)
+        return render_template(self.template, item=item)
+
+app.add_url_rule(
+    "/users/<int:id>",
+    view_func=DetailView.as_view("user_detail", User)
+)
+```
 
 # Creating Controllers with Blueprints
 
