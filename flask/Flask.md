@@ -225,7 +225,8 @@ flask run --help
 
 ### Application and Request Contexts
 
-- Flask uses contexts to temporarily make certain objects globally accessible
+- When Flask receives a request from a client, it needs to make a few objects available to the view function that will handle it. A good example is the request object, which encapsulates the HTTP request sent by the client.
+- To avoid cluttering view functions with lots of arguments that may not always be needed, Flask uses contexts to temporarily make certain objects globally accessible
 
 ```
 from flask import request
