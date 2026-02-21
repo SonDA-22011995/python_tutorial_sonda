@@ -92,6 +92,8 @@
 - [Global](#global)
 - [Class-based Views](#class-based-views)
   - [URL Variables](#url-variables)
+  - [HTTP methods (Method Hints)](#http-methods-method-hints)
+  - [Method class views](#method-class-views)
 - [Creating Controllers with Blueprints](#creating-controllers-with-blueprints)
 - [Other](#other)
   - [How to decode user session](#how-to-decode-user-session)
@@ -2267,6 +2269,107 @@ app.add_url_rule(
     view_func=DetailView.as_view("user_detail", User)
 )
 ```
+
+## HTTP methods (Method Hints)
+
+```
+class GenericView(View):
+    methods = ['GET', 'POST']
+
+    def dispatch_request(self):
+        if request.method == 'GET':
+            return render_template(self.template)
+        elif reque
+```
+
+## Method class views
+
+- For APIs it can be helpful to use a different function for each HTTP method. MethodView extends the basic View to dispatch to different methods of the class based on the request method. Each HTTP method maps to a method of the class with the same (lowercase) name
+
+```
+from flask.views import MethodView
+
+class ItemAPI(MethodView):
+    init_every_request = False
+
+    def __init__(self, model):
+        self.model = model
+        self.validator = generate_validator(model)
+
+    def _get_item(self, id):
+        return self.model.query.get_or_404(id)
+
+    def get(self, id):
+        item = self._get_item(id)
+        return jsonify(item.to_json())
+
+    def patch(self, id):
+        item = self._get_item(id)
+        errors = self.validator.validate(item, request.json)
+
+        if errors:
+            return jsonify(errors), 400
+
+        item.update_from_json(request.json)
+        db.session.commit()
+        return jsonify(item.to_json())
+
+    def delete(self, id):
+        item = self._get_item(id)
+        db.session.delete(item)
+        db.session.commit()
+        return "", 204
+
+class GroupAPI(MethodView):
+    init_every_request = False
+
+    def __init__(self, model):
+        self.model = model
+        self.validator = generate_validator(model, create=True)
+
+    def get(self):
+        items = self.model.query.all()
+        return jsonify([item.to_json() for item in items])
+
+    def post(self):
+        errors = self.validator.validate(request.json)
+
+        if errors:
+            return jsonify(errors), 400
+
+        db.session.add(self.model.from_json(request.json))
+        db.session.commit()
+        return jsonify(item.to_json())
+
+def register_api(app, model, name):
+    item = ItemAPI.as_view(f"{name}-item", model)
+    group = GroupAPI.as_view(f"{name}-group", model)
+    app.add_url_rule(f"/{name}/<int:id>", view_func=item)
+    app.add_url_rule(f"/{name}/", view_func=group)
+
+register_api(app, User, "users")
+register_api(app, Story, "stories")
+```
+
+- Users
+
+| URL         | Method | Description        |
+| ----------- | ------ | ------------------ |
+| /users/     | GET    | List all users     |
+| /users/     | POST   | Create a new user  |
+| /users/<id> | GET    | Show a single user |
+| /users/<id> | PATCH  | Update a user      |
+| /users/<id> | DELETE | Delete a user      |
+
+- Stories
+
+| URL           | Method | Description         |
+| ------------- | ------ | ------------------- |
+| /stories/     | GET    | List all stories    |
+| /stories/     | POST   | Create a new story  |
+| /stories/<id> | GET    | Show a single story |
+| /stories/<id> | PATCH  | Update a story      |
+| /stories/<id> | DELETE | Delete a story      |
 
 # Creating Controllers with Blueprints
 
