@@ -57,6 +57,9 @@
   - [`__init__` file](#__init__-file)
   - [Set Up Virtual Environment and Install Dependencies](#set-up-virtual-environment-and-install-dependencies)
 - [Other](#other)
+  - [Multi-Line Statements](#multi-line-statements)
+    - [Implicit](#implicit)
+    - [Explicit](#explicit)
   - [Debug in CLI command - without IDE editor](#debug-in-cli-command---without-ide-editor)
     - [Method 1: Start the debugger from the command line on the first line of the file.](#method-1-start-the-debugger-from-the-command-line-on-the-first-line-of-the-file)
     - [Method 2: Start the debugger from the command line and debug at the line where the breakpoint is set.](#method-2-start-the-debugger-from-the-command-line-and-debug-at-the-line-where-the-breakpoint-is-set)
@@ -2045,6 +2048,50 @@ pip install -r requirements.txt
 ```
 
 # Other
+
+## Multi-Line Statements
+
+### Implicit
+
+- Implicit expressions in:
+  - list literals []
+  - tuple literals ( )
+  - dictionary literals { }
+  - set literals { }
+  - function arguments / parameters
+
+```
+a = [1, #first element
+    2, #second element
+    3, #third element
+    ]
+```
+
+```
+def my_func(a, #some comment
+           b, c):
+    print(a, b, c)
+
+my_func(10, #comment
+       20, #comment
+       30)
+```
+
+### Explicit
+
+- You can break up statements over multiple lines explicitly, by using the `\` (backslash ) character
+- Multi-line statements are not implicitly converted to a single logical line.
+- Comments cannot be part of a statement, not even a multi-line statement.
+
+```
+a = 10
+b = 20
+c = 30
+if a > 5 \
+    and b > 10 \
+    and c > 20:
+    print('yes!!')
+```
 
 ## Debug in CLI command - without IDE editor
 
