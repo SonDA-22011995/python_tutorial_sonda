@@ -60,6 +60,10 @@
   - [Multi-Line Statements](#multi-line-statements)
     - [Implicit](#implicit)
     - [Explicit](#explicit)
+  - [Variable names](#variable-names)
+    - [Must](#must)
+    - [Conventions](#conventions)
+    - [Other Naming Conventions](#other-naming-conventions)
   - [Debug in CLI command - without IDE editor](#debug-in-cli-command---without-ide-editor)
     - [Method 1: Start the debugger from the command line on the first line of the file.](#method-1-start-the-debugger-from-the-command-line-on-the-first-line-of-the-file)
     - [Method 2: Start the debugger from the command line and debug at the line where the breakpoint is set.](#method-2-start-the-debugger-from-the-command-line-and-debug-at-the-line-where-the-breakpoint-is-set)
@@ -2092,6 +2096,69 @@ if a > 5 \
     and c > 20:
     print('yes!!')
 ```
+
+## Variable names
+
+### Must
+
+- Start with underscore `_` or letter `a-z A-Z`
+- Followed by any number of underscores `_`, letters `a-z A-Z`, or digits `0-9`
+- Cannot be reserved words
+
+| Keyword  | Purpose                           |
+| -------- | --------------------------------- |
+| False    | Boolean false value               |
+| None     | Represents null / no value        |
+| True     | Boolean true value                |
+| and      | Logical AND                       |
+| as       | Alias in import / context manager |
+| assert   | Debug assertion                   |
+| async    | Define async function             |
+| await    | Await async result                |
+| break    | Exit loop                         |
+| class    | Define class                      |
+| continue | Skip to next loop iteration       |
+| def      | Define function                   |
+| del      | Delete object                     |
+| elif     | Else-if condition                 |
+| else     | Fallback condition                |
+| except   | Catch exception                   |
+| finally  | Always execute after try          |
+| for      | Loop                              |
+| from     | Import from module                |
+| global   | Declare global variable           |
+| if       | Conditional                       |
+| import   | Import module                     |
+| in       | Membership test                   |
+| is       | Identity comparison               |
+| lambda   | Anonymous function                |
+| nonlocal | Declare non-local variable        |
+| not      | Logical NOT                       |
+| or       | Logical OR                        |
+| pass     | Do nothing                        |
+| raise    | Raise exception                   |
+| return   | Return value                      |
+| try      | Try block                         |
+| while    | Loop                              |
+| with     | Context manager                   |
+| yield    | Generator output                  |
+
+### Conventions
+
+- `_my_var` (single underscore): This is a convention to indicate **internal use** or **private** objects. Objects named this way will not get imported by a statement such as `from module import *`
+- `__my_var` (double underscore): Used to "mangle" class attributes – useful in inheritance chains
+- `__my_var__` (double underscore): Used for system-defined names that have a special meaning to the interpreter. Don't invent them, stick to the ones pre-defined by Python!
+
+### Other Naming Conventions
+
+| Item     | Naming Convention                               | Example            |
+| -------- | ----------------------------------------------- | ------------------ |
+| Module   | short, all lowercase, underscores allowed       | db_utils           |
+| Package  | short, all lowercase, preferably no underscores | utilities, dbutils |
+| Class    | CapWords (UpperCamelCase)                       | BankAccount        |
+| Function | lowercase with underscores (snake_case)         | open_account       |
+| Variable | lowercase with underscores (snake_case)         | account_id         |
+| Constant | ALL UPPERCASE with underscores                  | MIN_APR            |
 
 ## Debug in CLI command - without IDE editor
 
