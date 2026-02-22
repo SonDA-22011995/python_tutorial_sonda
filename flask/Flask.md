@@ -84,6 +84,9 @@
     - [UNIQUE](#unique)
     - [CHECK Constraint](#check-constraint)
     - [DEFAULT](#default)
+- [Database migrations with Alembic](#database-migrations-with-alembic)
+  - [Install](#install)
+  - [How to use](#how-to-use)
 - [Email Support with Flask-Mail](#email-support-with-flask-mail)
   - [Installing](#installing)
   - [Configuring](#configuring)
@@ -2118,6 +2121,68 @@ class User(Base):
 
 ```
 date = db.Column(db.DateTime(), default=datetime.datetime.now)
+```
+
+# Database migrations with Alembic
+
+- Alembic automatically creates and tracks database migrations from the changes in our SQLAlchemy models
+- Database migrations are records of all the changes of our schema
+- Alembic allows us to upgrade or downgrade our database to a specific saved version
+- Upgrading or downgrading by several versions will execute all the files between the two selected versions
+
+## Install
+
+```
+pip install Flask-Migrate
+```
+
+```
+import datetime
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+from config import DevConfig
+
+app = Flask(__name__)
+app.config.from_object(DevConfig)
+db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+```
+
+## How to use
+
+- Create a migration repository to start tracking our changes. This will create a new folder in our directory named migrations that will hold all of our history
+
+```
+flask db init
+```
+
+- Now we start with our first migration, as shown in the following code
+
+```
+flask db migrate -m "Initial migration."
+```
+
+- Then you can apply the changes described by the migration script to your database
+
+```
+flask db upgrade
+```
+
+- If we want to check out all the SQLAlchemy generated DDL code
+
+```
+flask db upgrade --sql
+```
+
+- To return to the previous version, find the version number with the `history` command and pass it to the `downgrade` command, as follows
+
+```
+flask db history
+
+# <base> -> 7ded34bc4fb (head), initial migratio
+
+flask db downgrade 7ded34bc4fb
 ```
 
 # Email Support with Flask-Mail
