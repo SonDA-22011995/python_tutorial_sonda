@@ -15,6 +15,7 @@
 - [OOP](#oop)
   - [The `class attributes`](#the-class-attributes)
   - [Attribute shadowing](#attribute-shadowing)
+  - [The `self` argument](#the-self-argument)
   - [The `@staticmethod` method](#the-staticmethod-method)
   - [The `@classmethod` method](#the-classmethod-method)
   - [`Is-A` relation](#is-a-relation)
@@ -582,6 +583,31 @@ p.z = 3 # let's make it a 3D point
 print(p.z) # 3
 print(Point.z)
 # AttributeError: type object 'Point' has no attribute 'z'
+```
+
+## The `self` argument
+
+- From within a class method, we can refer to an instance by means of a special argument, called `self` by convention
+- `self` is always the first attribute of an instance method
+
+```
+class Rectangle:
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+
+    def area(self):
+        return self.width * self.height
+
+    def perimeter(the_referenced_object):
+        return 2 * (the_referenced_object.width + the_referenced_object.height)
+
+r1 = Rectangle(10, 20)
+
+r1.perimeter()
+
+# 60
+# This is why we can use a name other than self, such as in the perimeter method
 ```
 
 ## The `@staticmethod` method
