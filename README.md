@@ -622,13 +622,14 @@ r1.perimeter()
 ```
 
 class Calculator:
-@staticmethod
-def add(x, y):
-return x + y
 
-    @staticmethod
-    def multiply(x, y):
-        return x * y
+  @staticmethod
+  def add(x, y):
+    return x + y
+
+  @staticmethod
+  def multiply(x, y):
+    return x * y
 
 # Calling static methods
 
