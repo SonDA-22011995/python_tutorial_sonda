@@ -711,12 +711,12 @@ print(my_car.display_car_info())
 ```
 
 class Person:
-def **init**(self, name, age):
-self.name = name
-self.age = age
+  def __init__(self, name, age):
+    self.name = name
+    self.age = age
 
-def **str**(self):
-return f"{self.name} ({self.age})"
+  def __str__(self):
+    return f"{self.name} ({self.age})"
 
 p1 = Person("Tobias", 36)
 
