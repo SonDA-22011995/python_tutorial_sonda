@@ -729,14 +729,14 @@ print(p1)
 ## The `__repr__` method
 
 - Used in debugging and logging
-- Fallback for **str**: If a class does not define a **str** method, Python will fall back to using **repr** for user-facing string conversions (e.g., when using print())
+- Fallback for `__str__`: If a class does not define a `__str__` method, Python will fall back to using `__repr__` for user-facing string conversions (e.g., when using print())
 
 ```
 
 class Point:
-def **init**(self, x, y):
-self.x = x
-self.y = y
+  def __init__(self, x, y):
+    self.x = x
+    self.y = y
 
     def __repr__(self):
         return f"Point(x={self.x}, y={self.y})"
