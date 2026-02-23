@@ -14,6 +14,7 @@
   - [Mutable sequences](#mutable-sequences)
 - [OOP](#oop)
   - [The `class attributes`](#the-class-attributes)
+  - [Attribute shadowing](#attribute-shadowing)
   - [The `@staticmethod` method](#the-staticmethod-method)
   - [The `@classmethod` method](#the-classmethod-method)
   - [`Is-A` relation](#is-a-relation)
@@ -551,6 +552,36 @@ Car.number_of_wheels = 6
 print(f"After modification, Car 1 now has {car1.number_of_wheels} wheels.")
 print(f"After modification, Car 2 now has {car2.number_of_wheels} wheels.")
 
+```
+
+## Attribute shadowing
+
+- When you search for an attribute on an object, if it is not found, Python extends the search to the attributes on the class that was used to create that object (and keeps searching until it's either found or the end of the inheritance chain is reached)
+
+```
+# oop/class.attribute.shadowing.py
+class Point:
+  x = 10
+  y = 7
+
+p = Point()
+
+print(p.x) # 10 (from class attribute)
+print(p.y) # 7 (from class attribute)
+
+p.x = 12 # p gets its own `x` attribute
+
+print(p.x) # 12 (now found on the instance)
+print(Point.x) # 10 (class attribute still the same)
+
+del p.x # we delete instance attribute
+print(p.x) # 10 (now search has to go again to find class attr)
+
+p.z = 3 # let's make it a 3D point
+
+print(p.z) # 3
+print(Point.z)
+# AttributeError: type object 'Point' has no attribute 'z'
 ```
 
 ## The `@staticmethod` method
