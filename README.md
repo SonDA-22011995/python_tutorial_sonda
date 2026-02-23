@@ -526,7 +526,8 @@ print(tuple3)
 
 ```
 
-class Car: # This is a class attribute
+class Car:
+# This is a class attribute
 number_of_wheels = 4
 
     def __init__(self, make, model):
