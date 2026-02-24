@@ -739,6 +739,8 @@ print(ebook.format_) # PDF
 
 ## Multiple inheritance
 
+- Old way, it's not recommended
+
 ```
 class Base1:
     def __init__(self, x):
@@ -763,6 +765,24 @@ class Derived(Base1, Base2):
 derived = Derived(1, 2, 3)
 
 print("Derived:", derived.x, derived.y, derived.z)
+```
+
+- New way, the large framework use **Cooperative Multiple Inheritance**
+
+```
+class A:
+    def __init__(self, a, **kwargs):
+        self.a = a
+        super().__init__(**kwargs)
+
+class B:
+    def __init__(self, b, **kwargs):
+        self.b = b
+        super().__init__(**kwargs)
+
+class C(A, B):
+    def __init__(self, a, b):
+        super().__init__(a=a, b=b)
 ```
 
 ## Method resolution order
