@@ -678,21 +678,21 @@ print(my_cat.speak()) # Output: Meow!
 ```
 
 class Engine:
-def **init**(self, horse_power):
-self.horse_power = horse_power
+  def __init__(self, horse_power):
+    self.horse_power = horse_power
 
-    def start(self):
-        return "Engine started."
+  def start(self):
+    return "Engine started."
 
 class Car:
-def **init**(self, make, model, horse_power):
-self.make = make
-self.model = model # Composition: A Car has an Engine object as an attribute
-self.engine = Engine(horse_power)
+  def __init__(self, make, model, horse_power):
+    self.make = make
+    self.model = model # Composition: A Car has an Engine object as an attribute
+    self.engine = Engine(horse_power)
 
-    def display_car_info(self):
-        engine_status = self.engine.start() # Accessing a method of the composed object
-        return f"{self.make} {self.model} with {self.engine.horse_power}hp. {engine_status}"
+  def display_car_info(self):
+    engine_status = self.engine.start() # Accessing a method of the composed object
+    return f"{self.make} {self.model} with {self.engine.horse_power}hp. {engine_status}"
 
 # Create a Car instance
 
