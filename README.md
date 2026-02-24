@@ -1009,6 +1009,7 @@ class Rectangle:
 
 `__eq__`, `__lt__`, `__add__`, `__len__`, `__getitem__`, `__str__`, `__repr__`
 
+```
 | Category            | Operator / Usage | Magic Method            |
 | ------------------- | ---------------- | ----------------------- | --------- |
 | Comparison          | `<`              | `__lt__`                |
@@ -1077,6 +1078,7 @@ class Rectangle:
 | Conversion          | `bytes(x)`       | `__bytes__`             |
 | Hashing             | `hash(x)`        | `__hash__`              |
 | Context             | `with obj:`      | `__enter__`, `__exit__` |
+```
 
 ## Don't use mutable defaults parameters
 
