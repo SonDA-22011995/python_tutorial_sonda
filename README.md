@@ -17,10 +17,10 @@
   - [Attribute shadowing](#attribute-shadowing)
   - [The `self` argument](#the-self-argument)
   - [Initializing an instance](#initializing-an-instance)
-  - [The `@staticmethod` method](#the-staticmethod-method)
-  - [The `@classmethod` method](#the-classmethod-method)
   - [`Is-A` relation](#is-a-relation)
   - [The class composition method `Has-A`](#the-class-composition-method-has-a)
+  - [The `@staticmethod` method](#the-staticmethod-method)
+  - [The `@classmethod` method](#the-classmethod-method)
   - [The `__str__` method](#the-__str__-method)
   - [The `__repr__` method](#the-__repr__-method)
   - [The `__eq__` method](#the-__eq__-method)
@@ -626,6 +626,86 @@ class Rectangle:
 r1 = Rectangle(10, 4)
 ```
 
+## `Is-A` relation
+
+- It signifies a hierarchical relationship where a subclass (or derived class) is a specialized version of its superclass (or base class).
+- Key characteristics of the `Is-A` relation
+  - **Inheritance**: The "Is-A" relationship is established when one class inherits from another. The subclass automatically gains access to the attributes and methods defined in its superclass.
+  - **Specialization**: The subclass represents a more specific type of the superclass. For example, a Dog `Is-A` Animal, and a Car `Is-A` Vehicle.
+  - **Code Reusability**: Inheritance promotes code reusability by allowing subclasses to inherit and potentially override or extend the functionality of their superclasses, rather than duplicating code.
+  - **Polymorphism**: The `Is-A` relationship enables polymorphism, where objects of different classes can be treated as objects of a common superclass, allowing for more flexible and extensible code.
+
+```
+
+# Superclass (Base class)
+
+class Animal:
+  def speak(self):
+    return "Animal speaks"
+
+# Subclass (Derived class) - Dog IS-A Animal
+
+class Dog(Animal):
+  def speak(self):
+    return "Woof!"
+
+# Subclass (Derived class) - Cat IS-A Animal
+
+class Cat(Animal):
+  def speak(self):
+    return "Meow!"
+
+# Usage
+
+my_dog = Dog()
+my_cat = Cat()
+
+print(my_dog.speak()) # Output: Woof!
+print(my_cat.speak()) # Output: Meow!
+
+```
+
+## The class composition method `Has-A`
+
+- An object-oriented programming concept where a class includes an object of another class as an attribute
+- This creates a **has-a** relationship, meaning the composite class has or owns a component object.
+- Key Concepts
+  - `Has-A` Relationship: This principle is central to composition. For example, a Car class "has an" Engine objec
+  - **Strong Dependency**: In a strict composition relationship, the component object cannot exist independently of the composite object. If the Car object is destroyed, the Engine object it owns is also conceptually (or programmatically) destroyed.
+  - **Code Reuse and Modularity**: Composition promotes flexibility and code reuse without creating a rigid class hierarchy that comes with inheritance. It allows you to change the behavior of a class by simply replacing one of its component objects.
+  - **Single Responsibility Principle**: Composition helps in creating smaller, more focused classes, adhering to the principle that a class should have one specific responsibility
+
+```
+
+class Engine:
+def **init**(self, horse_power):
+self.horse_power = horse_power
+
+    def start(self):
+        return "Engine started."
+
+class Car:
+def **init**(self, make, model, horse_power):
+self.make = make
+self.model = model # Composition: A Car has an Engine object as an attribute
+self.engine = Engine(horse_power)
+
+    def display_car_info(self):
+        engine_status = self.engine.start() # Accessing a method of the composed object
+        return f"{self.make} {self.model} with {self.engine.horse_power}hp. {engine_status}"
+
+# Create a Car instance
+
+my_car = Car(make="Ford", model="Mustang", horse_power=500)
+print(my_car.display_car_info())
+
+```
+
+- In this example
+  - The Car class is the composite class.
+  - The Engine class is the component class.
+  - The Car class creates and manages an Engine instance within its own `__init__` method, demonstrating the strong ownership inherent in composition.
+
 ## The `@staticmethod` method
 
 - The `@staticmethod` decorator in Python transforms a regular function within a class into a static method. Static methods are distinct from instance methods and class methods in their relationship to the class and its instances.
@@ -698,86 +778,6 @@ print(v2.v_type, v2.name) # bike Honda
 print(v3.v_type, v3.name) # truck Volvo
 
 ```
-
-## `Is-A` relation
-
-- It signifies a hierarchical relationship where a subclass (or derived class) is a specialized version of its superclass (or base class).
-- Key characteristics of the `Is-A` relation
-  - **Inheritance**: The "Is-A" relationship is established when one class inherits from another. The subclass automatically gains access to the attributes and methods defined in its superclass.
-  - **Specialization**: The subclass represents a more specific type of the superclass. For example, a Dog `Is-A` Animal, and a Car `Is-A` Vehicle.
-  - **Code Reusability**: Inheritance promotes code reusability by allowing subclasses to inherit and potentially override or extend the functionality of their superclasses, rather than duplicating code.
-  - **Polymorphism**: The `Is-A` relationship enables polymorphism, where objects of different classes can be treated as objects of a common superclass, allowing for more flexible and extensible code.
-
-```
-
-# Superclass (Base class)
-
-class Animal:
-def speak(self):
-return "Animal speaks"
-
-# Subclass (Derived class) - Dog IS-A Animal
-
-class Dog(Animal):
-def speak(self):
-return "Woof!"
-
-# Subclass (Derived class) - Cat IS-A Animal
-
-class Cat(Animal):
-def speak(self):
-return "Meow!"
-
-# Usage
-
-my_dog = Dog()
-my_cat = Cat()
-
-print(my_dog.speak()) # Output: Woof!
-print(my_cat.speak()) # Output: Meow!
-
-```
-
-## The class composition method `Has-A`
-
-- An object-oriented programming concept where a class includes an object of another class as an attribute
-- This creates a **has-a** relationship, meaning the composite class has or owns a component object.
-- Key Concepts
-  - `Has-A` Relationship: This principle is central to composition. For example, a Car class "has an" Engine objec
-  - **Strong Dependency**: In a strict composition relationship, the component object cannot exist independently of the composite object. If the Car object is destroyed, the Engine object it owns is also conceptually (or programmatically) destroyed.
-  - **Code Reuse and Modularity**: Composition promotes flexibility and code reuse without creating a rigid class hierarchy that comes with inheritance. It allows you to change the behavior of a class by simply replacing one of its component objects.
-  - **Single Responsibility Principle**: Composition helps in creating smaller, more focused classes, adhering to the principle that a class should have one specific responsibility
-
-```
-
-class Engine:
-def **init**(self, horse_power):
-self.horse_power = horse_power
-
-    def start(self):
-        return "Engine started."
-
-class Car:
-def **init**(self, make, model, horse_power):
-self.make = make
-self.model = model # Composition: A Car has an Engine object as an attribute
-self.engine = Engine(horse_power)
-
-    def display_car_info(self):
-        engine_status = self.engine.start() # Accessing a method of the composed object
-        return f"{self.make} {self.model} with {self.engine.horse_power}hp. {engine_status}"
-
-# Create a Car instance
-
-my_car = Car(make="Ford", model="Mustang", horse_power=500)
-print(my_car.display_car_info())
-
-```
-
-- In this example
-  - The Car class is the composite class.
-  - The Engine class is the component class.
-  - The Car class creates and manages an Engine instance within its own `__init__` method, demonstrating the strong ownership inherent in composition.
 
 ## The `__str__` method
 
