@@ -16,12 +16,14 @@
   - [The `class attributes`](#the-class-attributes)
   - [Attribute shadowing](#attribute-shadowing)
   - [The `self` argument](#the-self-argument)
+  - [Initializing an instance](#initializing-an-instance)
   - [The `@staticmethod` method](#the-staticmethod-method)
   - [The `@classmethod` method](#the-classmethod-method)
   - [`Is-A` relation](#is-a-relation)
   - [The class composition method `Has-A`](#the-class-composition-method-has-a)
   - [The `__str__` method](#the-__str__-method)
   - [The `__repr__` method](#the-__repr__-method)
+  - [The `__eq__` method](#the-__eq__-method)
   - [Don't use mutable defaults parameters](#dont-use-mutable-defaults-parameters)
   - [`__eq__()` method](#__eq__-method)
 - [Function](#function)
@@ -610,6 +612,20 @@ r1.perimeter()
 # This is why we can use a name other than self, such as in the perimeter method
 ```
 
+## Initializing an instance
+
+```
+class Rectangle:
+  def __init__(self, side_a, side_b):
+    self.side_a = side_a
+    self.side_b = side_b
+
+  def area(self):
+    return self.side_a * self.side_b
+
+r1 = Rectangle(10, 4)
+```
+
 ## The `@staticmethod` method
 
 - The `@staticmethod` decorator in Python transforms a regular function within a class into a static method. Static methods are distinct from instance methods and class methods in their relationship to the class and its instances.
@@ -805,6 +821,41 @@ class Point:
 p = Point(10, 20)
 print(repr(p)) # Explicitly calls **repr**
 print(p) # Calls **repr** by default if **str** is not defined
+
+```
+
+## The `__eq__` method
+
+```
+class Person:
+    def __init__(self, first_name, last_name, age):
+        self.first_name = first_name
+        self.last_name = last_name
+        self.age = age
+
+    def __eq__(self, other):
+        """
+        Defines equality based on age for this example.
+        """
+        if not isinstance(other, Person):
+            return NotImplemented # Or False, depending on desired behavior
+        return self.age == other.age
+
+# Create two Person objects
+john = Person('John', 'Doe', 25)
+jane = Person('Jane', 'Doe', 25)
+not_a_person = 25
+
+# Compare them using the == operator
+
+print(f"john == jane: {john == jane}")
+# True, because age is 25 for both
+
+print(f"john == not_a_person: {john == not_a_person}")
+# Returns NotImplemented, which allows Python to handle the comparison
+
+print(f"john is jane: {john is jane}")
+# False, because they are different objects in memory
 
 ```
 
