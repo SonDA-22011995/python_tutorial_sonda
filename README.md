@@ -789,6 +789,29 @@ c = C(a=10, b=20)
 
 ## Method resolution order
 
+- Python provides a way to always know the order in which classes are searched on attribute lookup: **the method resolution order (MRO)**.
+
+```
+class A:
+  label = 'a'
+
+class B(A):
+  pass # was: label = 'b'
+
+class C(A):
+  label = 'c'
+
+class D(B, C):
+  pass
+
+d = D()
+print(d.label) # 'c'
+print(d.__class__.mro()) # notice another way to get the MRO
+# prints:
+# [<class '__main__.D'>, <class '__main__.B'>,
+# <class '__main__.C'>, <class '__main__.A'>, <class 'object'>]
+```
+
 ## The `@staticmethod` method
 
 - The `@staticmethod` decorator in Python transforms a regular function within a class into a static method. Static methods are distinct from instance methods and class methods in their relationship to the class and its instances.
