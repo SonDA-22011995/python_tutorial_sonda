@@ -1003,6 +1003,28 @@ class Rectangle:
             return NotImplemented
 ```
 
+```
+r1 = Rectangle(100, 200)
+r2 = Rectangle(10, 20)
+
+r1 < r2 # False
+r2 < r1 # True
+```
+
+- What about `>`?
+
+```
+r1 > r2 # True
+```
+
+- How did that work? We did not define a `__gt__` method.
+  - Well, Python cleverly decided that since `r1 > r2` was not implemented, it would give `r2 < r1` a try. And since, `__lt__` **is** defined, it worked!
+- Of course, `<=` is not going to magically work!. You must overloading `__le__` method
+
+```
+r1 <= r2 # TypeError: '<=' not supported between instances of 'Rectangle' and 'Rectangle'
+```
+
 ## Python Operator Overloading – Magic Methods
 
 - In most real projects you usually only need:
