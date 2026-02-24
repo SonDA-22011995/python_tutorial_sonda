@@ -28,6 +28,7 @@
   - [The `__repr__` method](#the-__repr__-method)
   - [The `__eq__()` method](#the-__eq__-method)
   - [The `__lt__()`, `__gt__()` method](#the-__lt__-__gt__-method)
+  - [Python Operator Overloading – Magic Methods](#python-operator-overloading--magic-methods)
   - [Don't use mutable defaults parameters](#dont-use-mutable-defaults-parameters)
 - [Function](#function)
   - [Argument vs Parameter](#argument-vs-parameter)
@@ -1001,6 +1002,81 @@ class Rectangle:
         else:
             return NotImplemented
 ```
+
+## Python Operator Overloading – Magic Methods
+
+- In most real projects you usually only need:
+
+`__eq__`, `__lt__`, `__add__`, `__len__`, `__getitem__`, `__str__`, `__repr__`
+
+| Category            | Operator / Usage | Magic Method            |
+| ------------------- | ---------------- | ----------------------- | --------- |
+| Comparison          | `<`              | `__lt__`                |
+| Comparison          | `<=`             | `__le__`                |
+| Comparison          | `>`              | `__gt__`                |
+| Comparison          | `>=`             | `__ge__`                |
+| Comparison          | `==`             | `__eq__`                |
+| Comparison          | `!=`             | `__ne__`                |
+| Arithmetic          | `+`              | `__add__`               |
+| Arithmetic          | `-`              | `__sub__`               |
+| Arithmetic          | `*`              | `__mul__`               |
+| Arithmetic          | `/`              | `__truediv__`           |
+| Arithmetic          | `//`             | `__floordiv__`          |
+| Arithmetic          | `%`              | `__mod__`               |
+| Arithmetic          | `**`             | `__pow__`               |
+| Arithmetic          | `divmod()`       | `__divmod__`            |
+| Reflected           | `+`              | `__radd__`              |
+| Reflected           | `-`              | `__rsub__`              |
+| Reflected           | `*`              | `__rmul__`              |
+| Reflected           | `/`              | `__rtruediv__`          |
+| Reflected           | `//`             | `__rfloordiv__`         |
+| Reflected           | `%`              | `__rmod__`              |
+| Reflected           | `**`             | `__rpow__`              |
+| In-place            | `+=`             | `__iadd__`              |
+| In-place            | `-=`             | `__isub__`              |
+| In-place            | `*=`             | `__imul__`              |
+| In-place            | `/=`             | `__itruediv__`          |
+| In-place            | `//=`            | `__ifloordiv__`         |
+| In-place            | `%=`             | `__imod__`              |
+| In-place            | `**=`            | `__ipow__`              |
+| Unary               | `-x`             | `__neg__`               |
+| Unary               | `+x`             | `__pos__`               |
+| Unary               | `abs(x)`         | `__abs__`               |
+| Unary               | `~x`             | `__invert__`            |
+| Bitwise             | `&`              | `__and__`               |
+| Bitwise             | `                | `                       | `__or__`  |
+| Bitwise             | `^`              | `__xor__`               |
+| Bitwise             | `<<`             | `__lshift__`            |
+| Bitwise             | `>>`             | `__rshift__`            |
+| Bitwise (reflected) | `&`              | `__rand__`              |
+| Bitwise (reflected) | `                | `                       | `__ror__` |
+| Bitwise (reflected) | `^`              | `__rxor__`              |
+| Bitwise (reflected) | `<<`             | `__rlshift__`           |
+| Bitwise (reflected) | `>>`             | `__rrshift__`           |
+| Bitwise (in-place)  | `&=`             | `__iand__`              |
+| Bitwise (in-place)  | `                | =`                      | `__ior__` |
+| Bitwise (in-place)  | `^=`             | `__ixor__`              |
+| Bitwise (in-place)  | `<<=`            | `__ilshift__`           |
+| Bitwise (in-place)  | `>>=`            | `__irshift__`           |
+| Matrix              | `@`              | `__matmul__`            |
+| Matrix              | `@` (right)      | `__rmatmul__`           |
+| Matrix              | `@=`             | `__imatmul__`           |
+| Container           | `len(x)`         | `__len__`               |
+| Container           | `x[i]`           | `__getitem__`           |
+| Container           | `x[i]=v`         | `__setitem__`           |
+| Container           | `del x[i]`       | `__delitem__`           |
+| Container           | `v in x`         | `__contains__`          |
+| Iteration           | `for x in obj`   | `__iter__`              |
+| Iteration           | `next()`         | `__next__`              |
+| Callable            | `obj()`          | `__call__`              |
+| Conversion          | `str(x)`         | `__str__`               |
+| Conversion          | `repr(x)`        | `__repr__`              |
+| Conversion          | `int(x)`         | `__int__`               |
+| Conversion          | `float(x)`       | `__float__`             |
+| Conversion          | `bool(x)`        | `__bool__`              |
+| Conversion          | `bytes(x)`       | `__bytes__`             |
+| Hashing             | `hash(x)`        | `__hash__`              |
+| Context             | `with obj:`      | `__enter__`, `__exit__` |
 
 ## Don't use mutable defaults parameters
 
