@@ -19,6 +19,7 @@
   - [Initializing an instance](#initializing-an-instance)
   - [`Is-A` relation](#is-a-relation)
   - [The class composition method `Has-A`](#the-class-composition-method-has-a)
+  - [Accessing a base class (parent class)](#accessing-a-base-class-parent-class)
   - [The `@staticmethod` method](#the-staticmethod-method)
   - [The `@classmethod` method](#the-classmethod-method)
   - [The `__str__` method](#the-__str__-method)
@@ -704,6 +705,35 @@ print(my_car.display_car_info())
   - The Car class is the composite class.
   - The Engine class is the component class.
   - The Car class creates and manages an Engine instance within its own `__init__` method, demonstrating the strong ownership inherent in composition.
+
+## Accessing a base class (parent class)
+
+- When we don't specify a base class explicitly, Python will set the special `object` class as the base class for the one we're defining
+- `super()` is a function that returns a proxy object that delegates method calls to a parent or sibling class
+
+```
+class Book:
+  def __init__(self, title, publisher, pages):
+    self.title = title
+    self.publisher = publisher
+    self.pages = pages
+
+
+class Ebook(Book):
+  def __init__(self, title, publisher, pages, format_):
+    super().__init__(title, publisher, pages)
+    # Another way to do the same thing is:
+    # super(Ebook, self).__init__(title, publisher, pages)
+    self.format_ = format_
+
+ebook = Ebook(
+ 'Learn Python Programming', 'Packt Publishing', 500, 'PDF')
+
+print(ebook.title) # Learn Python Programming
+print(ebook.publisher) # Packt Publishing
+print(ebook.pages) # 500
+print(ebook.format_) # PDF
+```
 
 ## The `@staticmethod` method
 
