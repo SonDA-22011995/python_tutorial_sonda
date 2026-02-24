@@ -969,6 +969,8 @@ print(f"john == 25: {john == 25}") # Output: john == 25: False (due to the isins
 
 ## The `__lt__()`, `__gt__()` method
 
+- The `__lt__` and `__gt__` methods in Python are "dunder" (double underscore) or magic methods used for operator overloading of the less-than (<) and greater-than (>) comparison operators
+
 ```
 class Rectangle:
     def __init__(self, width, height):
