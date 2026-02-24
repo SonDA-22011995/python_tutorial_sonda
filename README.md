@@ -26,7 +26,8 @@
   - [The `@classmethod` method](#the-classmethod-method)
   - [The `__str__` method](#the-__str__-method)
   - [The `__repr__` method](#the-__repr__-method)
-  - [`__eq__()` method](#__eq__-method)
+  - [The `__eq__()` method](#the-__eq__-method)
+  - [The `__lt__()`, `__gt__()` method](#the-__lt__-__gt__-method)
   - [Don't use mutable defaults parameters](#dont-use-mutable-defaults-parameters)
 - [Function](#function)
   - [Argument vs Parameter](#argument-vs-parameter)
@@ -930,7 +931,7 @@ print(p) # Calls **repr** by default if **str** is not defined
 
 ```
 
-## `__eq__()` method
+## The `__eq__()` method
 
 - The `__eq__()` method in Python is a "dunder" (double-underscore) method that defines the behavior of the equality operator (==) for a class.
 - By implementing `__eq__()`, you can customize how instances of your class are compared for equality based on their values or attributes, rather than their memory location.
@@ -964,6 +965,39 @@ someone_else = Person('Peter', 'Pan', 30)
 print(f"john == jane: {john == jane}") # Output: john == jane: True
 print(f"john == someone_else: {john == someone_else}") # Output: john == someone_else: False
 print(f"john == 25: {john == 25}") # Output: john == 25: False (due to the isinstance check)
+```
+
+## The `__lt__()`, `__gt__()` method
+
+```
+class Rectangle:
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+
+    def area(self):
+        return self.width * self.height
+
+    def perimeter(self):
+        return 2 * (self.width + self.height)
+
+    def __str__(self):
+        return 'Rectangle (width={0}, height={1})'.format(self.width, self.height)
+
+    def __repr__(self):
+        return 'Rectangle({0}, {1})'.format(self.width, self.height)
+
+    def __eq__(self, other):
+        if isinstance(other, Rectangle):
+            return (self.width, self.height) == (other.width, other.height)
+        else:
+            return False
+
+    def __lt__(self, other):
+        if isinstance(other, Rectangle):
+            return self.area() < other.area()
+        else:
+            return NotImplemented
 ```
 
 ## Don't use mutable defaults parameters
