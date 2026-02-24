@@ -20,6 +20,8 @@
   - [`Is-A` relation](#is-a-relation)
   - [The class composition method `Has-A`](#the-class-composition-method-has-a)
   - [Accessing a base class (parent class)](#accessing-a-base-class-parent-class)
+  - [Multiple inheritance](#multiple-inheritance)
+  - [Method resolution order](#method-resolution-order)
   - [The `@staticmethod` method](#the-staticmethod-method)
   - [The `@classmethod` method](#the-classmethod-method)
   - [The `__str__` method](#the-__str__-method)
@@ -734,6 +736,36 @@ print(ebook.publisher) # Packt Publishing
 print(ebook.pages) # 500
 print(ebook.format_) # PDF
 ```
+
+## Multiple inheritance
+
+```
+class Base1:
+    def __init__(self, x):
+        self.x = x
+
+
+class Base2:
+    def __init__(self, y):
+        self.y = y
+
+
+class Derived(Base1, Base2):
+  def __init__(self, x, y, z):
+    # Call second base class constructor explicitly
+    # or Base1.__init__(self, x)
+    super().__init__(x)  # Call first base class constructor
+    # Call second base class constructor explicitly
+    Base2.__init__(self, y)
+    self.z = z
+
+
+derived = Derived(1, 2, 3)
+
+print("Derived:", derived.x, derived.y, derived.z)
+```
+
+## Method resolution order
 
 ## The `@staticmethod` method
 
