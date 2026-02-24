@@ -783,6 +783,8 @@ class B:
 class C(A, B):
     def __init__(self, a, b):
         super().__init__(a=a, b=b)
+
+c = C(a=10, b=20)
 ```
 
 ## Method resolution order
