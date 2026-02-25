@@ -65,6 +65,7 @@
   - [Imports](#imports)
   - [Absolute Imports](#absolute-imports)
   - [Relative Imports](#relative-imports)
+  - [Example Relative imports](#example-relative-imports)
   - [`__init__` file](#__init__-file)
   - [Set Up Virtual Environment and Install Dependencies](#set-up-virtual-environment-and-install-dependencies)
 - [Other](#other)
@@ -2253,8 +2254,10 @@ print(result)
 - A relative path is a location defined in relation to the current working directory
 - When to use `from . import module_name`
   - You use `.` when the file you want to import is in the same folder as the current file
-- When to use `from .folder_name import module_name`
+- When to use `from ..folder_name import module_name`
   - Use `.folder_name` when the module is inside a subfolder of the current folder.
+- When to use `from ...folder_name import module_name`
+  - Use `...folder_name` when the module is inside a sub-subfolder of the current folder.
 
 ```
 project/
@@ -2315,6 +2318,47 @@ def shout(text):
 from . import math_tools
 from . import string_tools
 
+```
+
+## Example Relative imports
+
+```
+my_project/
+├── main.py
+└── my_package/
+    ├── __init__.py
+    ├── module_a.py           # Contains: class Alpha
+    ├── subpackage/
+    │   ├── __init__.py
+    │   ├── module_b.py       # <--- WE ARE CODING HERE
+    │   └── utils.py          # Contains: def get_time()
+    └── other_sub/
+        ├── __init__.py
+        └── module_c.py       # Contains: def helper()
+```
+
+- One Dot `.`: Current Directory
+
+```
+# In module_b.py
+
+from .utils import get_time
+```
+
+- Two Dots `..`: Parent Directory
+
+```
+# module_b.py
+
+from ..module_a import Alpha
+```
+
+- Three Dots `...`: Grandparent Directory
+
+```
+# In module_b.py
+
+from ...other_sub.module_c import helper
 ```
 
 ## `__init__` file
