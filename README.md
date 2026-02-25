@@ -2220,12 +2220,12 @@ my_module's **name** when imported is: my_module
 my_project/
 │
 ├── app/
-│ ├── **init**.py
+│ ├── __init__.py
 │ ├── services/
-│ │ ├── **init**.py
+│ │ ├── __init__.py
 │ │ └── calculator.py
 │ └── utils/
-│ ├── **init**.py
+│ ├── __init__.py
 │ └── formatter.py
 │
 └── main.py
@@ -2233,23 +2233,19 @@ my_project/
 ```
 
 ```
-
 # my_project/app/services/calculator.py
 
 def add(a, b):
-return a + b
-
+  return a + b
 ```
 
 ```
-
 # main.py
 
 from app.services.calculator import add
 
 result = add(5, 3)
 print(result)
-
 ```
 
 ## Relative Imports
@@ -2261,41 +2257,34 @@ print(result)
   - Use `.folder_name` when the module is inside a subfolder of the current folder.
 
 ```
-
 project/
 app/
-**init**.py
+  __init__.py
 utils/
-**init**.py
-formatter.py
+  __init__.py
+  formatter.py
 services/
-**init**.py
-printer.py
-
+  __init__.py
+  printer.py
 ```
 
 ```
-
 # utils/formatter.py
 
 def to_upper(s):
-return s.upper()
-
+  return s.upper()
 ```
 
 ```
-
 # services/printer.py
 
 from ..utils.formatter import to_upper
 
 def print_upper(text):
 print(to_upper(text))
-
 ```
 
 ```
-
 my_project/
 │
 ├── main.py
@@ -2303,30 +2292,25 @@ my_project/
 ├── **init**.py
 ├── math_tools.py
 └── string_tools.py
-
 ```
 
 ```
-
 # utils/math_tools.py
 
 def add(a, b):
-return a + b
-
+  return a + b
 ```
 
 ```
-
 # utils/string_tools.py
 
 def shout(text):
-return text.upper()
-
+  return text.upper()
 ```
 
 ```
 
-# utils/**init**.py
+# utils/__init__.py
 
 from . import math_tools
 from . import string_tools
