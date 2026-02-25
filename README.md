@@ -2356,9 +2356,21 @@ from ..module_a import Alpha
 - Three Dots `...`: Grandparent Directory
 
 ```
-# In module_b.py
+my_project/
+├── __init__.py
+├── global_utils.py       # <--- Target: Three dots away
+└── my_package/
+    ├── __init__.py
+    └── subpackage/
+        ├── __init__.py
+        └── module_b.py   # <--- We are here
 
-from ...other_sub.module_c import helper
+```
+
+```
+#  in module_b.py
+
+from ...global_utils import some_function
 ```
 
 ## `__init__` file
