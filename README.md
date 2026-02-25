@@ -1242,9 +1242,9 @@ print(rolf.grades)
 from typing import Optional
 
 class Student:
-def **init**(self, name: str, grades: Optional[list[int]] = None):
-self.name = name
-self.grades = grades or []
+  def __init__(self, name: str, grades: Optional[list[int]] = None):
+    self.name = name
+    self.grades = grades or []
 
 ```
 
