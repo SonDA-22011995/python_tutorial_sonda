@@ -25,6 +25,7 @@
   - [The `@staticmethod` method](#the-staticmethod-method)
   - [The `@classmethod` method](#the-classmethod-method)
   - [Private methods and attributes](#private-methods-and-attributes)
+  - [The property decorator](#the-property-decorator)
   - [Name mangling](#name-mangling)
   - [The `__str__` method](#the-__str__-method)
   - [The `__repr__` method](#the-__repr__-method)
@@ -895,6 +896,55 @@ print(v3.v_type, v3.name) # truck Volvo
 - The convention is as follows
   - if an attribute's name has **no leading underscores**, it is considered public. This means you can access it and modify it freely
   - When the name has **one leading underscore**, the attribute is considered private, which means it's probably meant to be used internally and you should not modify it, or call it from the outside
+
+## The property decorator
+
+- **Reason**:
+  - Imagine that you have an age attribute in a Person class and, at some point, you want to make sure that when you change its value, you're also checking that age is within a proper range, such as [18, 99]. You could write accessor methods, such as `get_age()` and `set_age(...)` (also called getters and setters), and put the logic there. `get_age()` will most likely just return age, while `set_age(...)` will set its value after checking its validity. The problem is that you may already have a lot of code accessing the age attribute directly, which means you're now up to some tedious refactoring. Python does this with the **property decorator**
+
+- In Python we can use some special **decorators** to encapsulate our property getters and setters
+- There are more things we should do to properly implement all this, in particular we should also be checking the positive and negative values during the `__init__` phase. We do so by using the accessor methods for height and width
+
+```
+class Rectangle:
+    def __init__(self, width, height):
+        self._width = None
+        self._height = None
+        # now we call our accessor methods to set the width and height
+        self.width = width
+        self.height = height
+
+    def __repr__(self):
+        return 'Rectangle({0}, {1})'.format(self.width, self.height)
+
+    @property
+    def width(self):
+        return self._width
+
+    @width.setter
+    def width(self, width):
+        if width <= 0:
+            raise ValueError('Width must be positive.')
+        self._width = width
+
+    @property
+    def height(self):
+        return self._height
+
+    @height.setter
+    def height(self, height):
+        if height <= 0:
+            raise ValueError('Height must be positive.')
+        self._height = height
+
+r1 = Rectangle(10, 20)
+r1.width # 10
+r1.width = 100
+r1 # Rectangle(100, 20)
+r1.width = -10 # ValueError: Width must be positive.
+
+r2 = Rectangle(0, 10) # ValueError: Width must be positive.
+```
 
 ## Name mangling
 
