@@ -61,6 +61,7 @@
   - [The `yield from` expression](#the-yield-from-expression)
   - [Generator expressions](#generator-expressions)
 - [Package and module](#package-and-module)
+  - [What is module](#what-is-module)
   - [`__name__` variable](#__name__-variable)
   - [Imports](#imports)
   - [Absolute Imports](#absolute-imports)
@@ -2152,6 +2153,16 @@ print(n)
 ```
 
 # Package and module
+
+## What is module
+
+- In Python, a module is simply a file containing Python definitions and statements. It is used to logically organize code into separate files, making programs easier to maintain and reuse
+- Key Characteristics
+  - **File-Based**: Any text file with a .py extension is technically a module.
+  - **Encapsulation**: Each module has its own private namespace, which prevents naming conflicts between different parts of a program.
+  - **Contents**: A module can define functions, classes, and variables, and can also include runnable initialization code
+- Using Modules:
+  - To use the contents of a module, you must `import` it into your script
 
 ## `__name__` variable
 
