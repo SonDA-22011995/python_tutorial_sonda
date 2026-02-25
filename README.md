@@ -1207,12 +1207,12 @@ r1 <= r2 # TypeError: '<=' not supported between instances of 'Rectangle' and 'R
 ```
 
 class Student:
-def **init**(self, name: str, grades: list[int] = []): # BAD
-self.name = name
-self.grades = grades
+  def __init__(self, name: str, grades: list[int] = []): # BAD
+    self.name = name
+    self.grades = grades
 
-    def take_exam(self, result: int):
-        self.grades.append(result)
+  def take_exam(self, result: int):
+    self.grades.append(result)
 
 bob = Student('Bob')
 rolf = Student('Rof')
