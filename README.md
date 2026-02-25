@@ -2163,6 +2163,10 @@ print(n)
   - **Contents**: A module can define functions, classes, and variables, and can also include runnable initialization code
 - Using Modules:
   - To use the contents of a module, you must `import` it into your script
+- Types of Modules
+  - **Built-in Modules**: Modules like os, math, sys, and random that are part of the Python Standard Library and come bundled with your installation.
+  - **User-defined Modules**: Custom files created by you to organize your own project's code.
+  - **Third-party Modules**: Libraries developed by others (e.g., requests, numpy) that can be installed via package managers like pip
 
 ## `__name__` variable
 
