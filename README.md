@@ -24,6 +24,8 @@
   - [Method resolution order](#method-resolution-order)
   - [The `@staticmethod` method](#the-staticmethod-method)
   - [The `@classmethod` method](#the-classmethod-method)
+  - [Private methods and attributes](#private-methods-and-attributes)
+  - [Name mangling](#name-mangling)
   - [The `__str__` method](#the-__str__-method)
   - [The `__repr__` method](#the-__repr__-method)
   - [The `__eq__()` method](#the-__eq__-method)
@@ -886,6 +888,15 @@ print(v2.v_type, v2.name) # bike Honda
 print(v3.v_type, v3.name) # truck Volvo
 
 ```
+
+## Private methods and attributes
+
+- In Python, there is no such thing. Everything is public; therefore, we rely on conventions and, for privacy, on a mechanism called **name mangling**
+- The convention is as follows
+  - if an attribute's name has **no leading underscores**, it is considered public. This means you can access it and modify it freely
+  - When the name has **one leading underscore**, the attribute is considered private, which means it's probably meant to be used internally and you should not modify it, or call it from the outside
+
+## Name mangling
 
 ## The `__str__` method
 
