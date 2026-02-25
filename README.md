@@ -898,6 +898,43 @@ print(v3.v_type, v3.name) # truck Volvo
 
 ## Name mangling
 
+- **Name mangling** means that any attribute name that has at least two leading underscores, such as `__my_attr`
+
+- How It Works
+  - When the Python interpreter encounters a mangled name inside a class definition, it textually replaces it with a new name in the format, such as `_ClassName__my_attr`
+  - **Example Transformation**: If a class named Robot has an attribute `__name`, it is internally renamed to `_Robot__name`.
+  - **Encapsulation**: This makes it harder for subclasses to accidentally override parent attributes or for external code to access them directly, though it is not a strict "private" access modifier like in C++ or Java
+- Every class and instance object stores references to their attributes in a special attribute called `__dict__`, so let's inspect `obj.__dict__` to see name mangling in action, such as `print(obj.__dict__.keys())`
+
+```
+class A:
+  def __init__(self, factor):
+    self.__factor = factor
+
+  def op1(self):
+    print('Op1 with factor {}...'.format(self.__factor))
+
+class B(A):
+  def op2(self, factor):
+    self.__factor = factor
+    print('Op2 with factor {}...'.format(self.__factor))
+
+obj = B(100)
+obj.op1() # Op1 with factor 100...
+obj.op2(42) # Op2 with factor 42...
+obj.op1() # Op1 with factor 100... <- Wohoo! Now it's GOOD!
+```
+
+```
+class MyClass:
+    def __init__(self):
+        self.__secret = "42"
+
+obj = MyClass()
+# print(obj.__secret)       # Raises AttributeError
+print(obj._MyClass__secret) # Success: "42"
+```
+
 ## The `__str__` method
 
 - The `__str__()` method is a special method that controls what is returned when the object is printed:
