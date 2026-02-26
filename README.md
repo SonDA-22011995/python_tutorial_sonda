@@ -63,7 +63,7 @@
 - [Package and module](#package-and-module)
   - [What is module](#what-is-module)
   - [What happen if re-import module](#what-happen-if-re-import-module)
-  - [Imports](#imports)
+  - [How does Python import modules](#how-does-python-import-modules)
   - [Absolute Imports](#absolute-imports)
   - [Relative Imports](#relative-imports)
   - [Example Relative imports](#example-relative-imports)
@@ -2206,9 +2206,96 @@ type(sys.modules) # dict
 sys.modules['math'] # <module 'math' (built-in)>
 ```
 
-## Imports
+## How does Python import modules
 
 - The `import` statement is used to bring modules or specific components (functions, classes, variables) from modules into the current namespace, making them available for use. This promotes code reusability and organization
+- When we run a statement such as `import fractions` what is Python actually doing?. The first thing to note is that Python is doing the import at **run time**, i.e. while your code is actually running.
+- At a high level, this is how Python imports a module from file:
+  - checks the `sys.modules` cache to see if the module has already been imported - if so it simply uses the reference in there, otherwise:
+  - creates a new module object (`types.ModuleType`)
+  - loads the source code from file
+  - adds an entry to `sys.modules` with name as key and the newly created
+  - compiles and executes the source code
+- Where does Python look for imports? (loads the source code from file)
+  - Basically when we import a module, Python will search for the module in the paths contained in `sys.path`.
+  - If it does not find the module in one of those paths, the import will fail.
+  - So if you ever run into a problem where Python is not able to import a module or package, you should check this first to make sure the path to your module/package is in that list.
+- One thing that's really to important to note is that when a module is imported, the module code is **executed**.
+
+```
+import sys
+sys.path
+
+# ['',
+#  'D:\\Users\\fbapt\\Anaconda3\\envs\\deepdive\\python36.zip',
+#  'D:\\Users\\fbapt\\Anaconda3\\envs\\deepdive\\DLLs',
+#  'D:\\Users\\fbapt\\Anaconda3\\envs\\deepdive\\lib',
+#  'D:\\Users\\fbapt\\Anaconda3\\envs\\deepdive',
+#  'D:\\Users\\fbapt\\Anaconda3\\envs\\deepdive\\lib\\site-packages',
+#  'D:\\Users\\fbapt\\Anaconda3\\envs\\deepdive\\lib\\site-packages\\setuptools-27.2.0-py3.6.egg',
+#  'D:\\Users\\fbapt\\Anaconda3\\envs\\deepdive\\lib\\site-packages\\IPython\\extensions',
+#  'C:\\Users\\fbapt\\.ipython'
+# ]
+```
+
+- Example: In this example we look at a simplified view of how Python imports a module.We use two built-in functions, `compile` and `exec`.The `compile` function compiles source (e.g. text) into a code object. The `exec` function is used to execute a code object. Optionally we can specify what dictionary should be used to store global symbols. In our case we are going to want to use our module's `__dict__`.
+
+```
+# module1.py
+
+print('Running module1.py')
+
+
+def hello():
+    print('module1 says Hello!')
+```
+
+```
+# main.py
+import os.path
+import types
+import sys
+
+# let's "import" module1 manually
+
+# first we need to load the code from file
+module_name = 'module1'
+module_file = 'module1_source.py'
+module_path = '.'
+
+module_rel_file_path = os.path.join(module_path, module_file)
+module_abs_file_path = os.path.abspath(module_rel_file_path)
+
+# read source code from file
+with open(module_rel_file_path, 'r') as code_file:
+    source_code = code_file.read()
+
+# next we create a module object
+mod = types.ModuleType(module_name)
+mod.__file__ = module_abs_file_path
+
+# insert a reference to the module in sys.modules
+sys.modules[module_name] = mod
+
+# compile the module source code into a code object
+# optionally we should tell the code object where the source came from
+# the third parameter is used to indicate that our source consists of a sequence of statements
+code = compile(source_code, filename=module_abs_file_path, mode='exec')
+
+# execute the module
+# we want the global variables to be stored in mod.__dict__
+exec(code, mod.__dict__)
+
+# our module is now imported!
+# We can use it directly via our mod variable
+
+mod.hello()
+
+# but we can also import it, using the module name we specified
+import module1
+
+module1.hello()
+```
 
 ## Absolute Imports
 
