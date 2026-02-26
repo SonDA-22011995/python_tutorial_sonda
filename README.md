@@ -62,6 +62,7 @@
   - [Generator expressions](#generator-expressions)
 - [Package and module](#package-and-module)
   - [What is module](#what-is-module)
+  - [What happen if re-import module](#what-happen-if-re-import-module)
   - [`__name__` variable](#__name__-variable)
   - [Imports](#imports)
   - [Absolute Imports](#absolute-imports)
@@ -2189,6 +2190,20 @@ math # <module 'math' (built-in)>
 # and it remains the same throughout its lifetime
 
 id(math) # 2043440173664
+```
+
+## What happen if re-import module
+
+- What happens is that when you import a module, it is not actually loaded into the module's namespace only. Instead, the module is loaded into an overarching global system dictionary that contains the module name and the reference to the module object. The name we see here is "copied" into our namespace from that system namespace.
+- If we had a project with multiple modules that each imported `math`, Python will load the `math` module the first time it is requested and put it into memory.
+- The next time the `math` module is imported (in some different module), Python always looks at the system modules first - if it is there it simply copies that reference into our module's namespace and sets the label accordingly.
+
+```
+import sys
+
+type(sys.modules) # dict
+
+sys.modules['math'] # <module 'math' (built-in)>
 ```
 
 ## `__name__` variable
