@@ -2168,6 +2168,29 @@ print(n)
   - **User-defined Modules**: Custom files created by you to organize your own project's code.
   - **Third-party Modules**: Libraries developed by others (e.g., requests, numpy) that can be installed via package managers like pip
 
+- A module is simply another data type. And the modules we use are instances of that data type.
+
+```
+import math
+
+# globals() is a built-in function that Returns the global namespace as a dictionary.
+# representing the current global symbol table
+
+# local() is a built-in function that Returns the local namespace as a dictionary.
+
+globals()['math'] # <module 'math' (built-in)>
+
+type(math) # module
+
+math # <module 'math' (built-in)>
+
+# The id() function in Python is a built-in function that returns the identity of an object.
+# This identity is a unique and constant integer assigned to the object when it is created,
+# and it remains the same throughout its lifetime
+
+id(math) # 2043440173664
+```
+
 ## `__name__` variable
 
 - Built-in variable that automatically gets assigned a value by the Python interpreter based on how the script is being executed
