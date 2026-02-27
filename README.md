@@ -2490,6 +2490,8 @@ import module2 # running module2.py...
 module2.x # 'python'
 ```
 
+- We can "hack" the `sys.path` list by adding our own entries directly - but this means we would have to hard code these paths in our code, or potentially read them from a configuration file. It's perfectly fine to do that, but you may prefer using `.pth` files for that.I'm not going to get into the details of this - the Python docs are located here: `https://docs.python.org/3/library/site.html`
+
 ## Absolute Imports
 
 - An absolute path is the full, complete address of a file or directory, starting from the root of the file system
