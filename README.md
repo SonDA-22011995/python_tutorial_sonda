@@ -2482,6 +2482,14 @@ importlib.util.find_spec('module2')
 # object at 0x00000154B84356A0>, origin='\\Users\\fbapt\\module2.py')
 ```
 
+- Our import should now work
+
+```
+import module2 # running module2.py...
+
+module2.x # 'python'
+```
+
 ## Absolute Imports
 
 - An absolute path is the full, complete address of a file or directory, starting from the root of the file system
