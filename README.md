@@ -64,6 +64,7 @@
   - [What is module](#what-is-module)
   - [What happen if re-import module](#what-happen-if-re-import-module)
   - [How does Python import modules](#how-does-python-import-modules)
+  - [Imports and `importlib`](#imports-and-importlib)
   - [Absolute Imports](#absolute-imports)
   - [Relative Imports](#relative-imports)
   - [Example Relative imports](#example-relative-imports)
@@ -2295,6 +2296,46 @@ mod.hello()
 import module1
 
 module1.hello()
+```
+
+## Imports and `importlib`
+
+- The `importlib` module in Python provides a programmatic way to access and interact with the import system. It allows for dynamic loading of modules at runtime, which is useful for scenarios like implementing plugin systems or loading modules whose names are not known at coding time
+
+- Problem when using the `import` statement
+
+```
+module_import = 'math'
+
+import module_import
+
+# ModuleNotFoundError: No module named 'module_import'
+```
+
+- Solve the problem when using `importlib` statement
+
+```
+module_import = 'math'
+
+# Solution 1
+# math = importlib.import_module('math')
+math = importlib.import_module(module_import)
+
+# Solution 2
+# importlib.import_module(module_import)
+# import math
+
+math.__dict__
+# {
+#   '__name__': 'math',
+#   ..................
+# }
+
+math.sqrt(16)
+# 4.0
+
+importlib.__file__
+# C:\Users\SONDA\AppData\Local\Programs\Python\Python313\Lib\importlib\__init__.py
 ```
 
 ## Absolute Imports
