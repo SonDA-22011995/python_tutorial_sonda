@@ -2395,6 +2395,9 @@ with open('module1.py', 'w') as code_file:
 
 ```
 importlib.util.find_spec('module1')
+
+# ModuleSpec(name='module1', loader=<_frozen_importlib_external.SourceFileLoader object at 0x00000154B8435390>
+# ......
 ```
 
 - Now let's go ahead and actually import it:
