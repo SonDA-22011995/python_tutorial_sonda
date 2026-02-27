@@ -2383,6 +2383,28 @@ sys.meta_path
 importlib.util.find_spec('math')
 ```
 
+- Example: Let's write out a small source file to disk, called module1.py:
+
+```
+with open('module1.py', 'w') as code_file:
+  code_file.write("print('running module1.py...')\n")
+  code_file.write('a = 100\n')
+```
+
+- Now that we have the module on disk, we can ask `importlib` for the module spec:
+
+```
+importlib.util.find_spec('module1')
+```
+
+- Now let's go ahead and actually import it:
+
+```
+import module1 # running module1.py...
+
+module1.a # 10
+```
+
 ## Absolute Imports
 
 - An absolute path is the full, complete address of a file or directory, starting from the root of the file system
