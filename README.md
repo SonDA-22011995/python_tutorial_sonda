@@ -2377,6 +2377,12 @@ sys.meta_path
 # ]
 ```
 
+- We can also use `importlib` to find the spec for a particular module:
+
+```
+importlib.util.find_spec('math')
+```
+
 ## Absolute Imports
 
 - An absolute path is the full, complete address of a file or directory, starting from the root of the file system
