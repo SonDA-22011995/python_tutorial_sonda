@@ -2463,6 +2463,25 @@ except ModuleNotFoundError:
 
 - The module was not found because `sys.path` knows nothing about `ext_module_path`.
 
+```
+ext_module_path in sys.path # False
+```
+
+- So, let's add it!
+
+```
+sys.path.append(ext_module_path)
+```
+
+- Now let's try finding the module spec again:
+
+```
+importlib.util.find_spec('module2')
+
+# ModuleSpec(name='module2', loader=<_frozen_importlib_external.SourceFileLoader
+# object at 0x00000154B84356A0>, origin='\\Users\\fbapt\\module2.py')
+```
+
 ## Absolute Imports
 
 - An absolute path is the full, complete address of a file or directory, starting from the root of the file system
