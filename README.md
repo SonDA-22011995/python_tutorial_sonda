@@ -2408,6 +2408,61 @@ import module1 # running module1.py...
 module1.a # 10
 ```
 
+- Example: Now let's go ahead and write a file somewhere other than our source folder - you'll have to change this code to specify your path where you want that module file to be created:
+
+```
+import os
+
+# you can use this for Mac/Linux:
+# ext_module_path = os.environ['HOME']
+
+# you can use this in Windows 10
+#ext_module_path = os.environ['HOMEPATH']
+
+# or you can just hard code some path
+# ext_module_path = 'c:\\temp'
+
+ext_module_path = os.environ.get('HOME', os.environ['HOMEPATH'])
+# \Users\SONDA
+```
+
+- Write a small source file to **module2.py** in the** ext_module_path** directory.
+
+```
+file_abs_path = os.path.join(ext_module_path, 'module2.py')
+with open(file_abs_path, 'w') as code_file:
+    code_file.write("print('running module2.py...')\n")
+    code_file.write("x = 'python'\n")
+```
+
+- Let's see if Python can figure the module spec:
+
+```
+importlib.util.find_spec('module2')
+
+import module2 # ModuleNotFoundError
+```
+
+- As expected, the import failed, By the way, you can use `try...except` for your imports!
+
+```
+try:
+    import module2
+except ModuleNotFoundError:
+    # could not find module
+    # maybe import an alternative module instead??
+    # e.g. import module1 as module2
+    # but please do not just silence the exception!
+    # if you're importing the module most likely you are
+    # using it somewhere in your code - so raise an
+    # exception at the precise location where the root cause
+    # occurred!
+    # so the following is BAD!!
+    print('Module was not found.')
+```
+
+- The module was not found because `sys.path` knows nothing about `ext_module_path`.
+
 ## Absolute Imports
 
 - An absolute path is the full, complete address of a file or directory, starting from the root of the file system
