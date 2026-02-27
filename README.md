@@ -2338,6 +2338,45 @@ importlib.__file__
 # C:\Users\SONDA\AppData\Local\Programs\Python\Python313\Lib\importlib\__init__.py
 ```
 
+- Conceptually Python divides the work between **finders** and **loaders**.
+  - The **finders** are responsible for finding the module/package and returning the module spec, while the **loaders**, are responsible for "loading" the source code that is then used in the final steps to compile, execute and cache the module object. An object that implements both is called an **importer** - but they are still two separate concepts.
+
+- Python provides a number of standard finders and importers, such as:
+  - built-in modules
+  - frozen modules
+  - import path finder (finds source code files on the import path - for example the `sys.path` entries we have seen before)
+
+- What's interesting about the import path finder and loader is that they can search (and load from) zip archives.
+- In fact it can even be extended to search other resources, including url's, databases, etc. You could theoretically store code in a Mongo or Redis database and import directly from there!
+- Let's look at the module spec for `fractions`:
+  - As you can see the finder determined where the source code was located, and also indicated that the loader to be used is the SourceFileLoader.
+
+```
+fractions.__spec__
+
+# ModuleSpec(name='fractions', loader=<_frozen_importlib_external.SourceFileLoader
+# object at 0x00000154B83757F0>, origin='D:\\Users\\fbapt\\Anaconda3\\lib\\fractions.py')
+```
+
+- How does Python know which finder to use in the first place?
+  - It doesn't really - it will go through a bunch of finders, one by one, until one returns a module spec - if it exhausts all the registered finders and finds nothing, then we get the module not found exception:
+
+```
+# ModuleNotFoundError
+```
+
+- Here are the finders currently registered on my system
+
+```
+sys.meta_path
+
+# [
+#  _frozen_importlib.BuiltinImporter,
+#  _frozen_importlib.FrozenImporter,
+#  _frozen_importlib_external.PathFinder
+# ]
+```
+
 ## Absolute Imports
 
 - An absolute path is the full, complete address of a file or directory, starting from the root of the file system
