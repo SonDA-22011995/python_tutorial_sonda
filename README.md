@@ -2575,6 +2575,8 @@ cmath # <module 'cmath' (built-in)>
 ```
 
 - Why `from <module> import *` can lead to bugs
+  - The first one is that when I call `sin` just like that, someone reading my code does not immediately know where that function came from. Was it a function I implemented in my module? some other custom module? the `cmath` module? the `math` module?
+  - The second one is that you can run into serious problems if you also need to import the `math` module and import the `cmath` module:
 
 ```
 # module1.py
@@ -2588,6 +2590,12 @@ from math import * # sqrt <math.sqrt> in module1.globals()
 # So that's why we usually don't do an import star because you run the risk of
 # overriding a symbol from
 ```
+
+- What more efficient `import math` or `from math import sqrt`
+  - Importing: same amount of work
+  - Calling:
+    - `import math` -> the first needs to find sqrt symbol in math's namespace
+    - `from math import sqrt` -> dict lookup, super fast
 
 ## Absolute Imports
 
