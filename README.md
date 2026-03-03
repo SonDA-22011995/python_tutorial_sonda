@@ -2576,7 +2576,7 @@ cmath # <module 'cmath' (built-in)>
 ```
 
 - Why `from <module> import *` can lead to bugs
-  - The first one is that when I call `sin` just like that, someone reading my code does not immediately know where that function came from. Was it a function I implemented in my module? some other custom module? the `cmath` module? the `math` module?
+  - The first one is that when I call `sqrt` just like that, someone reading my code does not immediately know where that function came from. Was it a function I implemented in my module? some other custom module? the `cmath` module? the `math` module?
   - The second one is that you can run into serious problems if you also need to import the `math` module and import the `cmath` module:
 
 ```
