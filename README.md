@@ -2599,6 +2599,7 @@ from math import * # sqrt <math.sqrt> in module1.globals()
 
 ```
 from time import perf_counter
+from collections import namedtuple
 import math
 
 test_repeats = 10_000_000
