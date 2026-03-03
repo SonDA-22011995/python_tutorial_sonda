@@ -2510,8 +2510,37 @@ import math
 # Step 2: If it's not, it load the math module and insert a reference to sys.modules
 # Step 3: it adds the math symbol to the module1.py's global namespace. If math symbol
 # alreaday exists in module1.py's namespace, repalace it by reference to math in sys.modules
+```
+
+- `import math as r_math`
+  - loads the entire module (`math`) in memory if it's not already there
+  - adds a reference to it in `sys.modules` with a key of `math`
+  - adds the symbol `r_math` to our current namespace referencing the `math` object
+
+- `from math import sqrt`
+  - loads the entire module (`math`) in memory if it's not already there
+  - adds a reference to it in `sys.modules` with a key of `math`
+  - adds the symbol `sqrt` to our current namespace referencing the `math.sqrt` function
+  - it **does not** add the symbol `math` to our current namespace
 
 ```
+# module1.py
+
+from math import sqrt
+
+# Step 1: Look at sys.modules dictionary If it's exist use math in sys.modules
+# Step 2: If it's not, it load the math module and insert a reference to sys.modules
+# Step 3: it adds the sqrt symbol to the module1.py's global namespace refercening
+# math.sqrt.
+# If sqrt symbol alreaday exists in module1.py's namespace, repalace it by reference
+# to math.sqrt in sys.modules
+```
+
+- `from math import sqrt`
+  - loads the entire module (`math`) in memory if it's not already there
+  - adds a reference to it in `sys.modules` with a key of `math`
+  - adds the symbol `r_sqrt` to our current namespace referencing the `math.sqrt` function
+  - it **does not** add the symbol `math` to our current namespace
 
 ## Absolute Imports
 
