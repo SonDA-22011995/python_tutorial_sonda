@@ -2597,6 +2597,47 @@ from math import * # sqrt <math.sqrt> in module1.globals()
     - `import math` -> the first needs to find sqrt symbol in math's namespace
     - `from math import sqrt` -> dict lookup, super fast
 
+```
+from time import perf_counter
+import math
+
+test_repeats = 10_000_000
+
+start = perf_counter()
+
+for _ in range(test_repeats):
+    math.sqrt(2)
+
+end = perf_counter()
+
+elapsed_fully_qualified = end - start
+print(f'Elapsed: {elapsed_fully_qualified}') # Elapsed: 2.057656398357829
+
+start = perf_counter()
+
+for _ in range(test_repeats):
+    sqrt(2)
+
+end = perf_counter()
+
+elapsed_direct_symbol = end - start
+print(f'Elapsed: {elapsed_direct_symbol}') # Elapsed: 1.603430354697538
+
+Timings = namedtuple('Timings', 'timing_1 timing_2 abs_diff rel_diff_perc')
+
+def compare_timings(timing1, timing2):
+    rel_diff = (timing2 - timing1)/timing1 * 100
+
+    timings = Timings(round(timing1, 1),
+                     round(timing2, 1),
+                     round(timing2 - timing1, 2),
+                     round(rel_diff, 2))
+    return timings
+
+compare_timings(elapsed_fully_qualified, elapsed_direct_symbol)
+# Timings(timing_1=2.1, timing_2=1.6, abs_diff=-0.45, rel_diff_perc=-22.07)
+```
+
 ## Absolute Imports
 
 - An absolute path is the full, complete address of a file or directory, starting from the root of the file system
