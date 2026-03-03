@@ -2536,10 +2536,16 @@ from math import sqrt
 # to math.sqrt in sys.modules
 ```
 
-- `from math import sqrt`
+- `from math import sqrt as r_sqrt`
   - loads the entire module (`math`) in memory if it's not already there
   - adds a reference to it in `sys.modules` with a key of `math`
   - adds the symbol `r_sqrt` to our current namespace referencing the `math.sqrt` function
+  - it **does not** add the symbol `math` to our current namespace
+
+- `from math import *`
+  - loads the entire module (`math`) in memory if it's not already there
+  - adds a reference to it in `sys.modules` with a key of `math`
+  - adds symbols for all exported symbols in the `math` module directly to our name space (we'll see how what is exported from a module/package can be controlled using underscores or `__all__` later)
   - it **does not** add the symbol `math` to our current namespace
 
 ## Absolute Imports
