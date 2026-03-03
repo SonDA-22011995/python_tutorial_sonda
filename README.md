@@ -66,6 +66,7 @@
   - [How does Python import modules](#how-does-python-import-modules)
   - [Imports and `importlib`](#imports-and-importlib)
   - [Import Variants](#import-variants)
+  - [Misconceptions](#misconceptions)
   - [Absolute Imports](#absolute-imports)
   - [Relative Imports](#relative-imports)
   - [Example Relative imports](#example-relative-imports)
@@ -2547,6 +2548,46 @@ from math import sqrt
   - adds a reference to it in `sys.modules` with a key of `math`
   - adds symbols for all exported symbols in the `math` module directly to our name space (we'll see how what is exported from a module/package can be controlled using underscores or `__all__` later)
   - it **does not** add the symbol `math` to our current namespace
+
+- So the commonality is that in every case, the math module was loaded into memory and it was referenced
+
+## Misconceptions
+
+- You should use `from math import sqrt, abs` rather than `import math` because that way you only import what you need and you're not having Python load the entire module?
+  - For `math` that's just not true. In fact for any **simple** module. It simply imports the entire module
+
+```
+# module1.py
+
+from cmath import exp
+
+'cmath' in globals() # False
+
+'exp' in globals() # True
+
+sys.modules['cmath'] # <module 'cmath' (built-in)>
+
+cmath = sys.modules['cmath']
+cmath # <module 'cmath' (built-in)>
+
+# the entire cmath module was loaded when we ran from cmath import exp, not
+# just a portion of it!
+```
+
+- Why `from <module> import *` can lead to bugs
+
+```
+# module1.py
+
+from cmath import * # sqrt <cmath.sqrt> in module1.globals()
+
+from math import * # sqrt <math.sqrt> in module1.globals()
+
+# So now sqrt is actually the math sqrt function and so you can see where this could
+# lead to bugs because essentially these two imports stepped on each other
+# So that's why we usually don't do an import star because you run the risk of
+# overriding a symbol from
+```
 
 ## Absolute Imports
 
