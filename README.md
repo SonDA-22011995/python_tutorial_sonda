@@ -65,6 +65,7 @@
   - [What happen if re-import module](#what-happen-if-re-import-module)
   - [How does Python import modules](#how-does-python-import-modules)
   - [Imports and `importlib`](#imports-and-importlib)
+  - [Import Variants](#import-variants)
   - [Absolute Imports](#absolute-imports)
   - [Relative Imports](#relative-imports)
   - [Example Relative imports](#example-relative-imports)
@@ -2491,6 +2492,26 @@ module2.x # 'python'
 ```
 
 - We can "hack" the `sys.path` list by adding our own entries directly - but this means we would have to hard code these paths in our code, or potentially read them from a configuration file. It's perfectly fine to do that, but you may prefer using `.pth` files for that.I'm not going to get into the details of this - the Python docs are located here: `https://docs.python.org/3/library/site.html`
+
+## Import Variants
+
+- `import math`
+  - loads the entire module (`math`) in memory if it's not already there
+  - adds a reference to it in `sys.modules` with a key of `math`
+  - adds a symbol of the same name (`math`) in our current namespace referencing the `math` object
+  - Example use `import math` in **module1.py**
+
+```
+# module1.py
+
+import math
+
+# Step 1: Look at sys.modules dictionary If it's exist use math in sys.modules
+# Step 2: If it's not, it load the math module and insert a reference to sys.modules
+# Step 3: it adds the math symbol to the module1.py's global namespace. If math symbol
+# alreaday exists in module1.py's namespace, repalace it by reference to math in sys.modules
+
+```
 
 ## Absolute Imports
 
