@@ -67,6 +67,7 @@
   - [Imports and `importlib`](#imports-and-importlib)
   - [Import Variants](#import-variants)
   - [Misconceptions](#misconceptions)
+  - [Reloading module](#reloading-module)
   - [Absolute Imports](#absolute-imports)
   - [Relative Imports](#relative-imports)
   - [Example Relative imports](#example-relative-imports)
@@ -2599,7 +2600,6 @@ from math import * # sqrt <math.sqrt> in module1.globals()
 
 ```
 from time import perf_counter
-from collections import namedtuple
 import math
 
 test_repeats = 10_000_000
@@ -2613,6 +2613,11 @@ end = perf_counter()
 
 elapsed_fully_qualified = end - start
 print(f'Elapsed: {elapsed_fully_qualified}') # Elapsed: 2.057656398357829
+```
+
+```
+from time import perf_counter
+from math import sqrt
 
 start = perf_counter()
 
@@ -2623,6 +2628,10 @@ end = perf_counter()
 
 elapsed_direct_symbol = end - start
 print(f'Elapsed: {elapsed_direct_symbol}') # Elapsed: 1.603430354697538
+```
+
+```
+from collections import namedtuple
 
 Timings = namedtuple('Timings', 'timing_1 timing_2 abs_diff rel_diff_perc')
 
@@ -2638,6 +2647,8 @@ def compare_timings(timing1, timing2):
 compare_timings(elapsed_fully_qualified, elapsed_direct_symbol)
 # Timings(timing_1=2.1, timing_2=1.6, abs_diff=-0.45, rel_diff_perc=-22.07)
 ```
+
+## Reloading module
 
 ## Absolute Imports
 
