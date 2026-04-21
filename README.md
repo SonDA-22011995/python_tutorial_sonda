@@ -1449,7 +1449,7 @@ print(name, profession) # Bob Mechanic
 
 ```
 
-head, \*tail = [1, 2, 3, 4, 5]
+head, *tail = [1, 2, 3, 4, 5]
 
 print(head) # 1
 print(tail) # [2, 3, 4, 5]
@@ -1458,7 +1458,7 @@ print(tail) # [2, 3, 4, 5]
 
 ```
 
-\*head, tail = [1, 2, 3, 4, 5]
+*head, tail = [1, 2, 3, 4, 5]
 
 print(head) # [1, 2, 3, 4]
 print(tail) # 5
@@ -1467,7 +1467,7 @@ print(tail) # 5
 
 ```
 
-head, \*middle, tail = [1, 2, 3, 4, 5]
+head, *middle, tail = [1, 2, 3, 4, 5]
 
 print(head) # 1
 print(middle) # [2, 3, 4]
@@ -1477,8 +1477,7 @@ print(tail) # 5
 
 ## Iterable unpacking
 
-- Iterable unpacking uses the syntax \*iterable_name to pass the elements of an iterable
-  as positional arguments to a function
+- Iterable unpacking uses the syntax `*iterable_name` to pass the elements of an iterable as positional arguments to a function
 
 ```
 
@@ -1488,7 +1487,7 @@ def func(a, b, c):
 print(a, b, c)
 
 values = (1, 3, -7)
-func(\*values) # equivalent to: func(1, 3, -7)
+func(*values) # equivalent to: func(1, 3, -7)
 
 ```
 
