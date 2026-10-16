@@ -66,6 +66,11 @@
     - [What Is a Namespace?](#what-is-a-namespace)
     - [Types of Namespaces](#types-of-namespaces)
     - [The LEGB Rule](#the-legb-rule)
+    - [Inspecting Namespaces](#inspecting-namespaces)
+      - [locals()](#locals)
+      - [dir()](#dir)
+    - [Why Are Namespaces Important?](#why-are-namespaces-important)
+    - [Namespace vs. Scope](#namespace-vs-scope)
   - [Types of Modules](#types-of-modules)
     - [Built-in Modules](#built-in-modules)
     - [User-defined Modules](#user-defined-modules)
@@ -2251,6 +2256,52 @@ print(x)
 # local
 # global
 ```
+
+### Inspecting Namespaces
+
+- Python provides built-in functions to inspect namespaces.
+  
+
+#### locals()
+
+- Returns a dictionary representing the current local namespace.
+
+```python
+def test():
+    x = 10
+    y = 20
+    print(locals())
+
+test()
+
+# {'x': 10, 'y': 20}
+```
+
+#### dir()
+
+- Returns a list of names available in the current context or associated with an object.
+
+```python
+
+x = 10
+print(dir())
+
+# ['__annotations__', '__builtins__', '__doc__', '__loader__', '__name__', '__package__', '__spec__',  'x']
+```
+
+### Why Are Namespaces Important?
+
+- Namespaces are important because they:
+  - Prevent naming conflicts: Different modules or functions can define names with the same spelling.
+  - Organize code: Variables, functions, and classes belong to appropriate namespaces.
+  - Control name resolution: Python uses namespaces and scope rules to determine which object a name refers to.
+- Support modular programming: Modules and packages organize code into separate components
+
+### Namespace vs. Scope
+
+- Namespace and scope are related, but they are not the same.
+  - Namespace: A mapping between names and objects.
+  - Scope: The region of a program where a name can be accessed directly.
 
 ## Types of Modules
   
