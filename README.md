@@ -62,6 +62,14 @@
   - [Generator expressions](#generator-expressions)
 - [Package and module](#package-and-module)
   - [What is module](#what-is-module)
+  - [Modules have a namespace](#modules-have-a-namespace)
+    - [What Is a Namespace?](#what-is-a-namespace)
+    - [Types of Namespaces](#types-of-namespaces)
+    - [The LEGB Rule](#the-legb-rule)
+  - [Types of Modules](#types-of-modules)
+    - [Built-in Modules](#built-in-modules)
+    - [User-defined Modules](#user-defined-modules)
+    - [Third-party Modules](#third-party-modules)
   - [What happen if re-import module](#what-happen-if-re-import-module)
   - [How does Python import modules](#how-does-python-import-modules)
   - [Imports and `importlib`](#imports-and-importlib)
@@ -138,7 +146,7 @@
   - [Merge dictionaries (Python ≥ 3.9)](#merge-dictionaries-python--39)
 - [Python Libraries](#python-libraries)
   - [Flask](#flask)
-  - [Flask_smorest](#flask_smorest)
+  - [Flask\_smorest](#flask_smorest)
   - [python-dotenv](#python-dotenv)
   - [Marshmallow](#marshmallow)
   - [SQLAlchemy](#sqlalchemy)
@@ -2160,17 +2168,138 @@ print(n)
 
 ## What is module
 
-- In Python, a module is simply a file containing Python definitions and statements. It is used to logically organize code into separate files, making programs easier to maintain and reuse
+- In Python, a module is simply a file containing Python definitions and statements. 
+- It is used to logically organize code into separate files, making programs easier to maintain and reuse
 - Key Characteristics
-  - **File-Based**: Any text file with a .py extension is technically a module.
+  - **File-Based**: Any text file with a `.py` extension is technically a module.
   - **Encapsulation**: Each module has its own private namespace, which prevents naming conflicts between different parts of a program.
   - **Contents**: A module can define functions, classes, and variables, and can also include runnable initialization code
 - Using Modules:
   - To use the contents of a module, you must `import` it into your script
-- Types of Modules
-  - **Built-in Modules**: Modules like os, math, sys, and random that are part of the Python Standard Library and come bundled with your installation.
-  - **User-defined Modules**: Custom files created by you to organize your own project's code.
-  - **Third-party Modules**: Libraries developed by others (e.g., requests, numpy) that can be installed via package managers like pip
+
+## Modules have a namespace
+
+### What Is a Namespace?
+
+- A **namespace** in Python is a mapping between names and objects.
+- It allows Python to identify which object a name refers to.
+
+### Types of Namespaces
+
+- Python has four important types of namespaces
+
+| Namespace            | Description                                                          | Example                                            |
+|----------------------|----------------------------------------------------------------------|----------------------------------------------------|
+| Built-in Namespace   | Contains predefined names provided by Python.                        | `print()`, `len()`, `int()`                        |
+| Global Namespace     | Contains names defined at the module level.                          | Variables and functions defined outside functions |
+| Enclosing Namespace  | Contains names from an outer function surrounding a nested function. | Variables defined in an outer function             |
+| Local Namespace      | Contains names defined within the current function.                   | Local variables and parameters                     |
+
+- Example
+  - x belongs to the global namespace.
+  - y belongs to the enclosing namespace of inner().
+  - z belongs to the local namespace of inner().
+  - The inner() function can access names from its own namespace and the accessible outer namespaces.
+
+```python
+x = "global"
+
+def outer():
+    y = "enclosing"
+
+    def inner():
+        z = "local"
+        print(x)
+        print(y)
+        print(z)
+
+    inner()
+
+outer()
+
+# global
+# enclosing
+# local
+```
+
+### The LEGB Rule
+
+- Python uses the LEGB rule to determine where to look for a name when resolving a variable reference.
+- Python searches for a name in this order: **Local → Enclosing → Global → Built-in**
+
+| Order | Scope     | Description                             |
+|-------|-----------|-----------------------------------------|
+| L     | Local     | The current function's namespace        |
+| E     | Enclosing | The namespace of surrounding functions  |
+| G     | Global    | The current module's namespace          |
+| B     | Built-in  | Python's built-in namespace             |
+
+- Example
+  - Inside `test()`, Python finds x in the local namespace first.
+  - Outside the function, Python uses the global variable.
+
+```python
+x = "global"
+
+def test():
+    x = "local"
+    print(x)
+
+test()
+print(x)
+
+# local
+# global
+```
+
+## Types of Modules
+  
+### Built-in Modules
+
+- Modules like os, math, sys, and random that are part of the Python Standard Library and come bundled with your installation.
+
+```python
+# math is a built-in module implemented in C.
+
+import math
+```
+
+### User-defined Modules
+
+- Custom files created by you to organize your own project's code.
+
+```python
+
+from types import ModuleType
+
+mod = ModuleType("test", "This is a test module")
+
+isinstance(mod, ModuleType)
+# True
+
+# we can add attributes
+mod.pi = 3.14
+mod.__dict__
+
+# 'pi' → 3.14
+
+# We can even add functions:
+mod.hello = lambda: "Hello"
+mod.hello()
+
+# Hello 
+
+```
+
+### Third-party Modules 
+
+- Libraries developed by others (e.g., requests, numpy) that can be installed via package managers like pip
+
+```python
+# fractions is implemented in Python and exists as a .py file.
+
+import fractions
+```
 
 - A module is simply another data type. And the modules we use are instances of that data type.
 
