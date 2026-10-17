@@ -79,8 +79,16 @@
     - [`sys.modules` — the module cache](#sysmodules--the-module-cache)
     - [What happen if re-import module](#what-happen-if-re-import-module)
   - [Module attributes](#module-attributes)
-    - [`__dict__` attribute](#__dict__-attribute)
-    - [`__name__` attribute](#__name__-attribute)
+    - [Common module attributes](#common-module-attributes)
+    - [Developer-Defined Module Attributes](#developer-defined-module-attributes)
+  - [Special Variables](#special-variables)
+    - [Introduction](#introduction)
+    - [What Are Special Variables?](#what-are-special-variables)
+    - [Comparing Special Variables and Module Attributes](#comparing-special-variables-and-module-attributes)
+    - [Special Variables That Are Also Module Attributes](#special-variables-that-are-also-module-attributes)
+    - [Example](#example)
+      - [`__dict__` attribute](#__dict__-attribute)
+      - [`__name__` attribute](#__name__-attribute)
   - [How does Python import modules](#how-does-python-import-modules)
   - [Imports and `importlib`](#imports-and-importlib)
   - [Import Variants](#import-variants)
@@ -117,7 +125,7 @@
     - [What is an HTTP Request?](#what-is-an-http-request)
     - [Client–Server Model](#clientserver-model)
     - [Structure of an HTTP Request](#structure-of-an-http-request)
-    - [Example](#example)
+    - [Example](#example-1)
     - [Request Line](#request-line)
     - [HTTP Methods](#http-methods)
     - [HTTP Headers](#http-headers)
@@ -2471,6 +2479,8 @@ Reuse existing module
 
 ## Module attributes
 
+### Common module attributes
+
 | Attribute | Description | Example |
 |---|---|---|
 | `__name__` | Returns the module's name. When the module is executed directly, its value is `'__main__'`. | `print(module.__name__)` |
@@ -2484,7 +2494,74 @@ Reuse existing module
 | `__cached__` | Returns the path to the cached bytecode file, when available. | `print(module.__cached__)` |
 | `__annotations__` | Stores annotations associated with the module, when present. | `print(module.__annotations__)` |
 
-### `__dict__` attribute
+### Developer-Defined Module Attributes
+
+- Developers can define their own module attributes
+  - The attributes `__version__` and `__author__` are conventions commonly used by developers
+  - Python does not automatically assign them.
+
+```python
+
+__version__ = "1.0.0"
+__author__ = "Developer"
+
+def greet():
+    print("Hello!")
+```
+
+- Another module can access these attributes
+
+```python
+import mymodule
+
+print(mymodule.__version__)
+print(mymodule.__author__)
+mymodule.greet()
+
+# 1.0.0
+# Developer
+# Hello!
+```
+
+## Special Variables 
+
+### Introduction
+
+- In Python, you may encounter names such as `__name__`,`__file__`, `__doc__`, and `__package__`.
+- These names provide information about a module, its documentation, its location, and its relationship with other modules.
+
+### What Are Special Variables?
+
+- Special variables are variables with special meanings or conventions in Python. 
+- Some are automatically initialized by Python, while others are used by particular language features.
+
+### Comparing Special Variables and Module Attributes
+
+| Feature | Special Variables | Module Attributes |
+|---|---|---|
+| Definition | Variables with special meanings or conventions | Values associated with a module object |
+| Access | Often accessed directly inside the current module | Usually accessed using `module.attribute` |
+| Examples | `__name__`, `__doc__` | `math.pi`, `math.__name__`, `math.sqrt` |
+| Scope | Depends on the namespace in which the name is defined | Belongs to the referenced module object |
+| Relationship | Some special variables are also module attributes | Can include special variables, ordinary variables, functions, and classes |
+
+### Special Variables That Are Also Module Attributes
+
+| Special Variable | Module Attribute? | Description |
+|---|---|---|
+| `__name__` | Yes | The name of the module. |
+| `__doc__` | Yes | The module's documentation string (docstring). |
+| `__file__` | Yes, when available | The path to the module's source file or associated file. |
+| `__package__` | Yes | The package associated with the module. |
+| `__spec__` | Yes | The module's import specification. |
+| `__loader__` | Yes | The loader associated with the module. |
+| `__cached__` | Yes, when available | The path to the cached bytecode file. |
+| `__builtins__` | Yes, when present | A reference to the built-in namespace available to the module. |
+| `__path__` | Yes, for packages | An iterable of locations where Python searches for submodules of a package. |
+
+### Example
+
+#### `__dict__` attribute
 
 - A module has its own dictionary
   - `math.__dict__` contains the attributes defined by the module.
@@ -2498,7 +2575,7 @@ math.__dict__
 # {'__name__': 'math', '__doc__': 'This module provides access to the mathematical functions\ndefined by the C standard.', '__package__': '', '__loader__': <class '_frozen_importlib.BuiltinImporter'>, '__spec__': ModuleSpec(name='math', loader=<class '_frozen_importlib.BuiltinImporter'>, origin='built-in'), 'acos': <built-in function acos>, 'acosh': <built-in function acosh>, 'asin': <built-in function asin>, 'asinh': <built-in function asinh>, 'atan': <built-in function atan>, 'atan2': <built-in function atan2>, 'atanh': <built-in function atanh>, 'cbrt': <built-in function cbrt>, 'ceil': <built-in function ceil>, 'copysign': <built-in function copysign>, 'cos': <built-in function cos>, 'cosh': <built-in function cosh>, 'degrees': <built-in function degrees>, 'dist': <built-in function dist>, 'erf': <built-in function erf>, 'erfc': <built-in function erfc>, 'exp': <built-in function exp>, 'exp2': <built-in function exp2>, 'expm1': <built-in function expm1>, 'fabs': <built-in function fabs>, 'factorial': <built-in function factorial>, 'floor': <built-in function floor>, 'fmod': <built-in function fmod>, 'frexp': <built-in function frexp>, 'fsum': <built-in function fsum>, 'gamma': <built-in function gamma>, 'gcd': <built-in function gcd>, 'hypot': <built-in function hypot>, 'isclose': <built-in function isclose>, 'isfinite': <built-in function isfinite>, 'isinf': <built-in function isinf>, 'isnan': <built-in function isnan>, 'isqrt': <built-in function isqrt>, 'lcm': <built-in function lcm>, 'ldexp': <built-in function ldexp>, 'lgamma': <built-in function lgamma>, 'log': <built-in function log>, 'log1p': <built-in function log1p>, 'log10': <built-in function log10>, 'log2': <built-in function log2>, 'modf': <built-in function modf>, 'pow': <built-in function pow>, 'radians': <built-in function radians>, 'remainder': <built-in function remainder>, 'sin': <built-in function sin>, 'sinh': <built-in function sinh>, 'sqrt': <built-in function sqrt>, 'tan': <built-in function tan>, 'tanh': <built-in function tanh>, 'sumprod': <built-in function sumprod>, 'trunc': <built-in function trunc>, 'prod': <built-in function prod>, 'perm': <built-in function perm>, 'comb': <built-in function comb>, 'nextafter': <built-in function nextafter>, 'ulp': <built-in function ulp>, 'pi': 3.141592653589793, 'e': 2.718281828459045, 'tau': 6.283185307179586, 'inf': inf, 'nan': nan}
 ```
 
-### `__name__` attribute
+#### `__name__` attribute
 
 - Built-in variable that automatically gets assigned a value by the Python interpreter based on how the script is being executed
 - How `__name__` works
