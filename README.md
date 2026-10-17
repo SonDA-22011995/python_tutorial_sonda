@@ -2509,48 +2509,40 @@ math.__dict__
   - Prevent unintended execution: Ensure that certain code (like test cases or setup functions) only runs when the file is the primary executable, avoiding side effects when imported
   - Create reusable modules: Write modules that can be both executed independently and imported by other scripts without automatically running their main logic
 
-```
+```python
 
 # my_module.py
 
 def greet(name):
-return f"Hello, {name}!"
+  return f"Hello, {name}!"
 
-if **name** == '**main**': # This code will only run when my_module.py is executed directly
-print(greet("World"))
-print(f"This script's **name** is: {**name**}")
-
-```
-
-If you run python my_module.py, the output will be:
+# This code will only run when my_module.py is executed directly
+if __name__ == '__main__': 
+  print(greet("World"))
+  print(f"This script's **name** is: {**name**}")
 
 ```
 
-Hello, World!
-This script's **name** is: **main**
+- If you run python my_module.py, the output will be:
 
+```python
+# Hello, World!
+# This script's **name** is: **main**
 ```
 
-If you import my_module into another script:
+- If you import my_module into another script:
 
-```
-
+```python
 # another_script.py
 
 import my_module
 
 print(my_module.greet("Python"))
-print(f"my_module's **name** when imported is: {my_module.**name**}")
+print(f"my_module's __name__ when imported is: {my_module.__name__}")
 
-```
 
-The output will be:
-
-```
-
-Hello, Python!
-my_module's **name** when imported is: my_module
-
+# Hello, Python!
+# my_module's **name** when imported is: my_module
 ```
 
 
