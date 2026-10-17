@@ -79,8 +79,8 @@
     - [`sys.modules` — the module cache](#sysmodules--the-module-cache)
     - [What happen if re-import module](#what-happen-if-re-import-module)
   - [Module attributes](#module-attributes)
-    - [__dict__ atribute](#dict-atribute)
-    - [`__name__` variable](#__name__-variable)
+    - [`__dict__` attribute](#__dict__-attribute)
+    - [`__name__` attribute](#__name__-attribute)
   - [How does Python import modules](#how-does-python-import-modules)
   - [Imports and `importlib`](#imports-and-importlib)
   - [Import Variants](#import-variants)
@@ -2484,7 +2484,7 @@ Reuse existing module
 | `__cached__` | Returns the path to the cached bytecode file, when available. | `print(module.__cached__)` |
 | `__annotations__` | Stores annotations associated with the module, when present. | `print(module.__annotations__)` |
 
-### __dict__ atribute
+### `__dict__` attribute
 
 - A module has its own dictionary
   - `math.__dict__` contains the attributes defined by the module.
@@ -2498,7 +2498,7 @@ math.__dict__
 # {'__name__': 'math', '__doc__': 'This module provides access to the mathematical functions\ndefined by the C standard.', '__package__': '', '__loader__': <class '_frozen_importlib.BuiltinImporter'>, '__spec__': ModuleSpec(name='math', loader=<class '_frozen_importlib.BuiltinImporter'>, origin='built-in'), 'acos': <built-in function acos>, 'acosh': <built-in function acosh>, 'asin': <built-in function asin>, 'asinh': <built-in function asinh>, 'atan': <built-in function atan>, 'atan2': <built-in function atan2>, 'atanh': <built-in function atanh>, 'cbrt': <built-in function cbrt>, 'ceil': <built-in function ceil>, 'copysign': <built-in function copysign>, 'cos': <built-in function cos>, 'cosh': <built-in function cosh>, 'degrees': <built-in function degrees>, 'dist': <built-in function dist>, 'erf': <built-in function erf>, 'erfc': <built-in function erfc>, 'exp': <built-in function exp>, 'exp2': <built-in function exp2>, 'expm1': <built-in function expm1>, 'fabs': <built-in function fabs>, 'factorial': <built-in function factorial>, 'floor': <built-in function floor>, 'fmod': <built-in function fmod>, 'frexp': <built-in function frexp>, 'fsum': <built-in function fsum>, 'gamma': <built-in function gamma>, 'gcd': <built-in function gcd>, 'hypot': <built-in function hypot>, 'isclose': <built-in function isclose>, 'isfinite': <built-in function isfinite>, 'isinf': <built-in function isinf>, 'isnan': <built-in function isnan>, 'isqrt': <built-in function isqrt>, 'lcm': <built-in function lcm>, 'ldexp': <built-in function ldexp>, 'lgamma': <built-in function lgamma>, 'log': <built-in function log>, 'log1p': <built-in function log1p>, 'log10': <built-in function log10>, 'log2': <built-in function log2>, 'modf': <built-in function modf>, 'pow': <built-in function pow>, 'radians': <built-in function radians>, 'remainder': <built-in function remainder>, 'sin': <built-in function sin>, 'sinh': <built-in function sinh>, 'sqrt': <built-in function sqrt>, 'tan': <built-in function tan>, 'tanh': <built-in function tanh>, 'sumprod': <built-in function sumprod>, 'trunc': <built-in function trunc>, 'prod': <built-in function prod>, 'perm': <built-in function perm>, 'comb': <built-in function comb>, 'nextafter': <built-in function nextafter>, 'ulp': <built-in function ulp>, 'pi': 3.141592653589793, 'e': 2.718281828459045, 'tau': 6.283185307179586, 'inf': inf, 'nan': nan}
 ```
 
-### `__name__` variable
+### `__name__` attribute
 
 - Built-in variable that automatically gets assigned a value by the Python interpreter based on how the script is being executed
 - How `__name__` works
