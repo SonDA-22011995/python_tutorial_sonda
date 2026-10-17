@@ -69,6 +69,7 @@
     - [Inspecting Namespaces](#inspecting-namespaces)
       - [locals()](#locals)
       - [dir()](#dir)
+      - [globals()](#globals)
     - [Why Are Namespaces Important?](#why-are-namespaces-important)
     - [Namespace vs. Scope](#namespace-vs-scope)
   - [Types of Modules](#types-of-modules)
@@ -2326,6 +2327,22 @@ x = 10
 print(dir())
 
 # ['__annotations__', '__builtins__', '__doc__', '__loader__', '__name__', '__package__', '__spec__',  'x']
+```
+
+#### globals()
+
+- Returns a dictionary representing the current module's global namespace.
+- The output includes names such as `x` and `hello`, along with other module-level names.
+
+```python
+x = 10
+
+def hello():
+    pass
+
+print(globals())
+
+#{'__name__': '__main__', '__doc__': None, '__package__': None, '__loader__': <class '_frozen_importlib.BuiltinImporter'>, '__spec__': None, '__annotations__': {}, '__builtins__': <module 'builtins' (built-in)>, 'x': 100, 'sayHi': <function sayHi at 0x79fa229f32e0>}
 ```
 
 ### Why Are Namespaces Important?
