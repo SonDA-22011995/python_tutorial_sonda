@@ -75,7 +75,11 @@
     - [Built-in Modules](#built-in-modules)
     - [User-defined Modules](#user-defined-modules)
     - [Third-party Modules](#third-party-modules)
-  - [What happen if re-import module](#what-happen-if-re-import-module)
+  - [Importing a module](#importing-a-module)
+    - [`sys.modules` — the module cache](#sysmodules--the-module-cache)
+    - [What happen if re-import module](#what-happen-if-re-import-module)
+  - [Module attributes](#module-attributes)
+    - [__dict__ atribute](#dict-atribute)
   - [How does Python import modules](#how-does-python-import-modules)
   - [Imports and `importlib`](#imports-and-importlib)
   - [Import Variants](#import-variants)
@@ -2181,6 +2185,33 @@ print(n)
   - **Contents**: A module can define functions, classes, and variables, and can also include runnable initialization code
 - Using Modules:
   - To use the contents of a module, you must `import` it into your script
+- A module is simply another data type. And the modules we use are instances of that data type.
+  - Similar idea:
+    - Functions → instances of function
+    - Classes → instances of type
+    - Modules → instances of module
+
+
+```python
+import math
+
+# globals() is a built-in function that Returns the global namespace as a dictionary.
+# representing the current global symbol table
+
+# local() is a built-in function that Returns the local namespace as a dictionary.
+
+globals()['math'] # <module 'math' (built-in)>
+
+type(math) # module
+
+math # <module 'math' (built-in)>
+
+# The id() function in Python is a built-in function that returns the identity of an object.
+# This identity is a unique and constant integer assigned to the object when it is created,
+# and it remains the same throughout its lifetime
+
+id(math) # 2043440173664
+```
 
 ## Modules have a namespace
 
@@ -2352,158 +2383,62 @@ mod.hello()
 import fractions
 ```
 
-## Modules have a namespace
+## Importing a module
 
-### What Is a Namespace?
-
-- A **namespace** in Python is a mapping between names and objects.
-- It allows Python to identify which object a name refers to.
-
-### Types of Namespaces
-
-- Python has four important types of namespaces
-
-| Namespace            | Description                                                          | Example                                            |
-|----------------------|----------------------------------------------------------------------|----------------------------------------------------|
-| Built-in Namespace   | Contains predefined names provided by Python.                        | `print()`, `len()`, `int()`                        |
-| Global Namespace     | Contains names defined at the module level.                          | Variables and functions defined outside functions |
-| Enclosing Namespace  | Contains names from an outer function surrounding a nested function. | Variables defined in an outer function             |
-| Local Namespace      | Contains names defined within the current function.                   | Local variables and parameters                     |
-
-- Example
-  - x belongs to the global namespace.
-  - y belongs to the enclosing namespace of inner().
-  - z belongs to the local namespace of inner().
-  - The inner() function can access names from its own namespace and the accessible outer namespaces.
+- When we do: `import math`
+  - Python creates/loads a module object and gives us a reference to it.
+  - So `math` is simply a name referring to a module object
+- We can even create another reference 
+  - Both names point to the same module object
 
 ```python
-x = "global"
-
-def outer():
-    y = "enclosing"
-
-    def inner():
-        z = "local"
-        print(x)
-        print(y)
-        print(z)
-
-    inner()
-
-outer()
-
-# global
-# enclosing
-# local
-```
-
-### The LEGB Rule
-
-- Python uses the LEGB rule to determine where to look for a name when resolving a variable reference.
-- Python searches for a name in this order: **Local → Enclosing → Global → Built-in**
-
-| Order | Scope     | Description                             |
-|-------|-----------|-----------------------------------------|
-| L     | Local     | The current function's namespace        |
-| E     | Enclosing | The namespace of surrounding functions  |
-| G     | Global    | The current module's namespace          |
-| B     | Built-in  | Python's built-in namespace             |
-
-- Example
-  - Inside `test()`, Python finds x in the local namespace first.
-  - Outside the function, Python uses the global variable.
-
-```python
-x = "global"
-
-def test():
-    x = "local"
-    print(x)
-
-test()
-print(x)
-
-# local
-# global
-```
-
-## Types of Modules
-  
-### Built-in Modules
-
-- Modules like os, math, sys, and random that are part of the Python Standard Library and come bundled with your installation.
-
-```python
-# math is a built-in module implemented in C.
-
-import math
-```
-
-### User-defined Modules
-
-- Custom files created by you to organize your own project's code.
-
-```python
-
-from types import ModuleType
-
-mod = ModuleType("test", "This is a test module")
-
-isinstance(mod, ModuleType)
-# True
-
-# we can add attributes
-mod.pi = 3.14
-mod.__dict__
-
-# 'pi' → 3.14
-
-# We can even add functions:
-mod.hello = lambda: "Hello"
-mod.hello()
-
-# Hello 
-
-```
-
-### Third-party Modules 
-
-- Libraries developed by others (e.g., requests, numpy) that can be installed via package managers like pip
-
-```python
-# fractions is implemented in Python and exists as a .py file.
-
-import fractions
-```
-
-- A module is simply another data type. And the modules we use are instances of that data type.
-
-```
 import math
 
-# globals() is a built-in function that Returns the global namespace as a dictionary.
-# representing the current global symbol table
+junk = math
 
-# local() is a built-in function that Returns the local namespace as a dictionary.
-
-globals()['math'] # <module 'math' (built-in)>
-
-type(math) # module
-
-math # <module 'math' (built-in)>
-
-# The id() function in Python is a built-in function that returns the identity of an object.
-# This identity is a unique and constant integer assigned to the object when it is created,
-# and it remains the same throughout its lifetime
-
-id(math) # 2043440173664
+junk.sqrt(2)
 ```
 
-## What happen if re-import module
+```
+math ──┐
+       ├──→ math module object
+junk ──┘
+```
 
-- What happens is that when you import a module, it is not actually loaded into the module's namespace only. Instead, the module is loaded into an overarching global system dictionary that contains the module name and the reference to the module object. The name we see here is "copied" into our namespace from that system namespace.
-- If we had a project with multiple modules that each imported `math`, Python will load the `math` module the first time it is requested and put it into memory.
-- The next time the `math` module is imported (in some different module), Python always looks at the system modules first - if it is there it simply copies that reference into our module's namespace and sets the label accordingly.
+### `sys.modules` — the module cache
+
+- Python maintains a global dictionary
+
+```python
+import sys
+
+sys.modules
+```
+
+- This dictionary contains modules that have already been loaded.
+- For example
+  - refers to the same module object as `math`
+  - You can verify this with. They have the same ID
+
+```python
+import math
+
+sys.modules["math"]
+
+id(math)
+id(sys.modules["math"])
+```
+
+### What happen if re-import module
+
+- What happens is that when you import a module
+  - It is not actually loaded into the module's namespace only. 
+  - Instead, the module is loaded into an overarching global system dictionary that contains the module name and the reference to the module object. 
+  - The name we see here is "copied" into our namespace from that system namespace.
+- If we had a project with multiple modules that each `imported math`
+  - Python will load the `math` module the first time it is requested and put it into memory.
+  - The next time the `math` module is imported `imported math` (in some different module), Python always looks at the system modules `sys.modules` first 
+  - If it is there it simply copies that reference into our module's namespace and sets the label accordingly.
 
 ```
 import sys
@@ -2511,6 +2446,56 @@ import sys
 type(sys.modules) # dict
 
 sys.modules['math'] # <module 'math' (built-in)>
+```
+
+```
+First import
+    ↓
+Load module
+    ↓
+Create module object
+    ↓
+Store in sys.modules
+    ↓
+Add reference to current namespace
+
+
+Second import
+    ↓
+Check sys.modules
+    ↓
+Already exists
+    ↓
+Reuse existing module
+```
+
+## Module attributes
+
+| Attribute | Description | Example |
+|---|---|---|
+| `__name__` | Returns the module's name. When the module is executed directly, its value is `'__main__'`. | `print(module.__name__)` |
+| `__file__` | Returns the path of the file from which the module was loaded, when available. | `print(module.__file__)` |
+| `__doc__` | Returns the module's docstring, or `None` if no docstring exists. | `print(module.__doc__)` |
+| `__package__` | Returns the package name associated with the module. | `print(module.__package__)` |
+| `__spec__` | Contains the module's import specification, which describes how Python loads the module. | `print(module.__spec__)` |
+| `__loader__` | References the loader used to load the module, when available. | `print(module.__loader__)` |
+| `__dict__` | Returns the dictionary containing the module's namespace and attributes. | `print(module.__dict__)` |
+| `__builtins__` | Provides access to built-in names available in the module's execution environment. | `print(module.__builtins__)` |
+| `__cached__` | Returns the path to the cached bytecode file, when available. | `print(module.__cached__)` |
+| `__annotations__` | Stores annotations associated with the module, when present. | `print(module.__annotations__)` |
+
+### __dict__ atribute
+
+- A module has its own dictionary
+  - `math.__dict__` contains the attributes defined by the module.
+  - Therefore `math.sqrt(2)` is conceptually similar to `math.__dict__["sqrt"](2)`
+
+```python
+import math
+
+math.__dict__
+
+# {'__name__': 'math', '__doc__': 'This module provides access to the mathematical functions\ndefined by the C standard.', '__package__': '', '__loader__': <class '_frozen_importlib.BuiltinImporter'>, '__spec__': ModuleSpec(name='math', loader=<class '_frozen_importlib.BuiltinImporter'>, origin='built-in'), 'acos': <built-in function acos>, 'acosh': <built-in function acosh>, 'asin': <built-in function asin>, 'asinh': <built-in function asinh>, 'atan': <built-in function atan>, 'atan2': <built-in function atan2>, 'atanh': <built-in function atanh>, 'cbrt': <built-in function cbrt>, 'ceil': <built-in function ceil>, 'copysign': <built-in function copysign>, 'cos': <built-in function cos>, 'cosh': <built-in function cosh>, 'degrees': <built-in function degrees>, 'dist': <built-in function dist>, 'erf': <built-in function erf>, 'erfc': <built-in function erfc>, 'exp': <built-in function exp>, 'exp2': <built-in function exp2>, 'expm1': <built-in function expm1>, 'fabs': <built-in function fabs>, 'factorial': <built-in function factorial>, 'floor': <built-in function floor>, 'fmod': <built-in function fmod>, 'frexp': <built-in function frexp>, 'fsum': <built-in function fsum>, 'gamma': <built-in function gamma>, 'gcd': <built-in function gcd>, 'hypot': <built-in function hypot>, 'isclose': <built-in function isclose>, 'isfinite': <built-in function isfinite>, 'isinf': <built-in function isinf>, 'isnan': <built-in function isnan>, 'isqrt': <built-in function isqrt>, 'lcm': <built-in function lcm>, 'ldexp': <built-in function ldexp>, 'lgamma': <built-in function lgamma>, 'log': <built-in function log>, 'log1p': <built-in function log1p>, 'log10': <built-in function log10>, 'log2': <built-in function log2>, 'modf': <built-in function modf>, 'pow': <built-in function pow>, 'radians': <built-in function radians>, 'remainder': <built-in function remainder>, 'sin': <built-in function sin>, 'sinh': <built-in function sinh>, 'sqrt': <built-in function sqrt>, 'tan': <built-in function tan>, 'tanh': <built-in function tanh>, 'sumprod': <built-in function sumprod>, 'trunc': <built-in function trunc>, 'prod': <built-in function prod>, 'perm': <built-in function perm>, 'comb': <built-in function comb>, 'nextafter': <built-in function nextafter>, 'ulp': <built-in function ulp>, 'pi': 3.141592653589793, 'e': 2.718281828459045, 'tau': 6.283185307179586, 'inf': inf, 'nan': nan}
 ```
 
 ## How does Python import modules
