@@ -77,6 +77,10 @@
     - [Built-in Modules](#built-in-modules)
     - [User-defined Modules](#user-defined-modules)
     - [Third-party Modules](#third-party-modules)
+    - [How to Identify Built-in, Standard Library, and User-defined Modules in Python](#how-to-identify-built-in-standard-library-and-user-defined-modules-in-python)
+      - [Method 1: Using `sys.builtin_module_names`](#method-1-using-sysbuiltin_module_names)
+      - [Method 2: Using `importlib.util.find_spec()`](#method-2-using-importlibutilfind_spec)
+      - [Method 3: Using the `__file__` Module Attribute](#method-3-using-the-__file__-module-attribute)
   - [Importing a module](#importing-a-module)
     - [`sys.modules` — the module cache](#sysmodules--the-module-cache)
     - [What happen if re-import module](#what-happen-if-re-import-module)
@@ -2441,6 +2445,54 @@ mod.hello()
 # fractions is implemented in Python and exists as a .py file.
 
 import fractions
+```
+
+### How to Identify Built-in, Standard Library, and User-defined Modules in Python
+
+#### Method 1: Using `sys.builtin_module_names`
+
+- This is the most direct way to determine whether a module belongs to Python's built-in modules.
+- It cannot distinguish standard library modules from user-defined modules.
+
+```python
+import sys
+
+print("sys" in sys.builtin_module_names)       # True
+print("builtins" in sys.builtin_module_names)  # True
+print("os" in sys.builtin_module_names)        # False
+print("json" in sys.builtin_module_names)      # False
+```
+
+#### Method 2: Using `importlib.util.find_spec()`
+
+- The `find_spec()` function retrieves a module's specification, which provides information about how Python locates and loads the module.
+- Example
+  - A built-in module may have spec.origin == "built-in".
+  - A standard library module may have a path inside Python's standard library directory.
+  - A user-defined module may have a path inside your project directory.
+
+```python
+import importlib.util
+
+spec = importlib.util.find_spec("json")
+
+print(spec)
+print(spec.origin)
+```
+
+#### Method 3: Using the `__file__` Module Attribute
+
+- If a module has already been imported, you can inspect its `__file__` attribute to determine where its source file is located.
+
+```python
+import json
+import os
+
+print(json.__file__)
+print(os.__file__)
+
+# .../Python313/Lib/json/__init__.py
+# .../Python313/Lib/os.py
 ```
 
 ## Importing a module
