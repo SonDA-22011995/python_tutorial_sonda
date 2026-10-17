@@ -70,6 +70,7 @@
       - [locals()](#locals)
       - [dir()](#dir)
       - [globals()](#globals)
+    - [Namespace in Modules](#namespace-in-modules)
     - [Why Are Namespaces Important?](#why-are-namespaces-important)
     - [Namespace vs. Scope](#namespace-vs-scope)
   - [Types of Modules](#types-of-modules)
@@ -2343,6 +2344,40 @@ def hello():
 print(globals())
 
 #{'__name__': '__main__', '__doc__': None, '__package__': None, '__loader__': <class '_frozen_importlib.BuiltinImporter'>, '__spec__': None, '__annotations__': {}, '__builtins__': <module 'builtins' (built-in)>, 'x': 100, 'sayHi': <function sayHi at 0x79fa229f32e0>}
+```
+
+### Namespace in Modules
+
+- Each Python module has its own global namespace.
+- Consider the following project structure
+  - The name `utils` refers to the imported module. 
+  - Its members can be accessed through the module's namespace using dot notation, such as `utils.name` and `utils.hello()`.
+
+```
+my_project/
+├── main.py
+└── utils.py
+```
+
+```python
+# utils.py
+
+name = "Son"
+
+def hello():
+    print("Hello")
+```
+
+```python
+# main.py
+
+import utils
+
+print(utils.name)
+utils.hello()
+
+# Son
+# Hello
 ```
 
 ### Why Are Namespaces Important?
