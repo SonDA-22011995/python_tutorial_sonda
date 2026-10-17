@@ -81,11 +81,11 @@
   - [Module attributes](#module-attributes)
     - [Common module attributes](#common-module-attributes)
     - [Developer-Defined Module Attributes](#developer-defined-module-attributes)
-  - [Special Variables](#special-variables)
-    - [Introduction](#introduction)
-    - [What Are Special Variables?](#what-are-special-variables)
-    - [Comparing Special Variables and Module Attributes](#comparing-special-variables-and-module-attributes)
-    - [Special Variables That Are Also Module Attributes](#special-variables-that-are-also-module-attributes)
+    - [Special Variables](#special-variables)
+      - [Introduction](#introduction)
+      - [What Are Special Variables?](#what-are-special-variables)
+      - [Comparing Special Variables and Module Attributes](#comparing-special-variables-and-module-attributes)
+      - [Special Variables That Are Also Module Attributes](#special-variables-that-are-also-module-attributes)
     - [Example](#example)
       - [`__dict__` attribute](#__dict__-attribute)
       - [`__name__` attribute](#__name__-attribute)
@@ -2523,19 +2523,19 @@ mymodule.greet()
 # Hello!
 ```
 
-## Special Variables 
+### Special Variables 
 
-### Introduction
+#### Introduction
 
 - In Python, you may encounter names such as `__name__`,`__file__`, `__doc__`, and `__package__`.
 - These names provide information about a module, its documentation, its location, and its relationship with other modules.
 
-### What Are Special Variables?
+#### What Are Special Variables?
 
 - Special variables are variables with special meanings or conventions in Python. 
 - Some are automatically initialized by Python, while others are used by particular language features.
 
-### Comparing Special Variables and Module Attributes
+#### Comparing Special Variables and Module Attributes
 
 | Feature | Special Variables | Module Attributes |
 |---|---|---|
@@ -2545,7 +2545,7 @@ mymodule.greet()
 | Scope | Depends on the namespace in which the name is defined | Belongs to the referenced module object |
 | Relationship | Some special variables are also module attributes | Can include special variables, ordinary variables, functions, and classes |
 
-### Special Variables That Are Also Module Attributes
+#### Special Variables That Are Also Module Attributes
 
 | Special Variable | Module Attribute? | Description |
 |---|---|---|
