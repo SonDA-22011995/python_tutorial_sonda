@@ -96,6 +96,8 @@
       - [`__dict__` attribute](#__dict__-attribute)
       - [`__name__` attribute](#__name__-attribute)
   - [How does Python import modules](#how-does-python-import-modules)
+    - [Import happens at runtime](#import-happens-at-runtime)
+    - [Where Python looks for modules - `sys.path`](#where-python-looks-for-modules---syspath)
   - [Imports and `importlib`](#imports-and-importlib)
   - [Import Variants](#import-variants)
   - [Misconceptions](#misconceptions)
@@ -2726,11 +2728,32 @@ print(f"my_module's __name__ when imported is: {my_module.__name__}")
 # my_module's **name** when imported is: my_module
 ```
 
-
 ## How does Python import modules
 
-- The `import` statement is used to bring modules or specific components (functions, classes, variables) from modules into the current namespace, making them available for use. This promotes code reusability and organization
-- When we run a statement such as `import fractions` what is Python actually doing?. The first thing to note is that Python is doing the import at **run time**, i.e. while your code is actually running.
+- The `import` statement is used to bring modules or specific components (functions, classes, variables) from modules into the current namespace, making them available for use. 
+- This promotes code reusability and organization
+
+### Import happens at runtime
+
+- When we run a statement such as `import fractions` what is Python actually doing?. 
+- The first thing to note is that Python is doing the import at **run time**, i.e. while your code (or program) is actually running.
+
+```
+Python program is running
+        ↓
+    import module
+        ↓
+Python finds the module
+        ↓
+Creates module object
+        ↓
+Compiles source code
+        ↓
+Executes module code
+```
+
+### Where Python looks for modules - `sys.path`
+
 - At a high level, this is how Python imports a module from file:
   - checks the `sys.modules` cache to see if the module has already been imported - if so it simply uses the reference in there, otherwise:
   - creates a new module object (`types.ModuleType`)
