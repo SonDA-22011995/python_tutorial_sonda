@@ -98,6 +98,10 @@
   - [How does Python import modules](#how-does-python-import-modules)
     - [Import happens at runtime](#import-happens-at-runtime)
     - [Where Python looks for modules - `sys.path`](#where-python-looks-for-modules---syspath)
+    - [Python's Module Cache - `sys.modules`](#pythons-module-cache---sysmodules)
+    - [Module code is executed when imported](#module-code-is-executed-when-imported)
+    - [What happens during import?](#what-happens-during-import)
+    - [Example](#example-1)
   - [Imports and `importlib`](#imports-and-importlib)
   - [Import Variants](#import-variants)
   - [Misconceptions](#misconceptions)
@@ -133,7 +137,7 @@
     - [What is an HTTP Request?](#what-is-an-http-request)
     - [Client–Server Model](#clientserver-model)
     - [Structure of an HTTP Request](#structure-of-an-http-request)
-    - [Example](#example-1)
+    - [Example](#example-2)
     - [Request Line](#request-line)
     - [HTTP Methods](#http-methods)
     - [HTTP Headers](#http-headers)
@@ -2754,19 +2758,34 @@ Executes module code
 
 ### Where Python looks for modules - `sys.path`
 
-- At a high level, this is how Python imports a module from file:
-  - checks the `sys.modules` cache to see if the module has already been imported - if so it simply uses the reference in there, otherwise:
-  - creates a new module object (`types.ModuleType`)
-  - loads the source code from file
-  - adds an entry to `sys.modules` with name as key and the newly created
-  - compiles and executes the source code
-- Where does Python look for imports? (loads the source code from file)
-  - Basically when we import a module, Python will search for the module in the paths contained in `sys.path`.
-  - If it does not find the module in one of those paths, the import will fail.
-  - So if you ever run into a problem where Python is not able to import a module or package, you should check this first to make sure the path to your module/package is in that list.
-- One thing that's really to important to note is that when a module is imported, the module code is **executed**.
+- Basically when we import a module, Python will search for the module in the paths contained in `sys.path`.
+- If it does not find the module in one of those paths, the import will fail.
+  - Python may raise `ModuleNotFoundError`
+- So if you ever run into a problem where Python is not able to import a module or package, you should check this first to make sure the path to your module/package is in that list.
+- You can manually modify `sys.path.append(...)`
+  - But the lecture considers this more of a hack and recommends using proper import mechanisms instead.
 
+
+```python
+# in linux
+
+import sys
+
+sys.path
+
+#[
+#  '', 
+#  '/usr/lib/python312.zip', 
+#  '/usr/lib/python3.12', 
+#  '/usr/lib/python3.12/lib-dynload', 
+#  '/usr/local/lib/python3.12/dist-packages', '/usr/lib/python3/dist-packages'
+#]
 ```
+
+
+```python 
+# in Window
+
 import sys
 sys.path
 
@@ -2782,7 +2801,99 @@ sys.path
 # ]
 ```
 
-- Example: In this example we look at a simplified view of how Python imports a module.We use two built-in functions, `compile` and `exec`.The `compile` function compiles source (e.g. text) into a code object. The `exec` function is used to execute a code object. Optionally we can specify what dictionary should be used to store global symbols. In our case we are going to want to use our module's `__dict__`.
+### Python's Module Cache - `sys.modules`
+
+- Python maintains a dictionary `sys.modules`
+  - It contains modules that have already been imported.
+- When Python encounters `import <module_name>` such as `import module1`
+  - It first checks module exist in `sys.modules`
+  - If it exists, Python does not execute the module again.
+
+```python
+import sys
+
+sys.modules
+
+# {
+#    'sys': <module 'sys' (built-in)>, 
+#    'builtins': <module 'builtins' (built-in)>,
+#    '_frozen_importlib': <module '_frozen_importlib' (frozen)>,
+#    '_imp': <module '_imp' (built-in)>,
+#    '_thread': <module '_thread' (built-in)>
+#    ...........................................................
+#  }
+```
+
+### Module code is executed when imported
+
+- Suppose `module1.py` contains:
+
+```python
+
+print("Running module1")
+
+def hello():
+    print("Hello")
+```
+
+- `main.py` contains
+
+```python
+import module1
+```
+
+- When Python reaches `import module1`
+  - it actually executes the code inside `module1.py`
+  - So the output is `Running module1`
+  - The function `hello()` is also created and placed into the module's namespace.
+
+### What happens during import?
+
+```
+import module1
+       ↓
+Check sys.modules
+       ↓
+Is module1 already there?
+    ↙          ↘
+  YES           NO
+   ↓             ↓
+Return      Create module object
+existing          ↓
+module       Find source code
+                  ↓
+               Compile
+                  ↓
+               Execute
+                  ↓
+          Put into sys.modules
+                  ↓
+             Return module
+```
+
+
+- Step 1: Checks the `sys.modules` cache to see if the module has already been imported 
+  - if module exits so it simply uses the reference in there
+  
+- Step 2: Creates a new module object `types.ModuleType(module_name)`
+
+- Step 3: Set module metadata `module.__file__ = absolute_file_path`
+
+- Step 4 — Put the module into `sys.modules`
+  - Adds an entry to `sys.modules` with name as key and the newly created
+  
+- Step 5 — Read the source code
+  - Loads the source code from file
+
+- Step 6 — Compile the source
+  - Python uses `compile(...)` to turn source code into a Python code object containing bytecode.
+
+- Step 7 - Execute the code
+  - Python then uses `exec(...)` to execute the compiled code
+
+### Example
+
+- In this example we look at a simplified view of how Python imports a module.We use two built-in functions, `compile` and `exec`.The `compile` function compiles source (e.g. text) into a code object. The `exec` function is used to execute a code object. Optionally we can specify what dictionary should be used to store global symbols. In our case we are going to want to use our module's `__dict__`.
 
 ```
 # module1.py
