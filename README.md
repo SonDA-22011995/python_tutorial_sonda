@@ -101,6 +101,7 @@
     - [Python's Module Cache - `sys.modules`](#pythons-module-cache---sysmodules)
     - [Module code is executed when imported](#module-code-is-executed-when-imported)
     - [A module is basically a namespace](#a-module-is-basically-a-namespace)
+    - [Import creates a reference in the importing namespace](#import-creates-a-reference-in-the-importing-namespace)
     - [What happens during import?](#what-happens-during-import)
       - [`__name__` and `__main__`](#__name__-and-__main__)
     - [Example](#example-1)
@@ -2885,6 +2886,15 @@ module1.x
 module1.hello()
 ```
 
+### Import creates a reference in the importing namespace
+
+- `import module1` 
+  - Python creates/loads the module object and then creates a name `module1` in the current module's global namespace.
+  - So `module1.hello()` work
+- `del module1` It only removes the name/reference from the current namespace
+  - The module can still exist in `sys.modules`
+  - `import module1` can simply retrieve the existing module object from `sys.modules`
+
 ### What happens during import?
 
 ```
@@ -2932,6 +2942,8 @@ module       Find source code
 #### `__name__` and `__main__`
 
 - For more detail: [`__name__` attribute](#__name__-attribute)
+
+
 
 ### Example
 
