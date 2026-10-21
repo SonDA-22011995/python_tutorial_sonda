@@ -102,6 +102,7 @@
     - [Module code is executed when imported](#module-code-is-executed-when-imported)
     - [A module is basically a namespace](#a-module-is-basically-a-namespace)
     - [What happens during import?](#what-happens-during-import)
+      - [`__name__` and `__main__`](#__name__-and-__main__)
     - [Example](#example-1)
   - [Imports and `importlib`](#imports-and-importlib)
   - [Import Variants](#import-variants)
@@ -2927,6 +2928,10 @@ module       Find source code
 
 - Step 7 - Execute the code
   - Python then uses `exec(...)` to execute the compiled code
+
+#### `__name__` and `__main__`
+
+- For more detail: [`__name__` attribute](#__name__-attribute)
 
 ### Example
 
