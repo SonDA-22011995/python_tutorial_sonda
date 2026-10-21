@@ -100,6 +100,7 @@
     - [Where Python looks for modules - `sys.path`](#where-python-looks-for-modules---syspath)
     - [Python's Module Cache - `sys.modules`](#pythons-module-cache---sysmodules)
     - [Module code is executed when imported](#module-code-is-executed-when-imported)
+    - [A module is basically a namespace](#a-module-is-basically-a-namespace)
     - [What happens during import?](#what-happens-during-import)
     - [Example](#example-1)
   - [Imports and `importlib`](#imports-and-importlib)
@@ -2847,6 +2848,42 @@ import module1
   - So the output is `Running module1`
   - The function `hello()` is also created and placed into the module's namespace.
 
+### A module is basically a namespace
+
+- A very important idea from the lecture: **A module is essentially a namespace containing symbols**
+
+```python
+# module1.py
+
+x = 10
+
+def hello():
+    print("Hello")
+
+```
+
+- The module's namespace conceptually contains
+
+```
+module1.__dict__
+
+{
+    "x": 10,
+    "hello": <function object>,
+    ...
+}
+```
+
+- Therefore, the code below work.
+  - Because Python looks inside the module's namespace
+
+```python
+import module1
+
+module1.x
+module1.hello()
+```
+
 ### What happens during import?
 
 ```
@@ -2895,7 +2932,7 @@ module       Find source code
 
 - In this example we look at a simplified view of how Python imports a module.We use two built-in functions, `compile` and `exec`.The `compile` function compiles source (e.g. text) into a code object. The `exec` function is used to execute a code object. Optionally we can specify what dictionary should be used to store global symbols. In our case we are going to want to use our module's `__dict__`.
 
-```
+```python
 # module1.py
 
 print('Running module1.py')
@@ -2905,7 +2942,7 @@ def hello():
     print('module1 says Hello!')
 ```
 
-```
+```python
 # main.py
 import os.path
 import types
