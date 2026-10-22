@@ -97,6 +97,9 @@
       - [`__name__` attribute](#__name__-attribute)
   - [How does Python import modules](#how-does-python-import-modules)
     - [Import happens at runtime](#import-happens-at-runtime)
+    - [The import process](#the-import-process)
+    - [Finders and Loaders](#finders-and-loaders)
+    - [Python has a list of finders - `sys.meta_path`](#python-has-a-list-of-finders---sysmeta_path)
     - [Where Python looks for modules - `sys.path`](#where-python-looks-for-modules---syspath)
     - [Python's Module Cache - `sys.modules`](#pythons-module-cache---sysmodules)
     - [Module code is executed when imported](#module-code-is-executed-when-imported)
@@ -112,9 +115,6 @@
     - [The same module object](#the-same-module-object)
     - [Modules can come from different places](#modules-can-come-from-different-places)
     - [Module Spec](#module-spec)
-    - [The import process](#the-import-process)
-    - [Finders and Loaders](#finders-and-loaders)
-    - [Python has a list of finders - `sys.meta_path`](#python-has-a-list-of-finders---sysmeta_path)
   - [Import Variants](#import-variants)
   - [Misconceptions](#misconceptions)
   - [Reloading module](#reloading-module)
@@ -2768,6 +2768,74 @@ Compiles source code
 Executes module code
 ```
 
+### The import process
+
+```
+import module
+      ↓
+Check import system
+      ↓
+Find a suitable Finder
+      ↓
+Finder searches for module
+      ↓
+Finder returns ModuleSpec
+      ↓
+Loader is obtained
+      ↓
+Loader loads module
+      ↓
+Compile + execute
+      ↓
+Store in sys.modules
+      ↓
+Bind module name in namespace
+```
+
+### Finders and Loaders
+
+- Conceptually Python divides the work between **finders** and **loaders**.
+
+```
+Finder
+   +
+Loader
+   =
+Importer
+```
+
+- The **finders** are responsible for finding the module/package and returning the module spec
+- While the **loaders**, are responsible for "loading" the source code that is then used in the final steps to compile, execute and cache the module object. 
+- An object that implements both is called an **importer** - but they are still two separate concepts.
+- What's interesting about the import path finder and loader is that they can search (and load from) zip archives.
+- In fact it can even be extended to search other resources, including url's, databases, etc. You could theoretically store code in a Mongo or Redis database and import directly from there!
+
+### Python has a list of finders - `sys.meta_path`
+
+
+- You can inspect it
+
+```python
+import sys
+
+sys.meta_path
+
+# [
+#   <_distutils_hack.DistutilsMetaFinder object at 0x7fd08a3fea20>,
+#   <class '_frozen_importlib.BuiltinImporter'>,
+#   <class '_frozen_importlib.FrozenImporter'>,
+#   <class '_frozen_importlib_external.PathFinder'>
+# ]
+```
+
+- How does Python know which finder to use in the first place?
+  - It doesn't really - it will go through a bunch of finders, one by one, until one returns a module spec 
+  - If it exhausts all the registered finders and finds nothing, then we get the module not found exception:
+
+```
+# ModuleNotFoundError
+```
+
 ### Where Python looks for modules - `sys.path`
 
 - Basically when we import a module, Python will search for the module in the paths contained in `sys.path`.
@@ -3145,75 +3213,6 @@ fractions.__spec__
 #  )
 
 ```
-
-### The import process
-
-```
-import module
-      ↓
-Check import system
-      ↓
-Find a suitable Finder
-      ↓
-Finder searches for module
-      ↓
-Finder returns ModuleSpec
-      ↓
-Loader is obtained
-      ↓
-Loader loads module
-      ↓
-Compile + execute
-      ↓
-Store in sys.modules
-      ↓
-Bind module name in namespace
-```
-
-### Finders and Loaders
-
-- Conceptually Python divides the work between **finders** and **loaders**.
-
-```
-Finder
-   +
-Loader
-   =
-Importer
-```
-
-- The **finders** are responsible for finding the module/package and returning the module spec
-- While the **loaders**, are responsible for "loading" the source code that is then used in the final steps to compile, execute and cache the module object. 
-- An object that implements both is called an **importer** - but they are still two separate concepts.
-- What's interesting about the import path finder and loader is that they can search (and load from) zip archives.
-- In fact it can even be extended to search other resources, including url's, databases, etc. You could theoretically store code in a Mongo or Redis database and import directly from there!
-
-### Python has a list of finders - `sys.meta_path`
-
-
-- You can inspect it
-
-```python
-import sys
-
-sys.meta_path
-
-# [
-#   <_distutils_hack.DistutilsMetaFinder object at 0x7fd08a3fea20>,
-#   <class '_frozen_importlib.BuiltinImporter'>,
-#   <class '_frozen_importlib.FrozenImporter'>,
-#   <class '_frozen_importlib_external.PathFinder'>
-# ]
-```
-
-- How does Python know which finder to use in the first place?
-  - It doesn't really - it will go through a bunch of finders, one by one, until one returns a module spec 
-  - If it exhausts all the registered finders and finds nothing, then we get the module not found exception:
-
-```
-# ModuleNotFoundError
-```
-
 
 
 
