@@ -100,6 +100,7 @@
     - [Import happens at runtime](#import-happens-at-runtime)
     - [The import process](#the-import-process)
     - [Finders and Loaders](#finders-and-loaders)
+    - [Modules can come from different places](#modules-can-come-from-different-places)
     - [Python has a list of finders - `sys.meta_path`](#python-has-a-list-of-finders---sysmeta_path)
     - [Where Python looks for modules - `sys.path`](#where-python-looks-for-modules---syspath)
     - [Python's Module Cache - `sys.modules`](#pythons-module-cache---sysmodules)
@@ -114,7 +115,6 @@
     - [Solve the problem when using `importlib` statement](#solve-the-problem-when-using-importlib-statement)
     - [Important distinction](#important-distinction)
     - [The same module object](#the-same-module-object)
-    - [Modules can come from different places](#modules-can-come-from-different-places)
   - [Import Variants](#import-variants)
   - [Misconceptions](#misconceptions)
   - [Reloading module](#reloading-module)
@@ -2765,7 +2765,6 @@ fractions.__spec__
 
 ```
 
-
 ## How does Python import modules
 
 - The `import` statement is used to bring modules or specific components (functions, classes, variables) from modules into the current namespace, making them available for use. 
@@ -2832,8 +2831,21 @@ Importer
 - What's interesting about the import path finder and loader is that they can search (and load from) zip archives.
 - In fact it can even be extended to search other resources, including url's, databases, etc. You could theoretically store code in a Mongo or Redis database and import directly from there!
 
-### Python has a list of finders - `sys.meta_path`
+### Modules can come from different places
 
+- Not every module is a simple `.py` file.
+  - `.py` file
+  - compiled Python files
+  - shared libraries
+  - ZIP archives
+  - wheels
+  - other importable resources
+- Python provides a number of standard finders and importers, such as:
+  - Built-in modules
+  - frozen modules
+  - import path finder (finds source code files on the import path - for example the `sys.path` entries we have seen before)
+
+### Python has a list of finders - `sys.meta_path`
 
 - You can inspect it
 
@@ -3046,7 +3058,10 @@ module       Find source code
 
 ### Example
 
-- In this example we look at a simplified view of how Python imports a module.We use two built-in functions, `compile` and `exec`.The `compile` function compiles source (e.g. text) into a code object. The `exec` function is used to execute a code object. Optionally we can specify what dictionary should be used to store global symbols. In our case we are going to want to use our module's `__dict__`.
+- In this example we look at a simplified view of how Python imports a module.
+- We use two built-in functions, `compile` and `exec`.The `compile` function compiles source (e.g. text) into a code object. 
+- The `exec` function is used to execute a code object. Optionally we can specify what dictionary should be used to store global symbols. 
+- In our case we are going to want to use our module's `__dict__`.
 
 ```python
 # module1.py
@@ -3200,19 +3215,6 @@ sys.modules["math"]
       sys.modules["math"]        math2
 ```
 
-### Modules can come from different places
-
-- Not every module is a simple `.py` file.
-- Python provides a number of standard finders and importers, such as:
-  - Built-in modules
-  - frozen modules
-  - import path finder (finds source code files on the import path - for example the `sys.path` entries we have seen before)
-  - `.py` file
-  - compiled Python files
-  - shared libraries
-  - ZIP archives
-  - wheels
-  - other importable resources
 
 
 
