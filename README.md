@@ -103,6 +103,7 @@
     - [Modules can come from different places](#modules-can-come-from-different-places)
     - [Python has a list of finders - `sys.meta_path`](#python-has-a-list-of-finders---sysmeta_path)
     - [Where Python looks for modules - `sys.path`](#where-python-looks-for-modules---syspath)
+      - [Adding a directory to `sys.path`](#adding-a-directory-to-syspath)
     - [Python's Module Cache - `sys.modules`](#pythons-module-cache---sysmodules)
     - [Module code is executed when imported](#module-code-is-executed-when-imported)
     - [A module is basically a namespace](#a-module-is-basically-a-namespace)
@@ -2916,6 +2917,29 @@ sys.path
 #  'D:\\Users\\fbapt\\Anaconda3\\envs\\deepdive\\lib\\site-packages\\IPython\\extensions',
 #  'C:\\Users\\fbapt\\.ipython'
 # ]
+```
+
+#### Adding a directory to `sys.path`
+
+- Suppose we have
+
+```
+Project/
+│
+└── main.py
+
+C:\external_modules\
+└── module2.py
+```
+
+- Python doesn't automatically know about `C:\external_modules`
+- So `import module2` fails
+- We can add the directory 
+
+```python
+import sys
+
+sys.path.append(r"C:\external_modules")
 ```
 
 ### Python's Module Cache - `sys.modules`
