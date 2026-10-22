@@ -3230,6 +3230,14 @@ sys.modules["math"]
 import importlib.util
 
 spec = importlib.util.find_spec("decimal")
+
+print(spec)
+
+# ModuleSpec(
+#   name='decimal', 
+#   loader=<_frozen_importlib_external.SourceFileLoader object at 0x7fd08886c080>,
+#   origin='/usr/lib/python3.12/decimal.py')
+
 ```
 
 #### Example: Let's write out a small source file to disk, called module1.py:
@@ -3262,7 +3270,7 @@ module1.a # 10
 
 - You'll have to change this code to specify your path where you want that module file to be created:
 
-```
+```python
 import os
 
 # you can use this for Mac/Linux:
@@ -3278,9 +3286,10 @@ ext_module_path = os.environ.get('HOME', os.environ['HOMEPATH'])
 # \Users\SONDA
 ```
 
-- Write a small source file to **module2.py** in the** ext_module_path** directory.
+- Write a small source file to **module2.py** in the **ext_module_path** directory.
 
-```
+```python
+
 file_abs_path = os.path.join(ext_module_path, 'module2.py')
 with open(file_abs_path, 'w') as code_file:
     code_file.write("print('running module2.py...')\n")
@@ -3289,7 +3298,8 @@ with open(file_abs_path, 'w') as code_file:
 
 - Let's see if Python can figure the module spec:
 
-```
+```python
+
 importlib.util.find_spec('module2')
 
 import module2 # ModuleNotFoundError
@@ -3315,19 +3325,19 @@ except ModuleNotFoundError:
 
 - The module was not found because `sys.path` knows nothing about `ext_module_path`.
 
-```
+```python
 ext_module_path in sys.path # False
 ```
 
 - So, let's add it!
 
-```
+```python
 sys.path.append(ext_module_path)
 ```
 
 - Now let's try finding the module spec again:
 
-```
+```python
 importlib.util.find_spec('module2')
 
 # ModuleSpec(name='module2', loader=<_frozen_importlib_external.SourceFileLoader
@@ -3336,7 +3346,7 @@ importlib.util.find_spec('module2')
 
 - Our import should now work
 
-```
+```python
 import module2 # running module2.py...
 
 module2.x # 'python'
