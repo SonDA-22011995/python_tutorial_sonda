@@ -104,6 +104,7 @@
     - [Python has a list of finders - `sys.meta_path`](#python-has-a-list-of-finders---sysmeta_path)
     - [Where Python looks for modules - `sys.path`](#where-python-looks-for-modules---syspath)
       - [Adding a directory to `sys.path`](#adding-a-directory-to-syspath)
+      - [Why modifying `sys.path` isn't always ideal](#why-modifying-syspath-isnt-always-ideal)
     - [Python's Module Cache - `sys.modules`](#pythons-module-cache---sysmodules)
     - [Module code is executed when imported](#module-code-is-executed-when-imported)
     - [A module is basically a namespace](#a-module-is-basically-a-namespace)
@@ -2939,8 +2940,18 @@ C:\external_modules\
 ```python
 import sys
 
-sys.path.append(r"C:\external_modules")
+sys.path.append("C:\external_modules")
 ```
+
+- Then `import module2` can work
+
+#### Why modifying `sys.path` isn't always ideal
+
+- You could hardcode `sys.path.append(<external_directory>)`
+- But this creates a problem - The program now depends on a specific filesystem location.
+- A better approach may involve configuration or Python's path files mechanism.
+- Path files provide another way of adding directories to sys.path without directly modifying it in application code.
+
 
 ### Python's Module Cache - `sys.modules`
 
@@ -3057,24 +3068,85 @@ module       Find source code
              Return module
 ```
 
+```
+import module
+       │
+       ▼
+Check sys.modules
+       │
+       ├── Module found ──► Return cached module
+       │
+       ▼
+   sys.meta_path
+       │
+       ├──► Finder
+       │       │
+       │       ├──► BuiltinImporter
+       │       ├──► FrozenImporter
+       │       └──► PathFinder
+       │                  │
+       │                  ▼
+       │              Read sys.path
+       │                  │
+       │                  ▼
+       │          Search directories for
+       │          module/package or extension
+       │                  │
+       │                  ▼
+       │             ModuleSpec
+       │             ├── name
+       │             ├── loader
+       │             └── origin
+       │                  │
+       │                  ▼
+       │                Loader
+       │                  │
+       │                  ▼
+       │            Create module object
+       │                  │
+       │                  ▼
+       │            Insert into sys.modules
+       │                  │
+       │                  ▼
+       │             Execute module code
+       │                  │
+       │                  ▼
+       │            Current namespace
+```
+
 
 - Step 1: Checks the `sys.modules` cache to see if the module has already been imported 
   - if module exits so it simply uses the reference in there
+
+- Step 2: Search `sys.meta_path`
+  - If the module is not cached, Python iterates through the finders registered in `sys.meta_path` to locate the module.
+  - Each finder attempts to find the module. 
+  - For standard filesystem-based imports, PathFinder is responsible for searching module locations
   
-- Step 2: Creates a new module object `types.ModuleType(module_name)`
+- Step 3: Read `sys.path`
+  - For a top-level module, PathFinder searches the directories listed in `sys.path`. 
+  - For a submodule, it typically searches the parent package's __path__.
 
-- Step 3: Set module metadata `module.__file__ = absolute_file_path`
+- Step 4: Create a ModuleSpec
+  - Once the module is found, the finder returns a ModuleSpec containing information such as:
+    - name: The module's fully qualified name.
+    - loader: The object responsible for loading the module.
+    - origin: The location or source of the module
 
-- Step 4 — Put the module into `sys.modules`
+- Step 5: Creates a new module object `types.ModuleType(module_name)`
+
+- Step 6: Set module metadata `module.__file__ = absolute_file_path`
+
+- Step 7 — Put the module into `sys.modules`
   - Adds an entry to `sys.modules` with name as key and the newly created
   
-- Step 5 — Read the source code
+- Step 8 — Read the source code
   - Loads the source code from file
 
-- Step 6 — Compile the source
+- Step 9 — Compile the source
   - Python uses `compile(...)` to turn source code into a Python code object containing bytecode.
 
-- Step 7 - Execute the code
+- Step 10 - Execute the code
   - Python then uses `exec(...)` to execute the compiled code
 
 #### `__name__` and `__main__`
