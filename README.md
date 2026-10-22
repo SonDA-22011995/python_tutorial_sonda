@@ -124,6 +124,7 @@
     - [The key idea](#the-key-idea)
     - [`import math`](#import-math)
     - [`import math as r_math`](#import-math-as-r_math)
+    - [`from math import sqrt`](#from-math-import-sqrt)
   - [Misconceptions](#misconceptions)
   - [Reloading module](#reloading-module)
   - [Absolute Imports](#absolute-imports)
@@ -3493,15 +3494,19 @@ import math
 
 ### `import math as r_math`
   
-- loads the entire module (`math`) in memory if it's not already there
-- adds a reference to it in `sys.modules` with a key of `math`
-- adds the symbol `r_math` to our current namespace referencing the `math` object
+- Loads the entire module (`math`) in memory if it's not already there
+- Adds a reference to it in `sys.modules` with a key of `math`
+- Adds the symbol `r_math` to our current namespace referencing the `math` object
+  - The module is still stored under its real name `sys.modules["math"]`
+  - But the current module gets the alias `r_math` 
+  - There is no `math` name added to the current module's namespace
 
-- `from math import sqrt`
-  - loads the entire module (`math`) in memory if it's not already there
-  - adds a reference to it in `sys.modules` with a key of `math`
-  - adds the symbol `sqrt` to our current namespace referencing the `math.sqrt` function
-  - it **does not** add the symbol `math` to our current namespace
+### `from math import sqrt`
+  
+- Loads the entire module (`math`) in memory if it's not already there
+- Adds a reference to it in `sys.modules` with a key of `math`
+- Adds the symbol `sqrt` to our current namespace referencing the `math.sqrt` function
+- It **does not** add the symbol `math` to our current namespace
 
 ```
 # module1.py
