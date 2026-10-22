@@ -120,7 +120,10 @@
     - [Find the module specification without actually importing the module](#find-the-module-specification-without-actually-importing-the-module)
       - [Example: Let's write out a small source file to disk, called module1.py:](#example-lets-write-out-a-small-source-file-to-disk-called-module1py)
       - [Example: Now let's go ahead and write a file somewhere other than our source folder](#example-now-lets-go-ahead-and-write-a-file-somewhere-other-than-our-source-folder)
-  - [Import Variants](#import-variants)
+  - [Import Variants and Misconceptions](#import-variants-and-misconceptions)
+    - [The key idea](#the-key-idea)
+    - [`import math`](#import-math)
+    - [`import math as r_math`](#import-math-as-r_math)
   - [Misconceptions](#misconceptions)
   - [Reloading module](#reloading-module)
   - [Absolute Imports](#absolute-imports)
@@ -3451,13 +3454,31 @@ module2.x # 'python'
 - We can "hack" the `sys.path` list by adding our own entries directly - but this means we would have to hard code these paths in our code, or potentially read them from a configuration file.
 -  It's perfectly fine to do that, but you may prefer using `.pth` files for that.I'm not going to get into the details of this - the Python docs are located here: `https://docs.python.org/3/library/site.html`
 
-## Import Variants
+## Import Variants and Misconceptions
 
-- `import math`
-  - loads the entire module (`math`) in memory if it's not already there
-  - adds a reference to it in `sys.modules` with a key of `math`
-  - adds a symbol of the same name (`math`) in our current namespace referencing the `math` object
-  - Example use `import math` in **module1.py**
+### The key idea
+
+- The lecture compares different forms of Python imports
+
+```python
+import math
+import math as r_math
+
+from math import sqrt
+from math import sqrt as r_sqrt
+
+from math import *
+```
+
+- The most important point is:
+  - All these forms still load the math module. What changes is which names are added to the importing module's global namespace.
+
+### `import math`
+  
+- Loads the entire module (`math`) in memory if it's not already there
+- Adds a reference to it in `sys.modules` with a key of `math`
+- Adds a symbol of the same name (`math`) in our current namespace referencing the `math` object
+- Example use `import math` in **module1.py**
 
 ```
 # module1.py
@@ -3470,10 +3491,11 @@ import math
 # alreaday exists in module1.py's namespace, repalace it by reference to math in sys.modules
 ```
 
-- `import math as r_math`
-  - loads the entire module (`math`) in memory if it's not already there
-  - adds a reference to it in `sys.modules` with a key of `math`
-  - adds the symbol `r_math` to our current namespace referencing the `math` object
+### `import math as r_math`
+  
+- loads the entire module (`math`) in memory if it's not already there
+- adds a reference to it in `sys.modules` with a key of `math`
+- adds the symbol `r_math` to our current namespace referencing the `math` object
 
 - `from math import sqrt`
   - loads the entire module (`math`) in memory if it's not already there
