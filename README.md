@@ -106,6 +106,15 @@
       - [`__name__` and `__main__`](#__name__-and-__main__)
     - [Example](#example-1)
   - [Imports and `importlib`](#imports-and-importlib)
+    - [Why `importlib` exists](#why-importlib-exists)
+    - [Solve the problem when using `importlib` statement](#solve-the-problem-when-using-importlib-statement)
+    - [Important distinction](#important-distinction)
+    - [The same module object](#the-same-module-object)
+    - [Modules can come from different places](#modules-can-come-from-different-places)
+    - [Module Spec](#module-spec)
+    - [The import process](#the-import-process)
+    - [Finders and Loaders](#finders-and-loaders)
+    - [Python has a list of finders - `sys.meta_path`](#python-has-a-list-of-finders---sysmeta_path)
   - [Import Variants](#import-variants)
   - [Misconceptions](#misconceptions)
   - [Reloading module](#reloading-module)
@@ -3008,11 +3017,22 @@ module1.hello()
 
 ## Imports and `importlib`
 
-- The `importlib` module in Python provides a programmatic way to access and interact with the import system. It allows for dynamic loading of modules at runtime, which is useful for scenarios like implementing plugin systems or loading modules whose names are not known at coding time
+- The `importlib` module in Python provides a programmatic way to access and interact with the import system. 
+- It allows for dynamic loading of modules at runtime, which is useful for scenarios like implementing plugin systems or loading modules whose names are not known at coding time
 
-- Problem when using the `import` statement
+### Why `importlib` exists
 
+- Normally, this works
+
+```python
+
+import math
 ```
+
+- Problem when using the `import` statement with the module name is stored in a variable
+  - Python interprets this as Import a module literally named **module_import**.
+
+```python
 module_import = 'math'
 
 import module_import
@@ -3020,9 +3040,14 @@ import module_import
 # ModuleNotFoundError: No module named 'module_import'
 ```
 
-- Solve the problem when using `importlib` statement
+### Solve the problem when using `importlib` statement
 
-```
+- The important function is `importlib.import_module(<module_name>)`
+- Conceptually `import math` is roughly equivalent to `math = importlib.import_module("math")`
+
+```python
+import importlib
+
 module_import = 'math'
 
 # Solution 1
@@ -3046,44 +3071,151 @@ importlib.__file__
 # C:\Users\SONDA\AppData\Local\Programs\Python\Python313\Lib\importlib\__init__.py
 ```
 
-- Conceptually Python divides the work between **finders** and **loaders**.
-  - The **finders** are responsible for finding the module/package and returning the module spec, while the **loaders**, are responsible for "loading" the source code that is then used in the final steps to compile, execute and cache the module object. An object that implements both is called an **importer** - but they are still two separate concepts.
+### Important distinction
 
-- Python provides a number of standard finders and importers, such as:
-  - built-in modules
-  - frozen modules
-  - import path finder (finds source code files on the import path - for example the `sys.path` entries we have seen before)
+- `sys.modules` is the module cache.
+  - It does not automatically mean that the module name is available as a variable in your current namespace.
+- For example: 
+  - After `importlib.import_module("math")`
+  - The module exists in `sys.modules`, but you need to assign the returned object if you want a local variable `math = importlib.import_module("math")`
+  - Then `math.sqrt(2)` work
 
-- What's interesting about the import path finder and loader is that they can search (and load from) zip archives.
-- In fact it can even be extended to search other resources, including url's, databases, etc. You could theoretically store code in a Mongo or Redis database and import directly from there!
-- Let's look at the module spec for `fractions`:
-  - As you can see the finder determined where the source code was located, and also indicated that the loader to be used is the SourceFileLoader.
+### The same module object
+
+- Suppose
+
+```python
+import importlib
+
+math2 = importlib.import_module("math")
+```
+
+- The returned object is the same module object referenced from:
+
+```python
+sys.modules["math"]
+```
+
+- Conceptually
+  - Both references point to the same object.
+  - This is one reason Python doesn't simply reload a module every time you import it.
 
 ```
+                 ┌──────────────┐
+                 │ math module  │
+                 └──────┬───────┘
+                        │
+             ┌──────────┴──────────┐
+             ↓                     ↓
+      sys.modules["math"]        math2
+```
+
+### Modules can come from different places
+
+- Not every module is a simple `.py` file.
+- Python provides a number of standard finders and importers, such as:
+  - Built-in modules
+  - frozen modules
+  - import path finder (finds source code files on the import path - for example the `sys.path` entries we have seen before)
+  - `.py` file
+  - compiled Python files
+  - shared libraries
+  - ZIP archives
+  - wheels
+  - other importable resources
+
+
+### Module Spec
+
+- The specification contains information such as:
+  - module name
+  - loader
+  - module location/origin
+  - other information needed to load the module
+
+```python
+import fractions
+
 fractions.__spec__
 
-# ModuleSpec(name='fractions', loader=<_frozen_importlib_external.SourceFileLoader
-# object at 0x00000154B83757F0>, origin='D:\\Users\\fbapt\\Anaconda3\\lib\\fractions.py')
+# ModuleSpec(
+#  name='fractions', 
+#  loader=<_frozen_importlib_external.SourceFileLoader object at 0x7fd08884e6c0>, 
+#  origin='/usr/lib/python3.12/fractions.py'
+#  )
+
+```
+
+### The import process
+
+```
+import module
+      ↓
+Check import system
+      ↓
+Find a suitable Finder
+      ↓
+Finder searches for module
+      ↓
+Finder returns ModuleSpec
+      ↓
+Loader is obtained
+      ↓
+Loader loads module
+      ↓
+Compile + execute
+      ↓
+Store in sys.modules
+      ↓
+Bind module name in namespace
+```
+
+### Finders and Loaders
+
+- Conceptually Python divides the work between **finders** and **loaders**.
+
+```
+Finder
+   +
+Loader
+   =
+Importer
+```
+
+- The **finders** are responsible for finding the module/package and returning the module spec
+- While the **loaders**, are responsible for "loading" the source code that is then used in the final steps to compile, execute and cache the module object. 
+- An object that implements both is called an **importer** - but they are still two separate concepts.
+- What's interesting about the import path finder and loader is that they can search (and load from) zip archives.
+- In fact it can even be extended to search other resources, including url's, databases, etc. You could theoretically store code in a Mongo or Redis database and import directly from there!
+
+### Python has a list of finders - `sys.meta_path`
+
+
+- You can inspect it
+
+```python
+import sys
+
+sys.meta_path
+
+# [
+#   <_distutils_hack.DistutilsMetaFinder object at 0x7fd08a3fea20>,
+#   <class '_frozen_importlib.BuiltinImporter'>,
+#   <class '_frozen_importlib.FrozenImporter'>,
+#   <class '_frozen_importlib_external.PathFinder'>
+# ]
 ```
 
 - How does Python know which finder to use in the first place?
-  - It doesn't really - it will go through a bunch of finders, one by one, until one returns a module spec - if it exhausts all the registered finders and finds nothing, then we get the module not found exception:
+  - It doesn't really - it will go through a bunch of finders, one by one, until one returns a module spec 
+  - If it exhausts all the registered finders and finds nothing, then we get the module not found exception:
 
 ```
 # ModuleNotFoundError
 ```
 
-- Here are the finders currently registered on my system
 
-```
-sys.meta_path
 
-# [
-#  _frozen_importlib.BuiltinImporter,
-#  _frozen_importlib.FrozenImporter,
-#  _frozen_importlib_external.PathFinder
-# ]
-```
 
 - We can also use `importlib` to find the spec for a particular module:
 
