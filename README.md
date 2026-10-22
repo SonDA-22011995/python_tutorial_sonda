@@ -3403,7 +3403,7 @@ import module2 # ModuleNotFoundError
 
 - As expected, the import failed, By the way, you can use `try...except` for your imports!
 
-```
+```python
 try:
     import module2
 except ModuleNotFoundError:
