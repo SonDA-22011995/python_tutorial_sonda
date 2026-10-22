@@ -95,6 +95,7 @@
     - [Example](#example)
       - [`__dict__` attribute](#__dict__-attribute)
       - [`__name__` attribute](#__name__-attribute)
+      - [`_spec__` attribute - Module Spec](#_spec__-attribute---module-spec)
   - [How does Python import modules](#how-does-python-import-modules)
     - [Import happens at runtime](#import-happens-at-runtime)
     - [The import process](#the-import-process)
@@ -114,7 +115,6 @@
     - [Important distinction](#important-distinction)
     - [The same module object](#the-same-module-object)
     - [Modules can come from different places](#modules-can-come-from-different-places)
-    - [Module Spec](#module-spec)
   - [Import Variants](#import-variants)
   - [Misconceptions](#misconceptions)
   - [Reloading module](#reloading-module)
@@ -2744,6 +2744,28 @@ print(f"my_module's __name__ when imported is: {my_module.__name__}")
 # my_module's **name** when imported is: my_module
 ```
 
+#### `_spec__` attribute - Module Spec
+
+- The specification contains information such as:
+  - module name
+  - loader
+  - module location/origin
+  - other information needed to load the module
+
+```python
+import fractions
+
+fractions.__spec__
+
+# ModuleSpec(
+#  name='fractions', 
+#  loader=<_frozen_importlib_external.SourceFileLoader object at 0x7fd08884e6c0>, 
+#  origin='/usr/lib/python3.12/fractions.py'
+#  )
+
+```
+
+
 ## How does Python import modules
 
 - The `import` statement is used to bring modules or specific components (functions, classes, variables) from modules into the current namespace, making them available for use. 
@@ -3191,28 +3213,6 @@ sys.modules["math"]
   - ZIP archives
   - wheels
   - other importable resources
-
-
-### Module Spec
-
-- The specification contains information such as:
-  - module name
-  - loader
-  - module location/origin
-  - other information needed to load the module
-
-```python
-import fractions
-
-fractions.__spec__
-
-# ModuleSpec(
-#  name='fractions', 
-#  loader=<_frozen_importlib_external.SourceFileLoader object at 0x7fd08884e6c0>, 
-#  origin='/usr/lib/python3.12/fractions.py'
-#  )
-
-```
 
 
 
