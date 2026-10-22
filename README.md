@@ -115,6 +115,9 @@
     - [Solve the problem when using `importlib` statement](#solve-the-problem-when-using-importlib-statement)
     - [Important distinction](#important-distinction)
     - [The same module object](#the-same-module-object)
+    - [Find the module specification without actually importing the module](#find-the-module-specification-without-actually-importing-the-module)
+      - [Example: Let's write out a small source file to disk, called module1.py:](#example-lets-write-out-a-small-source-file-to-disk-called-module1py)
+      - [Example: Now let's go ahead and write a file somewhere other than our source folder](#example-now-lets-go-ahead-and-write-a-file-somewhere-other-than-our-source-folder)
   - [Import Variants](#import-variants)
   - [Misconceptions](#misconceptions)
   - [Reloading module](#reloading-module)
@@ -3215,18 +3218,24 @@ sys.modules["math"]
       sys.modules["math"]        math2
 ```
 
+### Find the module specification without actually importing the module
 
+- You can ask Python to find the module specification without actually importing the module.
+- Example
+  - This performs the finding step: `find_spec("decimal")` -> Finders search -> ModuleSpec
+  - It is different from `importlib.import_module("decimal")` 
+  - Because `find_spec()` is about finding information, while `import_module()` actually imports the module.
 
+```python
+import importlib.util
 
-- We can also use `importlib` to find the spec for a particular module:
-
+spec = importlib.util.find_spec("decimal")
 ```
-importlib.util.find_spec('math')
-```
 
-- Example: Let's write out a small source file to disk, called module1.py:
+#### Example: Let's write out a small source file to disk, called module1.py:
 
-```
+```python
+
 with open('module1.py', 'w') as code_file:
   code_file.write("print('running module1.py...')\n")
   code_file.write('a = 100\n')
@@ -3234,7 +3243,7 @@ with open('module1.py', 'w') as code_file:
 
 - Now that we have the module on disk, we can ask `importlib` for the module spec:
 
-```
+```python
 importlib.util.find_spec('module1')
 
 # ModuleSpec(name='module1', loader=<_frozen_importlib_external.SourceFileLoader object at 0x00000154B8435390>
@@ -3249,7 +3258,9 @@ import module1 # running module1.py...
 module1.a # 10
 ```
 
-- Example: Now let's go ahead and write a file somewhere other than our source folder - you'll have to change this code to specify your path where you want that module file to be created:
+#### Example: Now let's go ahead and write a file somewhere other than our source folder 
+
+- You'll have to change this code to specify your path where you want that module file to be created:
 
 ```
 import os
