@@ -129,7 +129,11 @@
       - [`from math import sqrt as r_sqrt`](#from-math-import-sqrt-as-r_sqrt)
       - [`from math import *`](#from-math-import-)
     - [Misconceptions](#misconceptions)
+      - [Import Efficiency Misconception](#import-efficiency-misconception)
+      - [Does importing inside a function reload the module?](#does-importing-inside-a-function-reload-the-module)
     - [Why `from <module> import *` is dangerous](#why-from-module-import--is-dangerous)
+      - [Even specific imports can overwrite names](#even-specific-imports-can-overwrite-names)
+      - [Use aliases to avoid collisions](#use-aliases-to-avoid-collisions)
     - [Importing vs calling: another misconception](#importing-vs-calling-another-misconception)
       - [But don't optimize imports for this reason](#but-dont-optimize-imports-for-this-reason)
   - [Reloading module](#reloading-module)
@@ -3580,6 +3584,8 @@ module_1.globals()
 
 ### Misconceptions
 
+#### Import Efficiency Misconception
+
 - People often think `from math import sqrt, abs` is more efficient than `import math`
   - Because only `sqrt`, `abs` is imported
 - Reality
@@ -3634,6 +3640,26 @@ cmath # <module 'cmath' (built-in)>
 # just a portion of it!
 ```
 
+#### Does importing inside a function reload the module?
+
+- The answer is **No**
+- Example
+  - Suppose `func()` is called 10 million times.
+  - Python does not reload the math module 10 million times.
+  - The first import loads math and places it in `sys.modules`
+  - On subsequent calls, Python essentially checks 
+    - Is math already in `sys.modules`?
+    -  Yes -> Use the existing module
+    -  So the module itself is not repeatedly loaded.
+- There is still some overhead because Python has to perform the import operation and bind the reference in the function's local namespace.
+
+```python
+def func(a):
+    import math
+    return math.sqrt(a)
+```
+
+
 ### Why `from <module> import *` is dangerous
 
 - Consider `from cmath import *`
@@ -3659,6 +3685,39 @@ from math import * # sqrt <math.sqrt> in module1.globals()
   - The first one is that when I call `sqrt` just like that, someone reading my code does not immediately know where that function came from. 
   - Was it a function I implemented in my module? some other custom module? the `cmath` module? the `math` module?
   - The second one is that you can run into serious problems if you also need to import the `math` module and import the `cmath` module
+
+#### Even specific imports can overwrite names
+
+- You don't need `*` to have this problem
+
+- For example
+  - The previous reference has been replaced.
+  - This is potentially confusing
+
+```python
+from cmath import sign
+# sign → cmath.sign
+
+# Later
+from math import sign
+# Now sign → math.sign
+```
+
+#### Use aliases to avoid collisions
+
+- A better approach is
+
+```python
+from cmath import sign as c_sign
+from math import sign as r_sign
+
+# c_sign → cmath.sign
+# r_sign → math.sign
+```
+
+- Now you have two distinct names:
+  - This makes the origin of each function explicit.
+  - This is particularly useful when two modules contain symbols with the same name.
 
 ### Importing vs calling: another misconception
 
