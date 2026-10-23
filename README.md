@@ -121,12 +121,13 @@
       - [Example: Let's write out a small source file to disk, called module1.py:](#example-lets-write-out-a-small-source-file-to-disk-called-module1py)
       - [Example: Now let's go ahead and write a file somewhere other than our source folder](#example-now-lets-go-ahead-and-write-a-file-somewhere-other-than-our-source-folder)
   - [Import Variants and Misconceptions](#import-variants-and-misconceptions)
-    - [The key idea](#the-key-idea)
-    - [`import math`](#import-math)
-    - [`import math as r_math`](#import-math-as-r_math)
-    - [`from math import sqrt`](#from-math-import-sqrt)
-    - [`from math import sqrt as r_sqrt`](#from-math-import-sqrt-as-r_sqrt)
-    - [`from math import *`](#from-math-import-)
+    - [Import Variants](#import-variants)
+      - [The key idea](#the-key-idea)
+      - [`import math`](#import-math)
+      - [`import math as r_math`](#import-math-as-r_math)
+      - [`from math import sqrt`](#from-math-import-sqrt)
+      - [`from math import sqrt as r_sqrt`](#from-math-import-sqrt-as-r_sqrt)
+      - [`from math import *`](#from-math-import-)
     - [Misconceptions](#misconceptions)
     - [Why `from <module> import *` is dangerous](#why-from-module-import--is-dangerous)
     - [Importing vs calling: another misconception](#importing-vs-calling-another-misconception)
@@ -3462,7 +3463,9 @@ module2.x # 'python'
 
 ## Import Variants and Misconceptions
 
-### The key idea
+### Import Variants 
+
+#### The key idea
 
 - The lecture compares different forms of Python imports
 
@@ -3489,17 +3492,18 @@ from math import *
 | `from math import *` | Yes | exported names |
 | Second `import math` | No reload | existing `math` reference reused |
 
-### `import math`
+#### `import math`
   
 - Loads the entire module (`math`) in memory if it's not already there
 - Adds a reference to it in `sys.modules` with a key of `math`
 - Adds a symbol of the same name (`math`) in our current namespace referencing the `math` object
 - Example use `import math` in **module1.py**
 
-```
+```python
 # module1.py
 
 import math
+
 
 # Step 1: Look at sys.modules dictionary If it's exist use math in sys.modules
 # Step 2: If it's not, it load the math module and insert a reference to sys.modules
@@ -3507,7 +3511,7 @@ import math
 # alreaday exists in module1.py's namespace, repalace it by reference to math in sys.modules
 ```
 
-### `import math as r_math`
+#### `import math as r_math`
   
 - Loads the entire module (`math`) in memory if it's not already there
 - Adds a reference to it in `sys.modules` with a key of `math`
@@ -3516,7 +3520,7 @@ import math
   - But the current module gets the alias `r_math` 
   - There is no `math` name added to the current module's namespace
 
-### `from math import sqrt`
+#### `from math import sqrt`
   
 - Loads the entire module (`math`) in memory if it's not already there
 - Adds a reference to it in `sys.modules` with a key of `math`
@@ -3547,7 +3551,7 @@ from math import sqrt
 # True
 ```
 
-### `from math import sqrt as r_sqrt`
+#### `from math import sqrt as r_sqrt`
   
 - Loads the entire module (`math`) in memory if it's not already there
 - Adds a reference to it in `sys.modules` with a key of `math`
@@ -3565,7 +3569,7 @@ module_1.globals()
     └── r_sqrt
 ```
 
-### `from math import *`
+#### `from math import *`
   
 - Loads the entire module (`math`) in memory if it's not already there
 - Adds a reference to it in `sys.modules` with a key of `math`
