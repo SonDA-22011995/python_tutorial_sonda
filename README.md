@@ -137,6 +137,9 @@
     - [Performance experiment](#performance-experiment)
       - [Fully qualified name vs Directly imported symbol](#fully-qualified-name-vs-directly-imported-symbol)
         - [But don't optimize imports for this reason](#but-dont-optimize-imports-for-this-reason)
+      - [Nested imports are slower](#nested-imports-are-slower)
+      - [`from math import sqrt` inside the function can be even slower](#from-math-import-sqrt-inside-the-function-can-be-even-slower)
+      - [Main performance conclusions](#main-performance-conclusions)
   - [Reloading module](#reloading-module)
   - [Absolute Imports](#absolute-imports)
   - [Relative Imports](#relative-imports)
@@ -3830,6 +3833,79 @@ import math
 
 math.sqrt(2)
 ```
+
+#### Nested imports are slower
+
+- This 
+
+```python
+def func():
+    import math
+    return math.sqrt(2)
+```
+
+- is slower than
+
+```python
+import math
+
+def func():
+    return math.sqrt(2)
+```
+
+```
+import math
+     ↓
+check sys.modules
+     ↓
+math already exists
+     ↓
+reuse existing module
+```
+
+- Because 
+  - Every time `func()` runs, Python needs to perform the import operation again.
+  - However, **So it doesn't reload the module**.
+  - The overhead is mainly the repeated import lookup and namespace binding
+
+
+#### `from math import sqrt` inside the function can be even slower
+
+- This
+
+```python
+def func():
+    from math import sqrt
+    return sqrt(2)
+```
+
+- turned out to be significantly slower than:
+
+```python
+def func():
+    import math
+    return math.sqrt(2)
+```
+
+- The reason is
+  - `import math`: Python needs to look up math -> put math into local namespace
+  - `from math import sqrt`: Python needs to look up math -> find sqrt inside math -> put sqrt into local namespace
+
+#### Main performance conclusions
+
+| Approach | General result |
+|---|---|
+| `math.sqrt()` | Slightly slower |
+| `sqrt()` | Slightly faster |
+| Import at module level | Preferred |
+| `import math` inside function | Some overhead |
+| `from math import sqrt` inside function | More overhead |
+| Module itself repeatedly reloaded? | **No** |
+
+
+- But don't over-optimize. For example, if your function runs: 10 times, 100 times, 1,000 times
+  - The difference is generally negligible.
+- Even the lecture's noticeable differences came from 10 million iterations.
 
 ## Reloading module
 
