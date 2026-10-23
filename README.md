@@ -3480,6 +3480,15 @@ from math import *
   - All these forms still load the math module. What changes is which names are added to the importing module's global namespace.
   - So the commonality is that in every case, the math module was loaded into memory and it was referenced
 
+| Syntax | Module loaded? | Name added to current namespace |
+|---|---|---|
+| `import math` | Yes | `math` |
+| `import math as m` | Yes | `m` |
+| `from math import sqrt` | Yes | `sqrt` |
+| `from math import sqrt as s` | Yes | `s` |
+| `from math import *` | Yes | exported names |
+| Second `import math` | No reload | existing `math` reference reused |
+
 ### `import math`
   
 - Loads the entire module (`math`) in memory if it's not already there
