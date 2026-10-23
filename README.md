@@ -130,6 +130,7 @@
     - [Misconceptions](#misconceptions)
     - [Why `from <module> import *` is dangerous](#why-from-module-import--is-dangerous)
     - [Importing vs calling: another misconception](#importing-vs-calling-another-misconception)
+      - [But don't optimize imports for this reason](#but-dont-optimize-imports-for-this-reason)
   - [Reloading module](#reloading-module)
   - [Absolute Imports](#absolute-imports)
   - [Relative Imports](#relative-imports)
@@ -3739,6 +3740,20 @@ def compare_timings(timing1, timing2):
 
 compare_timings(elapsed_fully_qualified, elapsed_direct_symbol)
 # Timings(timing_1=2.1, timing_2=1.6, abs_diff=-0.45, rel_diff_perc=-22.07)
+```
+
+#### But don't optimize imports for this reason
+
+- Python dictionary lookups are very fast.
+- Therefore, don't write: `from math import sqrt`
+  - Just because you think it will make your program faster 
+- Prefer readability:
+  - This makes it immediately clear where `sqrt` comes from.
+
+```python
+import math
+
+math.sqrt(2)
 ```
 
 ## Reloading module
