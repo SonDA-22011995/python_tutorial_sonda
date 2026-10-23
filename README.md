@@ -125,7 +125,11 @@
     - [`import math`](#import-math)
     - [`import math as r_math`](#import-math-as-r_math)
     - [`from math import sqrt`](#from-math-import-sqrt)
-  - [Misconceptions](#misconceptions)
+    - [`from math import sqrt as r_sqrt`](#from-math-import-sqrt-as-r_sqrt)
+    - [`from math import *`](#from-math-import-)
+    - [Misconceptions](#misconceptions)
+    - [Why `from <module> import *` is dangerous](#why-from-module-import--is-dangerous)
+    - [Importing vs calling: another misconception](#importing-vs-calling-another-misconception)
   - [Reloading module](#reloading-module)
   - [Absolute Imports](#absolute-imports)
   - [Relative Imports](#relative-imports)
@@ -3473,6 +3477,7 @@ from math import *
 
 - The most important point is:
   - All these forms still load the math module. What changes is which names are added to the importing module's global namespace.
+  - So the commonality is that in every case, the math module was loaded into memory and it was referenced
 
 ### `import math`
   
@@ -3507,10 +3512,12 @@ import math
 - Adds a reference to it in `sys.modules` with a key of `math`
 - Adds the symbol `sqrt` to our current namespace referencing the `math.sqrt` function
 - It **does not** add the symbol `math` to our current namespace
+  - So `sqrt(2)` work
+  - But `math.sqrt(2)` doesn't work unless `math` was separately imported.
 
-```
+```python
 # module1.py
-
+import sys
 from math import sqrt
 
 # Step 1: Look at sys.modules dictionary If it's exist use math in sys.modules
@@ -3519,28 +3526,83 @@ from math import sqrt
 # math.sqrt.
 # If sqrt symbol alreaday exists in module1.py's namespace, repalace it by reference
 # to math.sqrt in sys.modules
+
+'math' in sys.modules
+# True
+
+'math' in globals()
+# False
+
+'sqrt' in globals()
+# True
 ```
 
-- `from math import sqrt as r_sqrt`
-  - loads the entire module (`math`) in memory if it's not already there
-  - adds a reference to it in `sys.modules` with a key of `math`
-  - adds the symbol `r_sqrt` to our current namespace referencing the `math.sqrt` function
-  - it **does not** add the symbol `math` to our current namespace
+### `from math import sqrt as r_sqrt`
+  
+- Loads the entire module (`math`) in memory if it's not already there
+- Adds a reference to it in `sys.modules` with a key of `math`
+- Adds the symbol `r_sqrt` to our current namespace referencing the `math.sqrt` function
+- It **does not** add the symbol `math` to our current namespace
+ 
+```
+math module
+    │
+    └── sqrt function
+            ▲
+            │
+module_1.globals()
+    │
+    └── r_sqrt
+```
 
-- `from math import *`
-  - loads the entire module (`math`) in memory if it's not already there
-  - adds a reference to it in `sys.modules` with a key of `math`
-  - adds symbols for all exported symbols in the `math` module directly to our name space (we'll see how what is exported from a module/package can be controlled using underscores or `__all__` later)
-  - it **does not** add the symbol `math` to our current namespace
+### `from math import *`
+  
+- Loads the entire module (`math`) in memory if it's not already there
+- Adds a reference to it in `sys.modules` with a key of `math`
+- Adds symbols for all exported symbols in the `math` module directly to our name space 
+  - we'll see how what is exported from a module/package can be controlled using underscores or `__all__` later
+- It **does not** add the symbol `math` to our current namespace
 
-- So the commonality is that in every case, the math module was loaded into memory and it was referenced
 
-## Misconceptions
+### Misconceptions
 
-- You should use `from math import sqrt, abs` rather than `import math` because that way you only import what you need and you're not having Python load the entire module?
-  - For `math` that's just not true. In fact for any **simple** module. It simply imports the entire module
+- People often think `from math import sqrt, abs` is more efficient than `import math`
+  - Because only `sqrt`, `abs` is imported
+- Reality
+  - For `math` that's just not true. The `math` module still has to be loaded.
+  - In fact for any **simple** module, It simply imports the entire module
+- Conceptually
 
 ```
+from math import sqrt
+
+        ↓
+
+Load math module
+        ↓
+Put math in sys.modules
+        ↓
+Find sqrt inside math
+        ↓
+Put sqrt into current globals
+```
+
+- So the difference is not how much of the module gets loaded
+- The difference is
+
+```
+import math
+        ↓
+current namespace gets: math
+
+from math import sqrt
+        ↓
+current namespace gets: sqrt
+```
+
+- Example with `cmath`
+
+```python
 # module1.py
 
 from cmath import exp
@@ -3558,11 +3620,15 @@ cmath # <module 'cmath' (built-in)>
 # just a portion of it!
 ```
 
-- Why `from <module> import *` can lead to bugs
-  - The first one is that when I call `sqrt` just like that, someone reading my code does not immediately know where that function came from. Was it a function I implemented in my module? some other custom module? the `cmath` module? the `math` module?
-  - The second one is that you can run into serious problems if you also need to import the `math` module and import the `cmath` module:
+### Why `from <module> import *` is dangerous
 
-```
+- Consider `from cmath import *`
+  - Now `sqrt` refers to `cmath.sqrt`
+- Then `from math import *`
+  - `math` also has a `sqrt`
+  - The new import can replace the existing sqrt reference
+
+```python
 # module1.py
 
 from cmath import * # sqrt <cmath.sqrt> in module1.globals()
@@ -3575,13 +3641,57 @@ from math import * # sqrt <math.sqrt> in module1.globals()
 # overriding a symbol from
 ```
 
+- There reasons why `import *` is dangerous are
+  - The first one is that when I call `sqrt` just like that, someone reading my code does not immediately know where that function came from. 
+  - Was it a function I implemented in my module? some other custom module? the `cmath` module? the `math` module?
+  - The second one is that you can run into serious problems if you also need to import the `math` module and import the `cmath` module
+
+### Importing vs calling: another misconception
+
+- Compare
+
+```python
+
+import math
+
+math.sqrt(2)
+```
+
+```
+current globals
+      ↓
+    math
+      ↓
+    sqrt
+      ↓
+    call
+```
+
+- With
+
+```python
+from math import sqrt
+
+sqrt(2)
+```
+
+```
+current globals
+      ↓
+    sqrt
+      ↓
+    call
+```
+
+
 - What more efficient `import math` or `from math import sqrt`
   - Importing: same amount of work
   - Calling:
-    - `import math` -> the first needs to find sqrt symbol in math's namespace
+    - `import math` The first needs to find sqrt symbol in math's namespace
     - `from math import sqrt` -> dict lookup, super fast
+    - There is `import math` fewer lookup.So technicall, `rom math import sqrt` can be slightly faster
 
-```
+```python
 from time import perf_counter
 import math
 
@@ -3598,7 +3708,7 @@ elapsed_fully_qualified = end - start
 print(f'Elapsed: {elapsed_fully_qualified}') # Elapsed: 2.057656398357829
 ```
 
-```
+```python
 from time import perf_counter
 from math import sqrt
 
@@ -3613,7 +3723,7 @@ elapsed_direct_symbol = end - start
 print(f'Elapsed: {elapsed_direct_symbol}') # Elapsed: 1.603430354697538
 ```
 
-```
+```python
 from collections import namedtuple
 
 Timings = namedtuple('Timings', 'timing_1 timing_2 abs_diff rel_diff_perc')
