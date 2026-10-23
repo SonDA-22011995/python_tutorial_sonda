@@ -3895,9 +3895,8 @@ def func():
 
 | Approach                                | Declaration / Syntax                                       | General result                                                                   |
 | --------------------------------------- | ---------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| `math.sqrt()`                           | `import math` → `math.sqrt(25)`                            | Slightly slower                                                                  |
-| `sqrt()`                                | `from math import sqrt` → `sqrt(25)`                       | Slightly faster                                                                  |
-| Import at module level                  | `import math` or `from math import sqrt` outside functions | Preferred                                                                        |
+| Import at module level `math.sqrt()`    | `import math` outside function → `math.sqrt(25)`                            | Slightly slower                                                                  |
+| Import at module level  `sqrt()`          | `from math import sqrt` outside function → `sqrt(25)`                       | Slightly faster                                                                  |
 | `import math` inside function           | `def func():` → `import math` → `math.sqrt(25)`            | Some overhead                                                                    |
 | `from math import sqrt` inside function | `def func():` → `from math import sqrt` → `sqrt(25)`       | More overhead                                                                    |
 | Module itself repeatedly reloaded?      | `importlib.reload(math)`                                   | No — importing again does not reload the module; explicit reloading is required. |
@@ -3908,6 +3907,8 @@ def func():
 - Even the lecture's noticeable differences came from 10 million iterations.
 
 ## Reloading module
+
+
 
 ## Absolute Imports
 
