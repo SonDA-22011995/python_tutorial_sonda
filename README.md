@@ -3689,7 +3689,7 @@ current globals
   - Calling:
     - `import math` The first needs to find sqrt symbol in math's namespace
     - `from math import sqrt` -> dict lookup, super fast
-    - There is `import math` fewer lookup.So technicall, `rom math import sqrt` can be slightly faster
+    - There is `import math` fewer lookup.So technicall, `from math import sqrt` can be slightly faster
 
 ```python
 from time import perf_counter
