@@ -136,7 +136,7 @@
       - [Use aliases to avoid collisions](#use-aliases-to-avoid-collisions)
     - [Performance experiment](#performance-experiment)
       - [Fully qualified name vs Directly imported symbol](#fully-qualified-name-vs-directly-imported-symbol)
-      - [But don't optimize imports for this reason](#but-dont-optimize-imports-for-this-reason)
+        - [But don't optimize imports for this reason](#but-dont-optimize-imports-for-this-reason)
   - [Reloading module](#reloading-module)
   - [Absolute Imports](#absolute-imports)
   - [Relative Imports](#relative-imports)
@@ -3817,7 +3817,7 @@ compare_timings(elapsed_fully_qualified, elapsed_direct_symbol)
 # Timings(timing_1=2.1, timing_2=1.6, abs_diff=-0.45, rel_diff_perc=-22.07)
 ```
 
-#### But don't optimize imports for this reason
+##### But don't optimize imports for this reason
 
 - Python dictionary lookups are very fast.
 - Therefore, don't write: `from math import sqrt`
