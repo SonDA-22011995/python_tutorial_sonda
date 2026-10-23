@@ -3896,7 +3896,7 @@ def func():
 | Approach                                | Declaration / Syntax                                       | General result                                                                   |
 | --------------------------------------- | ---------------------------------------------------------- | -------------------------------------------------------------------------------- |
 | Import at module level `math.sqrt()`    | `import math` outside function → `math.sqrt(25)`                            | Slightly slower                                                                  |
-| Import at module level  `sqrt()`          | `from math import sqrt` outside function → `sqrt(25)`                       | Slightly faster                                                                  |
+| Import at module level  `sqrt()`          | `from math import sqrt` outside function → `sqrt(25)`                       | Slightly faster (referred)                                                                 |
 | `import math` inside function           | `def func():` → `import math` → `math.sqrt(25)`            | Some overhead                                                                    |
 | `from math import sqrt` inside function | `def func():` → `from math import sqrt` → `sqrt(25)`       | More overhead                                                                    |
 | Module itself repeatedly reloaded?      | `importlib.reload(math)`                                   | No — importing again does not reload the module; explicit reloading is required. |
