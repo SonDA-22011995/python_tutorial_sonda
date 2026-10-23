@@ -3706,9 +3706,7 @@ end = perf_counter()
 
 elapsed_fully_qualified = end - start
 print(f'Elapsed: {elapsed_fully_qualified}') # Elapsed: 2.057656398357829
-```
 
-```python
 from time import perf_counter
 from math import sqrt
 
@@ -3721,9 +3719,7 @@ end = perf_counter()
 
 elapsed_direct_symbol = end - start
 print(f'Elapsed: {elapsed_direct_symbol}') # Elapsed: 1.603430354697538
-```
 
-```python
 from collections import namedtuple
 
 Timings = namedtuple('Timings', 'timing_1 timing_2 abs_diff rel_diff_perc')
