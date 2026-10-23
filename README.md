@@ -134,7 +134,8 @@
     - [Why `from <module> import *` is dangerous](#why-from-module-import--is-dangerous)
       - [Even specific imports can overwrite names](#even-specific-imports-can-overwrite-names)
       - [Use aliases to avoid collisions](#use-aliases-to-avoid-collisions)
-    - [Importing vs calling: another misconception](#importing-vs-calling-another-misconception)
+    - [Performance experiment](#performance-experiment)
+      - [Fully qualified name vs Directly imported symbol](#fully-qualified-name-vs-directly-imported-symbol)
       - [But don't optimize imports for this reason](#but-dont-optimize-imports-for-this-reason)
   - [Reloading module](#reloading-module)
   - [Absolute Imports](#absolute-imports)
@@ -3719,9 +3720,11 @@ from math import sign as r_sign
   - This makes the origin of each function explicit.
   - This is particularly useful when two modules contain symbols with the same name.
 
-### Importing vs calling: another misconception
+### Performance experiment
 
-- Compare
+#### Fully qualified name vs Directly imported symbol
+
+- Compare Fully qualified name
 
 ```python
 
@@ -3740,7 +3743,7 @@ current globals
     call
 ```
 
-- With
+- With Directly imported symbol
 
 ```python
 from math import sqrt
