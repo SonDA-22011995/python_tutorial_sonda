@@ -3893,14 +3893,14 @@ def func():
 
 #### Main performance conclusions
 
-| Approach | General result |
-|---|---|
-| `math.sqrt()` | Slightly slower |
-| `sqrt()` | Slightly faster |
-| Import at module level | Preferred |
-| `import math` inside function | Some overhead |
-| `from math import sqrt` inside function | More overhead |
-| Module itself repeatedly reloaded? | **No** |
+| Approach                                | Declaration / Syntax                                       | General result                                                                   |
+| --------------------------------------- | ---------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `math.sqrt()`                           | `import math` → `math.sqrt(25)`                            | Slightly slower                                                                  |
+| `sqrt()`                                | `from math import sqrt` → `sqrt(25)`                       | Slightly faster                                                                  |
+| Import at module level                  | `import math` or `from math import sqrt` outside functions | Preferred                                                                        |
+| `import math` inside function           | `def func():` → `import math` → `math.sqrt(25)`            | Some overhead                                                                    |
+| `from math import sqrt` inside function | `def func():` → `from math import sqrt` → `sqrt(25)`       | More overhead                                                                    |
+| Module itself repeatedly reloaded?      | `importlib.reload(math)`                                   | No — importing again does not reload the module; explicit reloading is required. |
 
 
 - But don't over-optimize. For example, if your function runs: 10 times, 100 times, 1,000 times
